@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
+  m_Name: "Emitter-1 of 1 \u6A31\u5439\u96EA"
+  m_EditorClassIdentifier: 
+  description: "\u6A31\u5439\u96EA"
+  bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
+  bulletEvents:
+  - description: "\u6A31\u5439\u96EA\u5B50\u5F39\u5DE6\u53F3\u4EA4\u66FF\u65CB\u8F6C"
+    repeatTimes: 60
+    condition: {fileID: 11400000, guid: 1e446f8e37e07ca42b3f062d58752a31, type: 2}
+    modifier: {fileID: 11400000, guid: d7f618ef14efd804b833c8ac8fe49f65, type: 2}
+  shootDelay: 1
+  emitterDuration: -1
+  emitterPosTypeX: 0
+  emitterPosX:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  emitterPosTypeY: 0
+  emitterPosY:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  emitterDirectionType: 2
+  emitterDirection:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  shootWays:
+    baseValue: 32
+    offsetValue: 0
+    randomRange: 0
+  bulletsPerWay:
+    baseValue: 5
+    offsetValue: 0
+    randomRange: 0
+  shootRange:
+    baseValue: 360
+    offsetValue: 0
+    randomRange: 0
+  shootDirection:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 360
+  minBulletSpeed:
+    baseValue: 7
+    offsetValue: 0
+    randomRange: 0
+  maxBulletSpeed:
+    baseValue: 10
+    offsetValue: 0
+    randomRange: 0
+  shootTimesPerWave: 2
+  shootInterval: 0.5
+  waveInterval: 0.5
+  angleType: 4
+  increment:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  fixedValue:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  angle:
+    baseValue: 90
+    offsetValue: 0
+    randomRange: 0
+  posOffsetX:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  posOffsetY:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
