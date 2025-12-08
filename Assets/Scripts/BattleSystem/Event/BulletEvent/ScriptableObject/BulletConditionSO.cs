@@ -6,5 +6,5 @@ public abstract class BulletConditionSO : ScriptableObject
     [SerializeField] private string description;
 
 
-    public abstract bool IfTrue(BulletManagerData data);
+    public abstract bool IfTrue();
 }

@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "AlwaysConditionSO", menuName = "Battle System/Bullet/Condition/AlwaysConditionSO")]
 public class AlwaysConditionSO : BulletConditionSO
 {
-    public override bool IfTrue(BulletManagerData data)
+    public override bool IfTrue()
     {
-        return data.isActive;
+        return true;
     }
 }
