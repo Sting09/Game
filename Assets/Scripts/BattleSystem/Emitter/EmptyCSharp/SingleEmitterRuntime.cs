@@ -22,15 +22,14 @@ public class SingleEmitterRuntime : EmitterRuntime
     {
         if (newWave)
         {
+            waveTimes++;
             timesInWave = 0;
-            pattern.UpdatePattern(config);
         }
         CalcluateActualPos(start, posBuffer, newWave);
         CalculateActualDir(start, dirBuffer, newWave);   //一定先算位置再算角度
-        ShootOnePoint(0, timesInWave, posBuffer[0], dirBuffer[0], pattern);  //Single发射器只有一个发弹点，不用遍历数组
+        pattern.ShootBullet(0, timesInWave, waveTimes, posBuffer[0], dirBuffer[0]);  //Single发射器只有一个发弹点，不用遍历数组
         timesInWave++;
     }
-
 
     /// <summary>
     /// 计算该发射器在发射时，每个发弹点的世界坐标
@@ -53,11 +52,11 @@ public class SingleEmitterRuntime : EmitterRuntime
             switch (config.emitterPosTypeX)
             {
                 case PositionType.Self:
-                    x = start.position.x;
+                    x = start.position.x + singleConfig.emitterPosX.GetValue();
                     break;
 
                 case PositionType.Player:
-                    x = BattleManager.Instance.GetPlayerPos().x;
+                    x = BattleManager.Instance.GetPlayerPos().x + singleConfig.emitterPosX.GetValue();
                     break;
 
                 case PositionType.Object:
@@ -76,11 +75,11 @@ public class SingleEmitterRuntime : EmitterRuntime
             switch (config.emitterPosTypeY)
             {
                 case PositionType.Self:
-                    y = start.position.y;
+                    y = start.position.y + singleConfig.emitterPosY.GetValue();
                     break;
 
                 case PositionType.Player:
-                    y = BattleManager.Instance.GetPlayerPos().y;
+                    y = BattleManager.Instance.GetPlayerPos().y + singleConfig.emitterPosY.GetValue();
                     break;
 
                 case PositionType.Object:
@@ -123,7 +122,7 @@ public class SingleEmitterRuntime : EmitterRuntime
         Vector3 startPos = start.position;
         Vector3 endPos = BattleManager.Instance.GetPlayerPos();
 
-        //Single角度计算：敌人角度始终为0 + 发射器角度 + 发弹点角度（可能覆盖发射器角度） + shootDirection
+        //Single角度计算：敌人角度始终为0 + 发射器角度 + 发弹点角度（可能覆盖发射器角度）
 
         //发射器角度
         if(newWave)
@@ -174,9 +173,5 @@ public class SingleEmitterRuntime : EmitterRuntime
             default:
                 break;
         }
-
-        //shootDirection
-        dirBuffer[0] += config.shootDirection.GetValue();
-
     }
 }

@@ -10,15 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
-  m_Name: "Emitter-1 of 1 \u6A31\u5439\u96EA"
+  m_Name: "Emitter-1 of 2 \u5355\u5C42\u5F00\u82B1"
   m_EditorClassIdentifier: 
-  description: "\u6A31\u5439\u96EA"
+  description: "\u5355\u5C42360\u5EA6\u5F00\u82B1"
   bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
-  bulletEvents:
-  - description: "\u6A31\u5439\u96EA\u5B50\u5F39\u5DE6\u53F3\u4EA4\u66FF\u65CB\u8F6C"
-    repeatTimes: 60
-    condition: {fileID: 11400000, guid: 1e446f8e37e07ca42b3f062d58752a31, type: 2}
-    modifier: {fileID: 11400000, guid: d7f618ef14efd804b833c8ac8fe49f65, type: 2}
+  bulletEvents: []
   shootDelay: 1
   emitterDuration: -1
   emitterPosTypeX: 0
@@ -33,34 +29,11 @@ MonoBehaviour:
     randomRange: 0
   emitterDirectionType: 2
   emitterDirection:
-    baseValue: 0
+    baseValue: 90
     offsetValue: 0
     randomRange: 0
-  shootWays:
-    baseValue: 32
-    offsetValue: 0
-    randomRange: 0
-  bulletsPerWay:
-    baseValue: 5
-    offsetValue: 0
-    randomRange: 0
-  shootRange:
-    baseValue: 360
-    offsetValue: 0
-    randomRange: 0
-  shootDirection:
-    baseValue: 0
-    offsetValue: 0
-    randomRange: 360
-  minBulletSpeed:
-    baseValue: 7
-    offsetValue: 0
-    randomRange: 0
-  maxBulletSpeed:
-    baseValue: 10
-    offsetValue: 0
-    randomRange: 0
-  shootTimesPerWave: 2
+  bulletPattern: {fileID: 11400000, guid: d9a9cbf70f6684348afcadc94904f823, type: 2}
+  shootTimesPerWave: 1
   shootInterval: 0.5
   waveInterval: 0.5
   angleType: 4

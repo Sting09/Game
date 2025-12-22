@@ -7,7 +7,7 @@ public class BaseShooter : MonoBehaviour
     public int currentDanmakuIndex = 0;       //当前正在发射第几个弹幕
 
     [SerializeField]private float danmakuTimer;                  //当前符卡的计时器
-    [SerializeField] private float currentDanmakuDuration;        //当前符卡的持续时间
+    [SerializeField]private float currentDanmakuDuration;        //当前符卡的持续时间
     private List<ShooterTimer> timers;           //每个Emitter的计时器
 
     private void Awake()

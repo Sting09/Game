@@ -13,15 +13,17 @@ public abstract class EmitterRuntime
     protected List<Vector3> posBuffer;      //每个发弹点的位置
     protected List<float> dirBuffer;        //每个发弹点的角度
 
-    protected int timesInWave;        //当前波次中的第几次发射
+    [SerializeField] protected int timesInWave;        //当前波次中的第几次发射
+    [SerializeField] protected int waveTimes;            //已经发射了几波弹幕
 
     public EmitterRuntime(AbstractEmitterConfigSO emitter)
     {
         config = emitter;
-        pattern = pattern.UpdatePattern(config);
+        pattern = config.bulletPattern.CreateRuntimePattern();
         posBuffer = new List<Vector3>(10); // 给个初始容量，减少扩容开销
         dirBuffer = new List<float>(10);
         timesInWave = 0;
+        waveTimes = -1;
     }
 
     /// <summary>
@@ -29,58 +31,4 @@ public abstract class EmitterRuntime
     /// </summary>
     /// <param name="start">发弹敌人的Transform</param>
     public abstract void Shoot(Transform start, bool newWave = false);
-
-
-    /// <summary>
-    /// 让一个发弹点发射一次SO文件规定的样式的弹幕
-    /// </summary>
-    /// <param name="pos">该发弹点的世界坐标</param>
-    /// <param name="dir">该发弹点基于世界坐标系的朝向</param>
-    protected void ShootOnePoint(int emitterIndex, int timesInWave, Vector3 pos, float dir, ShootPattern pattern)
-    {
-        float startAngle = 0f, angleDelta = 0f;
-
-        float startSpeed = pattern.minSpeed;
-        float speedDelta = pattern.bulletsPerWay > 1 ? (pattern.maxSpeed - pattern.minSpeed) / (pattern.bulletsPerWay - 1) : 0f;
-
-        if(pattern.ways == 1)
-        {
-            startAngle = dir;
-        }
-        else
-        {
-            if (pattern.range >= 360f)     //子弹发射一圈
-            {
-                angleDelta = 360f / pattern.ways;
-                startAngle = dir - 180f + (angleDelta / 2f);
-            }
-            else if (pattern.range > 0)      //子弹呈一个扇形
-            {
-                angleDelta = pattern.range / (pattern.ways - 1);
-                startAngle = dir - pattern.range / 2f;
-            }
-        }
-
-        for (int lineNum = 0;lineNum < pattern.ways; lineNum++)    //lineNum：顺时针数第几列
-        {
-            for (int orderInLine = 0; orderInLine < pattern.bulletsPerWay; orderInLine++)
-            //速度由慢到快这是本列第几颗子弹
-            {
-                BulletRuntimeInfo info = new BulletRuntimeInfo();
-                info.shootPointIndex = emitterIndex;
-                info.wayIndex = lineNum;
-                info.orderInWay = orderInLine;
-                info.orderInOneShoot = lineNum * pattern.ways + orderInLine;
-                info.orderInWave = timesInWave * pattern.ways * pattern.bulletsPerWay +
-                              lineNum * pattern.ways + orderInLine;
-                info.speed = startSpeed + orderInLine * speedDelta;
-                info.direction = startAngle + lineNum * angleDelta;
-                info.lifetime = 0;
-
-                //BulletManager.Instance.AddBullet(pos, info);
-                BulletDOTSManager.Instance.AddBullet(pos, info);
-            }
-        }
-        
-    }
 }

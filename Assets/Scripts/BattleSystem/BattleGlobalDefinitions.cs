@@ -34,6 +34,18 @@ public enum AngleType       //发弹点的朝向
     FixedValue          //与发射器无关，朝向固定方向
 }
 
+public enum CircleAngleType       //圆形发射器发弹点的朝向
+{
+
+    AllPlayer,             //全部瞄准玩家
+    EnemyToPlayer,      //全部与敌人到玩家连线的方向相同
+    AllObject,             //全部瞄准一个物体
+    EnemyToObject,      //全部与敌人到一个物体连线的方向相同
+    Universal,          //全部朝同一个世界坐标发射
+    Uniform,             //均匀发射，呈圆形
+    UniformPlayer        //均匀发射，呈圆形，扇形中心对准玩家
+}
+
 [System.Serializable]
 public struct RangedFloat
 {
@@ -81,27 +93,5 @@ public struct RangedInt
     public int GetValue()
     {
         return baseValue + offsetValue + Random.Range(-randomRange, randomRange);
-    }
-}
-
-
-public struct ShootPattern
-{
-    public float range;             //这些条子弹组成扇形角的大小
-    public int ways;                //一共几条子弹
-    public int bulletsPerWay;       //每条子弹几颗子弹
-    public float minSpeed;          //一条子弹中最慢子弹的速度（只有一颗时以此为准）
-    public float maxSpeed;          //一条子弹中最快子弹的速度
-
-
-    public ShootPattern UpdatePattern(AbstractEmitterConfigSO config)
-    {
-        range = config.shootRange.GetValue();
-        ways = config.shootWays.GetValue();
-        bulletsPerWay = config.bulletsPerWay.GetValue();
-        minSpeed = config.minBulletSpeed.GetValue();
-        maxSpeed = config.maxBulletSpeed.GetValue();
-
-        return this;
     }
 }

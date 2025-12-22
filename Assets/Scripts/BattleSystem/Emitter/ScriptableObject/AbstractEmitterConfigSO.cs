@@ -31,12 +31,10 @@ public abstract class AbstractEmitterConfigSO : ScriptableObject
     [Header("Emitter Info")]
     [Tooltip("发射器X坐标类型")]
     public PositionType emitterPosTypeX = PositionType.Self;
-    [ShowIf("emitterPosTypeX", PositionType.FixedValue)]
     [Tooltip("发射器X坐标的值。前一个参数为FixedValue时生效")]
     public RangedFloat emitterPosX;
     [Tooltip("发射器Y坐标类型")]
     public PositionType emitterPosTypeY= PositionType.Self;
-    [ShowIf("emitterPosTypeY", PositionType.FixedValue)]
     [Tooltip("发射器Y坐标的值。前一个参数为FixedValue时生效")]
     public RangedFloat emitterPosY;
     [Tooltip("发射器的朝向类型")]
@@ -47,19 +45,9 @@ public abstract class AbstractEmitterConfigSO : ScriptableObject
 
 
 
-    [Header("Shoot Info")]
-    [Tooltip("一次发射几条子弹")]
-    public RangedInt shootWays = new(5, 0, 0);
-    [Tooltip("一条子弹有几颗子弹")]
-    public RangedInt bulletsPerWay = new(3, 0, 0);
-    [Tooltip("这些条子弹组成多大的扇形角")]
-    public RangedFloat shootRange = new(120, 0, 0);
-    [Tooltip("扇形角朝向的方向（相对发弹点朝向逆时针旋转，单位：度）。")]
-    public RangedFloat shootDirection = new(0, 0, 0);
-    [Tooltip("一条子弹中最慢子弹的速度。每条一颗时以此为准")]
-    public RangedFloat minBulletSpeed = new(3, 0, 0);
-    [Tooltip("一条子弹中最快子弹的速度。每条一颗时此参数无效")]
-    public RangedFloat maxBulletSpeed = new(5, 0, 0);
+    [Header("Shoot Pattern")]
+    [Tooltip("发弹点每次发射子弹的样式")]
+    public ShootPatternSO bulletPattern;
 
 
 
