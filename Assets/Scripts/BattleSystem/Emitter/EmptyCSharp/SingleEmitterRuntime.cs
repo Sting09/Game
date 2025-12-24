@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 public class SingleEmitterRuntime : EmitterRuntime
@@ -143,10 +145,11 @@ public class SingleEmitterRuntime : EmitterRuntime
                     break;
             }
             emitterDir = dirBuffer[0];
+            dirBuffer[0] = emitterDir + GetPropertyValue(EmitterPropertyType.EmitterDirection, 0);
         }
         else
         {
-            dirBuffer[0] = emitterDir;
+            dirBuffer[0] = emitterDir + GetPropertyValue(EmitterPropertyType.EmitterDirection, 0);
         }
 
         //·¢µ¯µã½Ç¶È

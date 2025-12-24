@@ -3,10 +3,12 @@ using UnityEngine;
 public abstract class ShootPattern
 {
     protected ShootPatternSO config;
+    protected EmitterRuntime ownerEmitterRuntime;  //发射这个样式的发射器
 
-
-    public ShootPattern(ShootPatternSO config) { 
+    public ShootPattern(ShootPatternSO config, EmitterRuntime runtime)
+    {
         this.config = config;
+        ownerEmitterRuntime = runtime;
     }
 
     /// <summary>

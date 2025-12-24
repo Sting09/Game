@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 [CreateAssetMenu(fileName = "CirclePatternSO", menuName = "Battle System/Bullet Pattern/Circle")]
 public class CirclePatternSO : ShootPatternSO
@@ -24,8 +23,8 @@ public class CirclePatternSO : ShootPatternSO
     [Tooltip("一条子弹中最快子弹的速度。每条一颗时此参数无效")]
     public RangedFloat endBulletSpeed = new(5, 0, 0);
 
-    public override ShootPattern CreateRuntimePattern()
+    public override ShootPattern CreateRuntimePattern(EmitterRuntime emitterRuntime)
     {
-        return new CircleShootPattern(this);
+        return new CircleShootPattern(this, emitterRuntime);
     }
 }

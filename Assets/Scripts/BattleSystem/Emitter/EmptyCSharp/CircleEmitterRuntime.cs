@@ -95,6 +95,8 @@ public class CircleEmitterRuntime : EmitterRuntime
         for (int i = 0; i < pointNum; i++)
         {
             dirBuffer[i] = emitterDir + startAngle + deltaAngle * i;
+            //×¢Òâ²»ÄÜÐ´dirBuffer[i] += GetPropertyValue(EmitterPropertyType.EmitterDirection, 0)
+            dirBuffer[i] = GetPropertyValue(EmitterPropertyType.EmitterDirection, dirBuffer[i]);
         }
     }
 

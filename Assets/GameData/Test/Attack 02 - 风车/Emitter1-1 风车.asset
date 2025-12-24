@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e70c1a926fc6fec449c21a052a61355f, type: 3}
-  m_Name: "Emitter-1 of 1 4\u5927\u5768\u72D9"
+  m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
+  m_Name: "Emitter1-1 \u98CE\u8F66"
   m_EditorClassIdentifier: 
-  description: "4\u5927\u5768\u81EA\u673A\u72D9"
+  description: 
   bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
   bulletEvents: []
-  shootDelay: 100
-  emitterDuration: -1
+  shootDelay: 1
+  emitterDuration: 45
   emitterPosTypeX: 0
   emitterPosX:
     baseValue: 0
@@ -29,30 +29,26 @@ MonoBehaviour:
     randomRange: 0
   emitterDirectionType: 2
   emitterDirection:
-    baseValue: 0
+    baseValue: 90
     offsetValue: 0
     randomRange: 360
-  bulletPattern: {fileID: 11400000, guid: fd836ca524fa2f444a43017380bee4a9, type: 2}
-  emitterEvents: []
-  shootTimesPerWave: 1
-  shootInterval: 1
-  waveInterval: 1
-  shootPointNum: 4
-  shootPointRange:
-    baseValue: 360
-    offsetValue: 0
-    randomRange: 0
-  radius:
+  bulletPattern: {fileID: 11400000, guid: b06c54fd987f82d47b7c45c9a4e747be, type: 2}
+  emitterEvents:
+  - {fileID: 11400000, guid: 63fe0062427a69e4fbcb6721fd4df359, type: 2}
+  shootTimesPerWave: 300
+  shootInterval: 0.15
+  waveInterval: 2
+  angleType: 4
+  increment:
     baseValue: 0
     offsetValue: 0
     randomRange: 0
-  radiusDirection:
-    baseValue: 45
+  fixedValue:
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
-  angleType: 5
   angle:
-    baseValue: 0
+    baseValue: 90
     offsetValue: 0
     randomRange: 0
   posOffsetX:
@@ -63,4 +59,3 @@ MonoBehaviour:
     baseValue: 0
     offsetValue: 0
     randomRange: 0
-  sameRandomness: 1

@@ -14,7 +14,7 @@ public class CircleShootPattern : ShootPattern
     public float startSpeed;          //一条子弹中最慢子弹的速度（只有一颗时以此为准）
     public float endSpeed;          //一条子弹中最快子弹的速度
 
-    public CircleShootPattern(CirclePatternSO config) : base(config)
+    public CircleShootPattern(CirclePatternSO config, EmitterRuntime runtime) : base(config, runtime)
     {
         circleConfig = config;
     }
@@ -22,9 +22,16 @@ public class CircleShootPattern : ShootPattern
     public override void UpdatePattern()
     {
         range = circleConfig.shootRange.GetValue();
+
+        //目前只能让事件改变radius，其他要改也好改，纯体力活，用到再写
         radius = circleConfig.radius.GetValue();
+        radius = ownerEmitterRuntime.GetPropertyValue(EmitterPropertyType.PatternCircle_Radius, radius);
+
         radiusDirection = circleConfig.radiusDirection.GetValue();
+
         shootDirection = circleConfig.shootDirection.GetValue();
+        shootDirection = ownerEmitterRuntime.GetPropertyValue(EmitterPropertyType.PatternCircle_ShootDirection, shootDirection);
+
         ways = circleConfig.shootWays.GetValue();
         bulletsPerWay = circleConfig.bulletsPerWay.GetValue();
         startSpeed = circleConfig.startBulletSpeed.GetValue();

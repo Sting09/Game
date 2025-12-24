@@ -46,6 +46,37 @@ public enum CircleAngleType       //圆形发射器发弹点的朝向
     UniformPlayer        //均匀发射，呈圆形，扇形中心对准玩家
 }
 
+
+/// <summary>
+/// 发射器属性
+/// </summary>
+public enum EmitterPropertyType
+{
+    //Emitter通用配置
+    EmitterPosX, 
+    EmitterPosY,
+    EmitterDirection,
+
+    //SingleEmitter专用配置
+    Single_Angle,
+
+    //Circle Pattern专用配置
+    PatternCircle_Radius,
+    PatternCircle_ShootDirection
+}
+
+
+/// <summary>
+/// 事件变化方式（变化至、增加、减少）
+/// </summary>
+public enum EventModificationType
+{
+    ChangeTo,
+    Add,
+    Reduce
+}
+
+
 [System.Serializable]
 public struct RangedFloat
 {

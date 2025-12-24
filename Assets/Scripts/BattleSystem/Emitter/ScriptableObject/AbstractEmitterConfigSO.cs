@@ -50,6 +50,10 @@ public abstract class AbstractEmitterConfigSO : ScriptableObject
     public ShootPatternSO bulletPattern;
 
 
+    [Header("Emitter Events")]
+    public List<EmitterEventSO> emitterEvents;
+
+
 
     [Header("Shoot Time Info")]
     [Tooltip("一波发射几次")]

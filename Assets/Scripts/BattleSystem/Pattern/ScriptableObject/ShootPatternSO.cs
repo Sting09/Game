@@ -3,5 +3,5 @@ using UnityEngine;
 
 public abstract class ShootPatternSO : ScriptableObject
 {
-    public abstract ShootPattern CreateRuntimePattern();
+    public abstract ShootPattern CreateRuntimePattern(EmitterRuntime emitterRuntime);
 }

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e70c1a926fc6fec449c21a052a61355f, type: 3}
-  m_Name: "Emitter-1 of 1 4\u5927\u5768\u72D9"
+  m_Name: "Emitter-test \u98CE\u8F66"
   m_EditorClassIdentifier: 
-  description: "4\u5927\u5768\u81EA\u673A\u72D9"
+  description: 
   bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
   bulletEvents: []
-  shootDelay: 100
+  shootDelay: 1
   emitterDuration: -1
   emitterPosTypeX: 0
   emitterPosX:
@@ -29,25 +29,24 @@ MonoBehaviour:
     randomRange: 0
   emitterDirectionType: 2
   emitterDirection:
-    baseValue: 0
+    baseValue: 90
     offsetValue: 0
-    randomRange: 360
-  bulletPattern: {fileID: 11400000, guid: fd836ca524fa2f444a43017380bee4a9, type: 2}
-  emitterEvents: []
-  shootTimesPerWave: 1
-  shootInterval: 1
-  waveInterval: 1
-  shootPointNum: 4
+    randomRange: 0
+  bulletPattern: {fileID: 11400000, guid: 92a43e925e77b53429704f82f859ecbf, type: 2}
+  shootTimesPerWave: 20
+  shootInterval: 0.15
+  waveInterval: 3
+  shootPointNum: 8
   shootPointRange:
     baseValue: 360
     offsetValue: 0
     randomRange: 0
   radius:
-    baseValue: 0
+    baseValue: 0.5
     offsetValue: 0
     randomRange: 0
   radiusDirection:
-    baseValue: 45
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
   angleType: 5
