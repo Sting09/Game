@@ -11,31 +11,36 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     // --- 配置 ---
     [Header("Pool Config")]
     public GameObject bulletPrefab;
-    private int maxBulletCapacity = 10000;
+    public int maxBulletCapacity = 10000;           //最大子弹数量
     public Transform poolRoot;
-    public int maxBulletNum = 2000;
+    public int initialPreFillCount = 500;                  //预填充的子弹数量
+    public int frameInstantiateLimit = 50;          // 每一帧后台偷偷生成的数量 (避免卡顿)
     public int currentBulletNum;
-    public float deltaZ = -0.0001f;
+    public float deltaZ = -0.00001f;
     [SerializeField] private float currentZ = 0;
 
     // --- Native 数据 ---
-    private NativeArray<float3> m_Positions;
-    private NativeArray<float> m_Speeds;
-    private NativeArray<float> m_Angles;
-    private NativeArray<float> m_Lifetimes;
-
-    // 【新增】上一帧的角度缓存，用于减少 transform.rotation 的写入次数
-    private NativeArray<float> m_LastAngles;
+    private NativeArray<float3> m_Positions;        //位置
+    private NativeArray<float> m_Speeds;            //速度
+    private NativeArray<float> m_Angles;            //角度
+    private NativeArray<float> m_LastAngles;        //上一帧的角度，如果和角度差别不大，就不新写入Transform
+    private NativeArray<float> m_Lifetimes;         //存活了多长时间
+    private NativeArray<bool> m_IsDead;             //子弹是否应该在本帧移除
 
     // TransformAccessArray
-    private TransformAccessArray m_Transforms;
+    private TransformAccessArray m_Transforms;      //用来给场景内的物体写入Transform数据
 
     // --- Managed 数据 ---
-    private List<GameObject> m_ActiveGOs;
-    private Queue<GameObject> m_PoolQueue;
+    private List<GameObject> m_ActiveGOs;           //活跃子弹列表
+    private Queue<GameObject> m_PoolQueue;          //子弹对象池
 
-    private int m_ActiveCount = 0;
-    private bool m_IsInitialized = false;
+    private int m_ActiveCount = 0;                  //活跃子弹数目
+    private bool m_IsInitialized = false;           //Manager是否已经初始化
+
+    private JobHandle m_JobHandle;                  //统一的Job句柄
+    private JobHandle bulletMoveJobHandle;          //控制子弹移动的任务句柄
+    private JobHandle bulletCullJobHandle;          //移除子弹的任务句柄
+
 
     protected override void Awake()
     {
@@ -45,6 +50,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
     void OnDestroy()
     {
+        // 确保销毁前 Job 已经结束，否则会导致 Unity 报错或崩溃
+        m_JobHandle.Complete();
         DisposeMemory();
     }
 
@@ -55,9 +62,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_Speeds = new NativeArray<float>(maxBulletCapacity, Allocator.Persistent);
         m_Angles = new NativeArray<float>(maxBulletCapacity, Allocator.Persistent);
         m_Lifetimes = new NativeArray<float>(maxBulletCapacity, Allocator.Persistent);
-
-        // 【新增】初始化 LastAngles
         m_LastAngles = new NativeArray<float>(maxBulletCapacity, Allocator.Persistent);
+        m_IsDead = new NativeArray<bool>(maxBulletCapacity, Allocator.Persistent);
 
         m_Transforms = new TransformAccessArray(maxBulletCapacity);
 
@@ -65,12 +71,15 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_PoolQueue = new Queue<GameObject>(maxBulletCapacity);
 
         // 预填充对象池
-        for (int i = 0; i < maxBulletNum; i++)
+        for (int i = 0; i < initialPreFillCount; i++)
         {
             CreateNewBulletToPool();
         }
 
         m_IsInitialized = true;
+
+        // 启动后台分帧扩容协程
+        StartCoroutine(ExpandPoolRoutine());
     }
 
     private void DisposeMemory()
@@ -81,10 +90,10 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         if (m_Speeds.IsCreated) m_Speeds.Dispose();
         if (m_Angles.IsCreated) m_Angles.Dispose();
         if (m_Lifetimes.IsCreated) m_Lifetimes.Dispose();
-
-        // 【新增】释放 LastAngles
         if (m_LastAngles.IsCreated) m_LastAngles.Dispose();
+        if (m_IsDead.IsCreated) m_IsDead.Dispose();
 
+        //这里注意一下，前面IsCreated全是大写I，只有这里是小写i
         if (m_Transforms.isCreated) m_Transforms.Dispose();
     }
 
@@ -98,6 +107,9 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
     public void AddBullet(Vector3 startPos, BulletRuntimeInfo info)
     {
+        //如果当前有Job正在后台运行，暂时阻塞主线程，立即完成Job
+        m_JobHandle.Complete();
+
         if (m_ActiveCount >= maxBulletCapacity)
         {
             Debug.LogWarning("Bullet pool limit reached!");
@@ -121,14 +133,13 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
         // 填充 Native 数据
         int index = m_ActiveCount;
-        currentZ -= deltaZ;
+        currentZ += deltaZ;
         m_Positions[index] = new float3(startPos.x, startPos.y, currentZ);
         m_Speeds[index] = info.speed;
         m_Angles[index] = info.direction;
         m_Lifetimes[index] = 0f;
-
-        // 【新增】初始化 LastAngle，防止第一帧重复计算
         m_LastAngles[index] = info.direction;
+        m_IsDead[index] = false;
 
         m_Transforms.Add(obj.transform);
         m_ActiveGOs.Add(obj);
@@ -138,10 +149,14 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
     void Update()
     {
+        // 每一帧开始时，确保上一帧的Job彻底完成了
+        m_JobHandle.Complete();
+
         if (m_ActiveCount == 0) return;
 
         float dt = Time.deltaTime;
 
+        //子弹移动Job
         BulletMoveJob moveJob = new BulletMoveJob
         {
             dt = dt,
@@ -149,30 +164,52 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             speeds = m_Speeds,
             angles = m_Angles,
             lifetimes = m_Lifetimes,
-            // 【新增】传入 LastAngles
             lastAngles = m_LastAngles
         };
 
-        JobHandle handle = moveJob.Schedule(m_Transforms);
-        handle.Complete();
+        //只Schedule，不调用Complete，让Job在后台线程跑，主线程执行其他脚本的Update
+        m_JobHandle = moveJob.Schedule(m_Transforms);
 
-        CheckAndRemoveBullets();
+        //移除子弹Job
+        BulletCullJob cullJob = new BulletCullJob
+        {
+            positions = m_Positions,
+            lifetimes = m_Lifetimes,
+            maxLifetime = 10f,  // 暂时的子弹最大存活时间
+            boundsX = 20f,      // 暂时的X边界
+            boundsY = 12f,      // 暂时的Y边界
+            isDeadResults = m_IsDead
+        };
 
+        // dependsOn: moveHandle
+        // 这告诉 Unity：必须等 bulletMoveJobHandle 算完了位置，才能开始算 cullJob
+        //此时 m_JobHandle 变成了 "MoveJob + CullJob" 的总 Handle
+        m_JobHandle = cullJob.Schedule(m_ActiveCount, 64, m_JobHandle);
+    }
+
+    // 处理Update后台处理的Job的收尾工作
+    void LateUpdate()
+    {
+        // 等待 Job 完成。如果此时 Job 还没算完，主线程会在这里等待。
+        m_JobHandle.Complete();
+
+        if (m_ActiveCount > 0)
+        {
+            // 移除超出屏幕边界、时间过长的子弹
+            CheckAndRemoveBullets();
+        }
+
+        // 更新子弹数量的调试数据
         currentBulletNum = m_ActiveCount;
-        currentZ = 0;
+        // 检查是否需要重置z轴遮挡排序
+        currentZ = currentZ < -1 ? 0 : currentZ;
     }
 
     private void CheckAndRemoveBullets()
     {
         for (int i = m_ActiveCount - 1; i >= 0; i--)
         {
-            float3 pos = m_Positions[i];
-            float life = m_Lifetimes[i];
-
-            bool isDead = life > 10f;
-            bool isOutOfBounds = pos.x < -20 || pos.x > 20 || pos.y < -12 || pos.y > 12;
-
-            if (isDead || isOutOfBounds)
+            if (m_IsDead[i])
             {
                 RemoveBulletAt(i);
             }
@@ -194,9 +231,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             m_Speeds[index] = m_Speeds[lastIndex];
             m_Angles[index] = m_Angles[lastIndex];
             m_Lifetimes[index] = m_Lifetimes[lastIndex];
-
-            // 【新增】搬运 LastAngles
             m_LastAngles[index] = m_LastAngles[lastIndex];
+            m_IsDead[index] = m_IsDead[lastIndex];
 
             m_ActiveGOs[index] = m_ActiveGOs[lastIndex];
             m_Transforms.RemoveAtSwapBack(index);
@@ -209,6 +245,34 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_ActiveGOs.RemoveAt(lastIndex);
         m_ActiveCount--;
     }
+
+    private System.Collections.IEnumerator ExpandPoolRoutine()
+    {
+        // 计算还需要生成多少个
+        int totalToCreate = maxBulletCapacity - initialPreFillCount;
+        int createdCount = 0;
+
+        while (createdCount < totalToCreate)
+        {
+            // 每一帧生成一批
+            for (int i = 0; i < frameInstantiateLimit; i++)
+            {
+                // 如果已经填满了，就停止
+                if (m_PoolQueue.Count + m_ActiveCount >= maxBulletCapacity)
+                {
+                    yield break;
+                }
+
+                CreateNewBulletToPool();
+                createdCount++;
+            }
+
+            // 暂停一帧，让出 CPU 给游戏逻辑和渲染
+            yield return null;
+        }
+
+        Debug.Log($"[BulletManager] Pool expansion finished. Total Capacity: {maxBulletCapacity}");
+    }
 }
 
 // =========================================================
@@ -220,8 +284,6 @@ public struct BulletMoveJob : IJobParallelForTransform
     // 读写数据
     public NativeArray<float3> positions;
     public NativeArray<float> lifetimes;
-
-    // 【新增】读写 LastAngles (不是 ReadOnly，因为要更新缓存)
     public NativeArray<float> lastAngles;
 
     // 只读数据
@@ -264,5 +326,41 @@ public struct BulletMoveJob : IJobParallelForTransform
             // 更新缓存
             lastAngles[index] = currentAngle;
         }
+    }
+}
+
+
+[BurstCompile]
+public struct BulletCullJob : IJobParallelFor
+{
+    // 输入数据
+    [ReadOnly] public NativeArray<float3> positions;
+    [ReadOnly] public NativeArray<float> lifetimes;
+
+    // 边界配置 (可以从 Manager 传入，避免硬编码)
+    public float maxLifetime;
+    public float boundsX;
+    public float boundsY;
+
+    // 输出数据：只写 bool，不改变数组结构
+    [WriteOnly] public NativeArray<bool> isDeadResults;
+
+    public void Execute(int index)
+    {
+        // 1. 检查生命周期
+        bool dead = lifetimes[index] > maxLifetime;
+
+        // 2. 检查边界 (如果还没有死，再查边界，节省性能)
+        if (!dead)
+        {
+            float3 pos = positions[index];
+            // 这里使用绝对值简化判断：|x| > bound
+            bool outOfBounds = pos.x < -boundsX || pos.x > boundsX ||
+                               pos.y < -boundsY || pos.y > boundsY;
+            dead = outOfBounds;
+        }
+
+        // 写入结果
+        isDeadResults[index] = dead;
     }
 }

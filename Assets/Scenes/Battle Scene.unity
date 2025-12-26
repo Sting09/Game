@@ -419,7 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   danmakuToShoot:
-  - {fileID: 11400000, guid: cf2a1f6b349fb3043b059413ceb4c015, type: 2}
+  - {fileID: 11400000, guid: 2ce247fb908e8e5488e41ba6602146af, type: 2}
   currentDanmakuIndex: 0
   danmakuTimer: 0
   currentDanmakuDuration: 0
@@ -498,7 +498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47b34c3dc2fa7054d973b2acf7daeb07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetFrameRate: 60
+  targetFrameRate: 144
 --- !u!1 &1457958548
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,10 +623,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
+  maxBulletCapacity: 10000
   poolRoot: {fileID: 1999661718}
-  maxBulletNum: 2000
+  initialPreFillCount: 100
+  frameInstantiateLimit: 20
   currentBulletNum: 0
-  deltaZ: -0.0001
+  deltaZ: -0.00001
   currentZ: 0
 --- !u!1 &1999661717
 GameObject:
@@ -637,7 +639,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1999661718}
-  - component: {fileID: 1999661719}
   m_Layer: 0
   m_Name: MainBulletPool
   m_TagString: Untagged
@@ -660,21 +661,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1999661719
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1999661717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff5929935d721324499219a7e2ae228f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
-  fillNum: 3000
-  parent: {fileID: 0}
 --- !u!1 &2003418451
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ public class PoolTool : MonoBehaviour
 {
     public GameObject objPrefab;    //ObjectPool里都是这个对象
     public int fillNum = 600;     //Awake时填充的物体数量
+    public bool ifPreFill = false;  //是否需要预填充
     public GameObject parent;   //生成的对象挂到这个物体下，为空则挂在ObjectPool所在物体下
     private ObjectPool<GameObject> pool;
 
@@ -26,7 +27,7 @@ public class PoolTool : MonoBehaviour
             actionOnDestroy:(obj) => Destroy(obj)
         );
 
-        PreFillPool(fillNum);
+        if (ifPreFill) { PreFillPool(fillNum); }
     }
 
     private void PreFillPool(int count)
