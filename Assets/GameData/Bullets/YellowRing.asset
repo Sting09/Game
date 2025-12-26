@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
-  m_Name: "Danmaku-\u98CE\u8F66"
+  m_Script: {fileID: 11500000, guid: 9b85c030d331c054b9d9dafec999d560, type: 3}
+  m_Name: YellowRing
   m_EditorClassIdentifier: 
-  duration: -1
-  emitterList:
-  - {fileID: 11400000, guid: 25bad2d0b026ece47958fc85aee8220e, type: 2}
-  - {fileID: 11400000, guid: 6cefee0f398255f4fa70f908952ed485, type: 2}
+  bulletName: YellowRing
+  prefab: {fileID: 6173098254462471731, guid: e3013db47e8c6bf46807979d44bdc4aa, type: 3}
+  zPriority: 2
+  collisionType: 0
+  circleRadius: 0.5
+  boxSize: {x: 1, y: 1}

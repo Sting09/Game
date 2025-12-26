@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24fcecf5d77356f41a74a8391619cfaf, type: 3}
   m_Name: "Pattern-1 for 1 \u7BAD\u5934"
   m_EditorClassIdentifier: 
+  bulletName: YellowRing
   description: 
   shootWaysHalf:
     baseValue: 4

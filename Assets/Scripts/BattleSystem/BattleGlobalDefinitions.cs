@@ -1,6 +1,15 @@
 using UnityEngine;
 
 /// <summary>
+/// 子弹的碰撞类型
+/// </summary>
+public enum BulletCollisionType
+{
+    Circle,
+    Square
+}
+
+/// <summary>
 /// 发射器的位置
 /// </summary>
 public enum PositionType    //发射器的位置

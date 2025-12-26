@@ -622,10 +622,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51e29bc64a4c8f3458891739948a014e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
-  maxBulletCapacity: 10000
+  bulletConfigs:
+  - {fileID: 11400000, guid: 9d800899811a0cb4897c80116d411347, type: 2}
+  - {fileID: 11400000, guid: 26f00399b480b1b428339d0663a3e40e, type: 2}
   poolRoot: {fileID: 1999661718}
-  initialPreFillCount: 100
+  maxBulletCapacity: 10000
+  initialPreFillCount: 500
   frameInstantiateLimit: 20
   currentBulletNum: 0
   deltaZ: -0.00001

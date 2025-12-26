@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
   m_Name: "Pattern-1 for 1 \u5F00\u82B1"
   m_EditorClassIdentifier: 
+  bulletName: RedBullet
   description: 
   shootWays:
     baseValue: 5

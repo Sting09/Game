@@ -5,14 +5,18 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Mathematics;
+using UnityEditor.ShaderGraph.Internal;
 
 public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 {
     // --- 配置 ---
     [Header("Pool Config")]
-    public GameObject bulletPrefab;
+    public List<BulletBasicConfigSO> bulletConfigs; //所有子弹的名称、预制体、碰撞
+    private Dictionary<string, int> m_NameToID;     //子弹名称到index的映射
+    private BulletBasicConfigSO[] m_IDToConfig;     //子弹index到配置文件的映射
+    public Dictionary<int, Queue<GameObject>> m_BulletPools; //子弹名称到子弹预制体的数组
+    public Transform poolRoot;                      //所有对象池的根节点
     public int maxBulletCapacity = 10000;           //最大子弹数量
-    public Transform poolRoot;
     public int initialPreFillCount = 500;                  //预填充的子弹数量
     public int frameInstantiateLimit = 50;          // 每一帧后台偷偷生成的数量 (避免卡顿)
     public int currentBulletNum;
@@ -32,7 +36,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
     // --- Managed 数据 ---
     private List<GameObject> m_ActiveGOs;           //活跃子弹列表
-    private Queue<GameObject> m_PoolQueue;          //子弹对象池
+    private List<int> m_ActiveTypeIDs;              //活跃子弹的index
 
     private int m_ActiveCount = 0;                  //活跃子弹数目
     private bool m_IsInitialized = false;           //Manager是否已经初始化
@@ -45,7 +49,9 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     protected override void Awake()
     {
         base.Awake();
+        InitializeConfig();
         InitializeMemory();
+        m_IsInitialized = true;
     }
 
     void OnDestroy()
@@ -53,6 +59,32 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         // 确保销毁前 Job 已经结束，否则会导致 Unity 报错或崩溃
         m_JobHandle.Complete();
         DisposeMemory();
+    }
+
+
+    private void InitializeConfig()
+    {
+        m_NameToID = new Dictionary<string, int>();
+        m_BulletPools = new Dictionary<int, Queue<GameObject>>();
+
+        // 转换 List 为 Array 方便通过 index 访问
+        if (bulletConfigs != null)
+        {
+            m_IDToConfig = bulletConfigs.ToArray();
+            for (int i = 0; i < m_IDToConfig.Length; i++)
+            {
+                var cfg = m_IDToConfig[i];
+                if (cfg == null) continue;
+
+                m_NameToID[cfg.bulletName] = i;
+                m_BulletPools[i] = new Queue<GameObject>();
+            }
+        }
+        else
+        {
+            m_IDToConfig = new BulletBasicConfigSO[0];
+            Debug.LogError("No Bullet Configs assigned!");
+        }
     }
 
     private void InitializeMemory()
@@ -68,7 +100,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_Transforms = new TransformAccessArray(maxBulletCapacity);
 
         m_ActiveGOs = new List<GameObject>(maxBulletCapacity);
-        m_PoolQueue = new Queue<GameObject>(maxBulletCapacity);
+        m_ActiveTypeIDs = new List<int>(maxBulletCapacity);
+        /*m_PoolQueue = new Queue<GameObject>(maxBulletCapacity);
 
         // 预填充对象池
         for (int i = 0; i < initialPreFillCount; i++)
@@ -76,10 +109,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             CreateNewBulletToPool();
         }
 
-        m_IsInitialized = true;
-
         // 启动后台分帧扩容协程
-        StartCoroutine(ExpandPoolRoutine());
+        StartCoroutine(ExpandPoolRoutine());*/
     }
 
     private void DisposeMemory()
@@ -97,15 +128,32 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         if (m_Transforms.isCreated) m_Transforms.Dispose();
     }
 
-    private GameObject CreateNewBulletToPool()
+    private GameObject GetBulletFromPool(int typeID)
+    {
+        Queue<GameObject> pool = m_BulletPools[typeID];
+
+        if (pool.Count > 0)
+        {
+            return pool.Dequeue();
+        }
+        else
+        {
+            // 池子空了，实例化新的 (Prefab从Config里取)
+            BulletBasicConfigSO cfg = m_IDToConfig[typeID];
+            GameObject newObj = Instantiate(cfg.prefab, poolRoot);
+            return newObj;
+        }
+    }
+
+    /*private GameObject CreateNewBulletToPool()
     {
         GameObject obj = Instantiate(bulletPrefab, poolRoot);
         obj.SetActive(false);
         m_PoolQueue.Enqueue(obj);
         return obj;
-    }
+    }*/
 
-    public void AddBullet(Vector3 startPos, BulletRuntimeInfo info)
+    public void AddBullet(string bulletName, Vector3 startPos, BulletRuntimeInfo info)
     {
         //如果当前有Job正在后台运行，暂时阻塞主线程，立即完成Job
         m_JobHandle.Complete();
@@ -116,7 +164,18 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             return;
         }
 
-        GameObject obj = null;
+        // 查找 ID
+        if (!m_NameToID.TryGetValue(bulletName, out int typeID))
+        {
+            Debug.LogWarning($"Bullet Config not found: {bulletName}");
+            return;
+        }
+        // 获取配置数据
+        BulletBasicConfigSO config = m_IDToConfig[typeID];
+        //获取一个指定子弹类型的对象
+        GameObject obj = GetBulletFromPool(typeID);
+
+        /*GameObject obj = null;
         if (m_PoolQueue.Count > 0)
         {
             obj = m_PoolQueue.Dequeue();
@@ -125,7 +184,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         {
             obj = CreateNewBulletToPool();
             obj = m_PoolQueue.Dequeue();
-        }
+        }*/
 
         obj.SetActive(true);
         // 初始化 Transform
@@ -134,7 +193,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         // 填充 Native 数据
         int index = m_ActiveCount;
         currentZ += deltaZ;
-        m_Positions[index] = new float3(startPos.x, startPos.y, currentZ);
+        float zPriority = m_IDToConfig[m_NameToID[bulletName]].zPriority;
+        m_Positions[index] = new float3(startPos.x, startPos.y, currentZ - zPriority);
         //m_Positions[index] = new float3(startPos.x, startPos.y, 0f);
         m_Speeds[index] = info.speed;
         m_Angles[index] = info.direction;
@@ -144,6 +204,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
         m_Transforms.Add(obj.transform);
         m_ActiveGOs.Add(obj);
+        m_ActiveTypeIDs.Add(typeID);
 
         m_ActiveCount++;
     }
@@ -222,8 +283,12 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         int lastIndex = m_ActiveCount - 1;
         GameObject objToRemove = m_ActiveGOs[index];
 
+        //要回收的子弹的typeID
+        int typeID = m_ActiveTypeIDs[index];
+
         objToRemove.SetActive(false);
-        m_PoolQueue.Enqueue(objToRemove);
+        //对应的池子Enqueue
+        m_BulletPools[typeID].Enqueue(objToRemove);
 
         if (index != lastIndex)
         {
@@ -236,6 +301,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             m_IsDead[index] = m_IsDead[lastIndex];
 
             m_ActiveGOs[index] = m_ActiveGOs[lastIndex];
+            m_ActiveTypeIDs[index] = m_ActiveTypeIDs[lastIndex];
             m_Transforms.RemoveAtSwapBack(index);
         }
         else
@@ -244,10 +310,11 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         }
 
         m_ActiveGOs.RemoveAt(lastIndex);
+        m_ActiveTypeIDs.RemoveAt(lastIndex);
         m_ActiveCount--;
     }
 
-    private System.Collections.IEnumerator ExpandPoolRoutine()
+    /*private System.Collections.IEnumerator ExpandPoolRoutine()
     {
         // 计算还需要生成多少个
         int totalToCreate = maxBulletCapacity - initialPreFillCount;
@@ -273,7 +340,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         }
 
         //Debug.Log($"[BulletManager] Pool expansion finished. Total Capacity: {maxBulletCapacity}");
-    }
+    }*/
 }
 
 // =========================================================
