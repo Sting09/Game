@@ -419,7 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   danmakuToShoot:
-  - {fileID: 11400000, guid: 2ce247fb908e8e5488e41ba6602146af, type: 2}
+  - {fileID: 11400000, guid: 2e5bdd441595c0c47a101b5bddf06e4f, type: 2}
   currentDanmakuIndex: 0
   danmakuTimer: 0
   currentDanmakuDuration: 0

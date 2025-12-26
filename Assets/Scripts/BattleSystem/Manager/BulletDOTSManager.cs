@@ -16,7 +16,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     public int initialPreFillCount = 500;                  //预填充的子弹数量
     public int frameInstantiateLimit = 50;          // 每一帧后台偷偷生成的数量 (避免卡顿)
     public int currentBulletNum;
-    public float deltaZ = -0.00001f;
+    public float deltaZ = -0.0001f;
     [SerializeField] private float currentZ = 0;
 
     // --- Native 数据 ---
@@ -135,6 +135,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         int index = m_ActiveCount;
         currentZ += deltaZ;
         m_Positions[index] = new float3(startPos.x, startPos.y, currentZ);
+        //m_Positions[index] = new float3(startPos.x, startPos.y, 0f);
         m_Speeds[index] = info.speed;
         m_Angles[index] = info.direction;
         m_Lifetimes[index] = 0f;
@@ -271,7 +272,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             yield return null;
         }
 
-        Debug.Log($"[BulletManager] Pool expansion finished. Total Capacity: {maxBulletCapacity}");
+        //Debug.Log($"[BulletManager] Pool expansion finished. Total Capacity: {maxBulletCapacity}");
     }
 }
 

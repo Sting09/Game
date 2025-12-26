@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: "Emitter-1 of 1 \u5F00\u82B1"
   m_EditorClassIdentifier: 
   description: 
-  bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
   bulletEvents: []
   shootDelay: 1
   emitterDuration: -1
@@ -35,9 +34,9 @@ MonoBehaviour:
   bulletPattern: {fileID: 11400000, guid: 289d8d47965d75a4b927b0ae2e61a3d2, type: 2}
   emitterEvents:
   - {fileID: 11400000, guid: 7b1f5f8d0ee3842489246e93e6c44f3b, type: 2}
-  shootTimesPerWave: 30
+  shootTimesPerWave: 5
   shootInterval: 0.5
-  waveInterval: 2
+  waveInterval: 3
   shootPointNum: 9
   shootPointRange:
     baseValue: 360

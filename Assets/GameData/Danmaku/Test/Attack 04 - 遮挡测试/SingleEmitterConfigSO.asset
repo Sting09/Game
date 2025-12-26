@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: SingleEmitterConfigSO
   m_EditorClassIdentifier: 
   description: 
-  bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
   bulletEvents: []
   shootDelay: 1
   emitterDuration: -1
@@ -35,8 +34,8 @@ MonoBehaviour:
   bulletPattern: {fileID: 11400000, guid: 3ebf532060ac1924280ca3ed02b6ef71, type: 2}
   emitterEvents: []
   shootTimesPerWave: 1
-  shootInterval: 0.1
-  waveInterval: 0.1
+  shootInterval: 1
+  waveInterval: 1
   angleType: 4
   increment:
     baseValue: 0

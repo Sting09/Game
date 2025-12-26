@@ -12,8 +12,6 @@ public abstract class AbstractEmitterConfigSO : ScriptableObject
 
 
     [Header("Bullet Info")]
-    [Tooltip("子弹预制体")]
-    public GameObject bulletPrefab;
     [Tooltip("子弹事件")]
     public List<BulletEvent> bulletEvents;
 
