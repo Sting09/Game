@@ -25,6 +25,7 @@ public class BaseShooter : MonoBehaviour
 
     void Update()
     {
+
         danmakuTimer += Time.deltaTime;
         //danmakuDuration为负数时发射永不停止 
         if (currentDanmakuDuration > 0 && danmakuTimer > currentDanmakuDuration)
@@ -64,6 +65,8 @@ public class BaseShooter : MonoBehaviour
             {
                 timers.Add(new ShooterTimer(emitter));
             }
+
+            BulletDOTSManager.Instance.PreparePoolsForLevel(currentDanmaku.requiredBulletNames);
 
             currentDanmakuDuration = currentDanmaku.duration;   //读取符卡持续时间
             danmakuTimer = 0f;      //重置计时器

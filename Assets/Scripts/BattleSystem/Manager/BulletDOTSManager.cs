@@ -5,16 +5,16 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Mathematics;
-using UnityEditor.ShaderGraph.Internal;
 
 public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 {
     // --- 配置 ---
     [Header("Pool Config")]
     public List<BulletBasicConfigSO> bulletConfigs; //所有子弹的名称、预制体、碰撞
-    private Dictionary<string, int> m_NameToID;     //子弹名称到index的映射
+    public Dictionary<string, int> m_NameToID;     //子弹名称到index的映射
     private BulletBasicConfigSO[] m_IDToConfig;     //子弹index到配置文件的映射
-    public Dictionary<int, Queue<GameObject>> m_BulletPools; //子弹名称到子弹预制体的数组
+    public Queue<GameObject>[] m_BulletPools;       //子弹名称到子弹预制体的数组
+    private Transform[] m_TypeRoots;                //存储每种子弹类型在对象池中的父节点
     public Transform poolRoot;                      //所有对象池的根节点
     public int maxBulletCapacity = 10000;           //最大子弹数量
     public int initialPreFillCount = 500;                  //预填充的子弹数量
@@ -65,26 +65,31 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     private void InitializeConfig()
     {
         m_NameToID = new Dictionary<string, int>();
-        m_BulletPools = new Dictionary<int, Queue<GameObject>>();
 
         // 转换 List 为 Array 方便通过 index 访问
         if (bulletConfigs != null)
         {
             m_IDToConfig = bulletConfigs.ToArray();
+            m_BulletPools = new Queue<GameObject>[m_IDToConfig.Length];
+            m_TypeRoots = new Transform[m_IDToConfig.Length];
+
             for (int i = 0; i < m_IDToConfig.Length; i++)
             {
                 var cfg = m_IDToConfig[i];
                 if (cfg == null) continue;
 
                 m_NameToID[cfg.bulletName] = i;
-                m_BulletPools[i] = new Queue<GameObject>();
             }
         }
         else
         {
+            // 防止空引用报错
             m_IDToConfig = new BulletBasicConfigSO[0];
+            m_BulletPools = new Queue<GameObject>[0];
+            m_TypeRoots = new Transform[0];
             Debug.LogError("No Bullet Configs assigned!");
         }
+
     }
 
     private void InitializeMemory()
@@ -101,16 +106,6 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
         m_ActiveGOs = new List<GameObject>(maxBulletCapacity);
         m_ActiveTypeIDs = new List<int>(maxBulletCapacity);
-        /*m_PoolQueue = new Queue<GameObject>(maxBulletCapacity);
-
-        // 预填充对象池
-        for (int i = 0; i < initialPreFillCount; i++)
-        {
-            CreateNewBulletToPool();
-        }
-
-        // 启动后台分帧扩容协程
-        StartCoroutine(ExpandPoolRoutine());*/
     }
 
     private void DisposeMemory()
@@ -130,6 +125,8 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
     private GameObject GetBulletFromPool(int typeID)
     {
+        // 极小概率防御：万一数组本身没初始化
+        if (m_BulletPools[typeID] == null) m_BulletPools[typeID] = new Queue<GameObject>();
         Queue<GameObject> pool = m_BulletPools[typeID];
 
         if (pool.Count > 0)
@@ -140,20 +137,15 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         {
             // 池子空了，实例化新的 (Prefab从Config里取)
             BulletBasicConfigSO cfg = m_IDToConfig[typeID];
-            GameObject newObj = Instantiate(cfg.prefab, poolRoot);
+            // 使用 GetOrCreateTypeRoot 获取父节点
+            Transform parent = GetOrCreateTypeRoot(typeID);
+            GameObject newObj = Instantiate(cfg.prefab, parent);
+            Debug.Log("Instantiate Function is Called!");
             return newObj;
         }
     }
 
-    /*private GameObject CreateNewBulletToPool()
-    {
-        GameObject obj = Instantiate(bulletPrefab, poolRoot);
-        obj.SetActive(false);
-        m_PoolQueue.Enqueue(obj);
-        return obj;
-    }*/
-
-    public void AddBullet(string bulletName, Vector3 startPos, BulletRuntimeInfo info)
+    public void AddBullet(int typeID, Vector3 startPos, BulletRuntimeInfo info)
     {
         //如果当前有Job正在后台运行，暂时阻塞主线程，立即完成Job
         m_JobHandle.Complete();
@@ -164,27 +156,10 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             return;
         }
 
-        // 查找 ID
-        if (!m_NameToID.TryGetValue(bulletName, out int typeID))
-        {
-            Debug.LogWarning($"Bullet Config not found: {bulletName}");
-            return;
-        }
         // 获取配置数据
         BulletBasicConfigSO config = m_IDToConfig[typeID];
         //获取一个指定子弹类型的对象
         GameObject obj = GetBulletFromPool(typeID);
-
-        /*GameObject obj = null;
-        if (m_PoolQueue.Count > 0)
-        {
-            obj = m_PoolQueue.Dequeue();
-        }
-        else
-        {
-            obj = CreateNewBulletToPool();
-            obj = m_PoolQueue.Dequeue();
-        }*/
 
         obj.SetActive(true);
         // 初始化 Transform
@@ -193,7 +168,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         // 填充 Native 数据
         int index = m_ActiveCount;
         currentZ += deltaZ;
-        float zPriority = m_IDToConfig[m_NameToID[bulletName]].zPriority;
+        float zPriority = m_IDToConfig[typeID].zPriority;
         m_Positions[index] = new float3(startPos.x, startPos.y, currentZ - zPriority);
         //m_Positions[index] = new float3(startPos.x, startPos.y, 0f);
         m_Speeds[index] = info.speed;
@@ -314,33 +289,101 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_ActiveCount--;
     }
 
-    /*private System.Collections.IEnumerator ExpandPoolRoutine()
+
+    /// <summary>
+    /// 根据关卡需求准备对象池：清理不需要的，创建并填充需要的
+    /// </summary>
+    /// <param name="requiredBulletNames">本关卡将会用到的所有子弹名称列表</param>
+    public void PreparePoolsForLevel(List<string> requiredBulletNames)
     {
-        // 计算还需要生成多少个
-        int totalToCreate = maxBulletCapacity - initialPreFillCount;
-        int createdCount = 0;
+        if (requiredBulletNames == null) return;
 
-        while (createdCount < totalToCreate)
+        // 1. 整理需求 ID
+        HashSet<int> requiredIDs = new HashSet<int>();
+        foreach (var name in requiredBulletNames)
         {
-            // 每一帧生成一批
-            for (int i = 0; i < frameInstantiateLimit; i++)
-            {
-                // 如果已经填满了，就停止
-                if (m_PoolQueue.Count + m_ActiveCount >= maxBulletCapacity)
-                {
-                    yield break;
-                }
-
-                CreateNewBulletToPool();
-                createdCount++;
-            }
-
-            // 暂停一帧，让出 CPU 给游戏逻辑和渲染
-            yield return null;
+            if (m_NameToID.TryGetValue(name, out int id)) requiredIDs.Add(id);
+            else Debug.LogWarning($"Config not found: {name}");
         }
 
-        //Debug.Log($"[BulletManager] Pool expansion finished. Total Capacity: {maxBulletCapacity}");
-    }*/
+        // 2. 清理旧数据 (遍历数组)
+        for (int i = 0; i < m_BulletPools.Length; i++)
+        {
+            // 只有当池子已经存在(不为null) 且 本关不需要时，才清理
+            if (m_BulletPools[i] != null && !requiredIDs.Contains(i))
+            {
+                Queue<GameObject> pool = m_BulletPools[i];
+                while (pool.Count > 0)
+                {
+                    GameObject obj = pool.Dequeue();
+                    if (obj != null) Destroy(obj);
+                }
+                // 彻底释放 Queue 引用
+                m_BulletPools[i] = null;
+
+                // 同时也销毁对应的分类父节点 (Hierarchy 清理)
+                if (m_TypeRoots[i] != null)
+                {
+                    Destroy(m_TypeRoots[i].gameObject);
+                    m_TypeRoots[i] = null; // 引用置空
+                }
+            }
+        }
+
+        // 3. 准备新数据
+        foreach (int id in requiredIDs)
+        {
+            // 数组越界保护
+            if (id < 0 || id >= m_BulletPools.Length) continue;
+
+            // 懒加载：如果是 null 则创建
+            if (m_BulletPools[id] == null)
+            {
+                m_BulletPools[id] = new Queue<GameObject>();
+            }
+
+            Queue<GameObject> pool = m_BulletPools[id];
+            BulletBasicConfigSO cfg = m_IDToConfig[id];
+
+            // 确保父节点存在 (Lazy Load)
+            Transform parent = GetOrCreateTypeRoot(id);
+
+            // 补货逻辑
+            int currentCount = pool.Count;
+            int targetCount = initialPreFillCount;
+
+            if (currentCount < targetCount)
+            {
+                int countToCreate = targetCount - currentCount;
+                for (int i = 0; i < countToCreate; i++)
+                {
+                    GameObject newObj = Instantiate(cfg.prefab, parent);
+                    newObj.SetActive(false);
+                    pool.Enqueue(newObj);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 获取指定类型的父节点，如果不存在则创建（懒加载）
+    /// </summary>
+    private Transform GetOrCreateTypeRoot(int typeID)
+    {
+        // 如果数组里没有，或者虽然有引用但GameObject已经被销毁了（比如切场景）
+        if (m_TypeRoots[typeID] == null)
+        {
+            BulletBasicConfigSO cfg = m_IDToConfig[typeID];
+            // 创建分类父节点，例如 "Pool_RedBullet"
+            GameObject subRootObj = new GameObject($"Pool_{cfg.bulletName}");
+            subRootObj.transform.SetParent(poolRoot);
+            subRootObj.transform.localPosition = Vector3.zero;
+            subRootObj.transform.localRotation = Quaternion.identity;
+
+            m_TypeRoots[typeID] = subRootObj.transform;
+        }
+        return m_TypeRoots[typeID];
+    }
 }
 
 // =========================================================

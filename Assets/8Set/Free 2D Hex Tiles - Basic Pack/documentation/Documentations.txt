@@ -1,0 +1,33 @@
+﻿FREE 2D Hex Tiles – Basic Pack V.1
+Author: 8Set
+Email: salmon.soul@gmail.com
+Current Version: v1.0 – October 2025
+________________
+
+
+Description:
+Hand-painted 2D hex tiles featuring terrain and decorative elements for games. This pack includes base tiles, special landscape tiles, and decor objects. These sets can be used to your 2D maps, game worlds, RPGs, board games etc.
+________________
+
+
+Features:
+* 12 hex tiles in total
+   * Base terrain (4): Water, Grass, Sand, Stone
+   * Special tiles (2): Mountain, Composition (multi-object landscape)
+   * Decor (6): Stone pile (2), Single tree (1), Tree cluster (1), Small bush (1), Large bush (1)
+* Fully transparent PNG files
+* Tile size: 512×512 px
+________________
+
+
+Compatibility:
+These assets can be used in any 2D application or game engine. No specific Unity version required.
+________________
+
+
+Future Plans:
+This is a first, trial version of the pack — just the beginning. I plan to create at least 10 more sets featuring different locations and environments. If you have any questions or suggestions, feel free to contact me.
+________________
+
+
+Thank you for using these assets!
