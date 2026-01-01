@@ -8,4 +8,6 @@ public class DanmakuSO : ScriptableObject
     public float duration = -1f;
     [Tooltip("发射器参数列表")]
     public List<AbstractEmitterConfigSO> emitterList;
+    [Tooltip("发射器参数列表")]
+    public List<string> requiredBulletNames;
 }

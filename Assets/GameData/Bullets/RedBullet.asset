@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b85c030d331c054b9d9dafec999d560, type: 3}
+  m_Name: RedBullet
+  m_EditorClassIdentifier: 
+  bulletName: RedBullet
+  prefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
+  zPriority: 4
+  collisionType: 0
+  circleRadius: 0.5
+  boxSize: {x: 1, y: 1}

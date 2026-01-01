@@ -1,6 +1,15 @@
 using UnityEngine;
 
 /// <summary>
+/// 子弹的碰撞类型
+/// </summary>
+public enum BulletCollisionType
+{
+    Circle,
+    Square
+}
+
+/// <summary>
 /// 发射器的位置
 /// </summary>
 public enum PositionType    //发射器的位置
@@ -74,6 +83,33 @@ public enum EventModificationType
     ChangeTo,
     Add,
     Reduce
+}
+
+
+public enum BulletEventType
+{
+    None = 0,
+    ChangeSpeed,        // 修改速度
+    ChangeDirection,    // 修改运动方向
+    SetAcceleration,    // 设置加速度 (大小, 角度)
+    SetAngularVelocity, // 设置角速度 (旋转)
+    Stop,               // 停止
+    Recycle             // 强制回收
+}
+
+// 对应 Job 的纯数据事件结构
+public struct NativeBulletEvent
+{
+    public float triggerTime;       // 触发时间 (Lifetime)
+    public BulletEventType type;    // 事件类型
+
+    // 通用参数 (根据 type 不同有不同含义)
+    public float valueA;            // 目标值 / 最小值 / X
+    public float valueB;            // 持续时间 / 标志位 / Y
+    public float valueC;            // 最大值 (用于随机)
+
+    public bool useRelative;        // 是否相对当前值 (+/-)
+    public bool useRandom;          // 是否随机 (在 valueA ~ valueC 之间)
 }
 
 

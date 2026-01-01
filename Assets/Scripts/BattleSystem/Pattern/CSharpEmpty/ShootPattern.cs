@@ -4,11 +4,17 @@ public abstract class ShootPattern
 {
     protected ShootPatternSO config;
     protected EmitterRuntime ownerEmitterRuntime;  //发射这个样式的发射器
+    protected string bulletName;
+    protected int bulletTypeID;
+    protected int bulletBehaviourID;
 
     public ShootPattern(ShootPatternSO config, EmitterRuntime runtime)
     {
         this.config = config;
         ownerEmitterRuntime = runtime;
+        this.bulletName = config.bulletName;
+        bulletTypeID = BulletDOTSManager.Instance.GetVisualID(bulletName);
+        bulletBehaviourID = config.bulletBehavior != "None" ? BulletDOTSManager.Instance.GetBehaviorID(config.bulletBehavior) : -1;
     }
 
     /// <summary>

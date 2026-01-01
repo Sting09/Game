@@ -15,3 +15,7 @@ MonoBehaviour:
   duration: -1
   emitterList:
   - {fileID: 11400000, guid: 25bad2d0b026ece47958fc85aee8220e, type: 2}
+  - {fileID: 11400000, guid: 6cefee0f398255f4fa70f908952ed485, type: 2}
+  requiredBulletNames:
+  - YellowRing
+  - RedBullet

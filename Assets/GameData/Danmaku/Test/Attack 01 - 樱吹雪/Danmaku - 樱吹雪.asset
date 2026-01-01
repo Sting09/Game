@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: -1
   emitterList:
-  - {fileID: 11400000, guid: 13764a59925df9d40a1e266d91795555, type: 2}
   - {fileID: 11400000, guid: 93b58be7d34e4d14caf0d52044624a21, type: 2}
+  requiredBulletNames:
+  - RedBullet
