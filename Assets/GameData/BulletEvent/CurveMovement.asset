@@ -9,11 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
-  m_Name: "Danmaku - \u6A31\u5439\u96EA"
+  m_Script: {fileID: 11500000, guid: 0ce3696a4f243be4c8a2afec09664558, type: 3}
+  m_Name: CurveMovement
   m_EditorClassIdentifier: 
-  duration: -1
-  emitterList:
-  - {fileID: 11400000, guid: 93b58be7d34e4d14caf0d52044624a21, type: 2}
-  requiredBulletNames:
-  - RedBullet
+  profileName: CurveMovement
+  eventList:
+  - time: 0.3
+    type: 2
+    valA: 90
+    valB: 0
+    valC: 0
+    useRelative: 1
+    useRandom: 0

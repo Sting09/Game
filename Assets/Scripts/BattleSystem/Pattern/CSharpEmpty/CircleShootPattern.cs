@@ -90,7 +90,7 @@ public class CircleShootPattern : ShootPattern
 
                 //pos¼ÓÉÏÆ«ÒÆ
                 //BulletManager.Instance.AddBullet(pos, info);
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, pos + offset, info);
+                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + offset, info);
             }
         }
     }

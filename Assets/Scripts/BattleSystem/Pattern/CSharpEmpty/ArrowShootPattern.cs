@@ -78,7 +78,7 @@ public class ArrowShootPattern : ShootPattern
                     info.direction = dir + centerDirection; //正中心子弹的角度
                     info.lifetime = 0;
                     // 最终位置 = 发射器位置 + 箭头形状偏移
-                    BulletDOTSManager.Instance.AddBullet(bulletTypeID, pos + CalculatePosOffset(dir, distance), info);
+                    BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
 
                     continue;
                 }
@@ -117,7 +117,7 @@ public class ArrowShootPattern : ShootPattern
                 infoLeft.speed = lengthOAk;
                 infoLeft.direction = dir + centerDirection + angleBOAkDeg;
                 infoLeft.lifetime = 0;
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, pos + CalculatePosOffset(dir + angleBOAkDeg, distance), infoLeft);
+                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir + angleBOAkDeg, distance), infoLeft);
                 
                 BulletRuntimeInfo infoRight = new BulletRuntimeInfo();
                 infoRight.shootPointIndex = shootPointIndex;
@@ -129,7 +129,7 @@ public class ArrowShootPattern : ShootPattern
                 infoRight.speed = lengthOAk;
                 infoRight.direction = dir + centerDirection - angleBOAkDeg;
                 infoRight.lifetime = 0;
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, pos + CalculatePosOffset(dir - angleBOAkDeg, distance), infoRight);
+                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir - angleBOAkDeg, distance), infoRight);
                 
                 // 存入结果
                 /*results.Add(new PointData
