@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 这是一个纯逻辑的配置，不包含任何Prefab引用
-[CreateAssetMenu(fileName = "NewBehaviorProfile", menuName = "Battle/Bullet Behavior Profile")]
+[CreateAssetMenu(fileName = "NewBehaviorProfile", menuName = "Battle System/Bullet Behavior Profile")]
 public class BulletBehaviorProfileSO : ScriptableObject
 {
     public string profileName;
