@@ -65,6 +65,17 @@ public class Tile : MonoBehaviour
                                                         Mathf.Sin(angle * Mathf.Deg2Rad) * edgeLength, 0);
 
             rooms.Add(new RoomRef(room.GetComponent<Room>(), (RoomDirection)i));
+
+            Room roomScript = room.GetComponent<Room>();
+            roomScript.direction = (RoomDirection)i;
+            roomScript.parentTile = this;
         }
+    }
+
+
+    public Room GetRandomRoom()
+    {
+        int randomIndex = Random.Range(0, rooms.Count);
+        return rooms[randomIndex].roomObj;
     }
 }

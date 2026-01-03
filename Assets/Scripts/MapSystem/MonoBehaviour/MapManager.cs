@@ -119,4 +119,11 @@ public class MapManager : SingletonMono<MapManager>
 
 
     }
+
+
+    public Tile GetRandomTile()
+    {
+        int randomIndex = Random.Range(0, allItems.Count);
+        return allItems[randomIndex];
+    }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7391789047866721097}
   - component: {fileID: 7766073068422156272}
   - component: {fileID: 165900485207724265}
+  - component: {fileID: 5849791912684205692}
   m_Layer: 0
   m_Name: RoomPrefab
   m_TagString: Untagged
@@ -138,3 +139,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aa80db3c7d2ef44abd9602222bc05d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: 0
+  isVisible: 0
+  parentTile: {fileID: 0}
+--- !u!114 &5849791912684205692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260608679309353371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc04550a1b129047b1024a7b1642f12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: "\u73A9\u5BB6\u79FB\u52A8\u540E\uFF0C\u623F\u95F4\u81EA\u8EAB\u66F4\u65B0\uFF0C\u8981\u4E0D\u8981\u5BF9\u73A9\u5BB6\u53EF\u89C1"
+  eventSO: {fileID: 11400000, guid: 6da35155f9d29d14c883eddad196d765, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 165900485207724265}
+        m_TargetAssemblyTypeName: Room, Assembly-CSharp
+        m_MethodName: UpdateSight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
