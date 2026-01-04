@@ -95,24 +95,57 @@ public class Room : MonoBehaviour
         Tile currentTile = currentRoom.parentTile;
 
         bool sameTile = (this.parentTile == currentTile);
+        if (sameTile) return true;
 
         int indexDelta = parentTile.index - currentTile.index;
         int lineDelta = parentTile.line - currentTile.line;
 
         bool adjacentExternal =
             //往左上角走
-            (lineDelta == -1 && indexDelta == -1 && direction == RoomDirection.RightBottom && currentRoom.direction == RoomDirection.LeftTop) ||
+            (lineDelta == -1 && indexDelta == -1 && (direction == RoomDirection.Right || direction == RoomDirection.RightBottom ||
+            direction == RoomDirection.LeftBottom) && currentRoom.direction == RoomDirection.LeftTop) ||
             //往左侧走
-            (lineDelta == 0 && indexDelta == -1 && direction == RoomDirection.Right && currentRoom.direction == RoomDirection.Left) ||
+            (lineDelta == 0 && indexDelta == -1 && (direction == RoomDirection.Right || direction == RoomDirection.RightBottom ||
+            direction == RoomDirection.RightTop) && currentRoom.direction == RoomDirection.Left) ||
             //往左下角走
-            (lineDelta == 1 && indexDelta == 0 && direction == RoomDirection.RightTop && currentRoom.direction == RoomDirection.LeftBottom) ||
+            (lineDelta == 1 && indexDelta == 0 && (direction == RoomDirection.RightTop || direction == RoomDirection.LeftTop ||
+            direction == RoomDirection.Right) && currentRoom.direction == RoomDirection.LeftBottom) ||
             //往右下角走
-            (lineDelta == 1 && indexDelta == 1 && direction == RoomDirection.LeftTop && currentRoom.direction == RoomDirection.RightBottom) ||
+            (lineDelta == 1 && indexDelta == 1 && (direction == RoomDirection.LeftTop || direction == RoomDirection.RightTop ||
+            direction == RoomDirection.Left) && currentRoom.direction == RoomDirection.RightBottom) ||
             //往右侧走
-            (lineDelta == 0 && indexDelta == 1 && direction == RoomDirection.Left && currentRoom.direction == RoomDirection.Right) ||
+            (lineDelta == 0 && indexDelta == 1 && (direction == RoomDirection.Left || direction == RoomDirection.LeftTop ||
+            direction == RoomDirection.LeftBottom) && currentRoom.direction == RoomDirection.Right) ||
             //往右上角走
-            (lineDelta == -1 && indexDelta == 0 && direction == RoomDirection.LeftBottom && currentRoom.direction == RoomDirection.RightTop);
+            (lineDelta == -1 && indexDelta == 0 && (direction == RoomDirection.LeftBottom || direction == RoomDirection.RightBottom ||
+            direction == RoomDirection.Left) && currentRoom.direction == RoomDirection.RightTop);
+        if (adjacentExternal) return true;
 
-        return adjacentExternal || sameTile;
+        bool twoStepExternal =
+            //玩家在左下，房间在左侧
+            (lineDelta == 0 && indexDelta == -1 && currentRoom.direction == RoomDirection.LeftBottom && direction == RoomDirection.Right) ||
+            //玩家在左下，房间在右下
+            (lineDelta == 1 && indexDelta == 1 && currentRoom.direction == RoomDirection.LeftBottom && direction == RoomDirection.LeftTop) ||
+            //玩家在右下，房间在左下
+            (lineDelta == 1 && indexDelta == 0 && currentRoom.direction == RoomDirection.RightBottom && direction == RoomDirection.RightTop) ||
+            //玩家在右下，房间在右侧
+            (lineDelta == 0 && indexDelta == 1 && currentRoom.direction == RoomDirection.RightBottom && direction == RoomDirection.Left) ||
+            //玩家在右侧，房间在右上
+            (lineDelta == -1 && indexDelta == 0 && currentRoom.direction == RoomDirection.Right && direction == RoomDirection.LeftBottom) ||
+            //玩家在右侧，房间在右下
+            (lineDelta == 1 && indexDelta == 1 && currentRoom.direction == RoomDirection.Right && direction == RoomDirection.LeftTop) ||
+            //玩家在右上，房间在左上
+            (lineDelta == -1 && indexDelta == -1 && currentRoom.direction == RoomDirection.RightTop && direction == RoomDirection.RightBottom) ||
+            //玩家在右上，房间在右侧
+            (lineDelta == 0 && indexDelta == 1 && currentRoom.direction == RoomDirection.RightTop && direction == RoomDirection.Left) ||
+            //玩家在左上，房间在右上
+            (lineDelta == -1 && indexDelta == 0 && currentRoom.direction == RoomDirection.LeftTop && direction == RoomDirection.LeftBottom) ||
+            //玩家在左上，房间在左侧
+            (lineDelta == 0 && indexDelta == -1 && currentRoom.direction == RoomDirection.LeftTop && direction == RoomDirection.Right) ||
+            //玩家在左侧，房间在左上
+            (lineDelta == -1 && indexDelta == -1 && currentRoom.direction == RoomDirection.Left && direction == RoomDirection.RightBottom) ||
+            //玩家在左侧，房间在左下
+            (lineDelta == 1 && indexDelta == 0 && currentRoom.direction == RoomDirection.Left && direction == RoomDirection.RightTop);
+        return twoStepExternal;
     }
 }
