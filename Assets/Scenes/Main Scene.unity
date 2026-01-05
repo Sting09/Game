@@ -425,6 +425,72 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   userConfig: {fileID: 0}
   globalVariable: {fileID: 11400000, guid: db78b9badcfe3d640b1ac0583dd65cbf, type: 2}
+--- !u!1 &1652005872
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1652005873}
+  - component: {fileID: 1652005874}
+  m_Layer: 0
+  m_Name: PhaseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1652005873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652005872}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1652005874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652005872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac340c39c41a1444ea3cd120058bcd91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentPhase: 0
+  currentPhaseIndex: -1
+  phaseList:
+  - {fileID: 11400000, guid: 6f92bf6264c0ecd449299b916965e58f, type: 2}
+  - {fileID: 11400000, guid: 3ede7791f665a464e9904b1355aef0db, type: 2}
+  - {fileID: 11400000, guid: 02cc00f9f31ca2a4096169cef055715d, type: 2}
+  - {fileID: 11400000, guid: 8b09a30c656b44142be9c2992e6f5872, type: 2}
+  - {fileID: 11400000, guid: 2c863950bb83d9145a24d877a37ae5df, type: 2}
+  - {fileID: 11400000, guid: 925bd4a1a8495514183fcaf5397201e2, type: 2}
+  - {fileID: 11400000, guid: 36364bc128cb31e4ca7f4e3a5513f9a0, type: 2}
+  - {fileID: 11400000, guid: 9d4c3d84cbd805f4dbde8e4c180c2125, type: 2}
+  - {fileID: 11400000, guid: f0e0374339710a44e9dcb527cb9653dc, type: 2}
+  - {fileID: 11400000, guid: 84a63f7ed3dd7ce4492afb1d403de2ad, type: 2}
+  - {fileID: 11400000, guid: 8ab11e7fc3861c94e970e420f0512319, type: 2}
+  - {fileID: 11400000, guid: e51892dedde118f498a79ac9d84d5938, type: 2}
+  - {fileID: 11400000, guid: f28cc3f52e863fa45ab7c336833068f2, type: 2}
+  - {fileID: 11400000, guid: 5f126c0fe0872e141b1808004926bf22, type: 2}
+  - {fileID: 11400000, guid: 1e2de71ffa2d4cd4cbad959a694c40cd, type: 2}
+  turnNum: 10
+  roundNum: 4
+  currentTurn: 0
+  currentRound: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -433,3 +499,4 @@ SceneRoots:
   - {fileID: 1457958551}
   - {fileID: 1564801796}
   - {fileID: 1562457537}
+  - {fileID: 1652005873}

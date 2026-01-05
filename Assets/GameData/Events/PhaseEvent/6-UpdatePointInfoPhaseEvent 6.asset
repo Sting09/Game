@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc84ce9cc2146b340aae9b19c0d2cda3, type: 3}
-  m_Name: New Object Event
+  m_Script: {fileID: 11500000, guid: d4a7669851b6f934e8e119cc342e0b67, type: 3}
+  m_Name: 6-UpdatePointInfoPhaseEvent 6
   m_EditorClassIdentifier: 
-  description: "\u6D4B\u8BD5\u7528\uFF0C\u70B9\u51FB\u9F20\u6807\u65F6\u89E6\u53D1\u6B64\u4E8B\u4EF6\u3002"
+  description: 
   lastSender: 
