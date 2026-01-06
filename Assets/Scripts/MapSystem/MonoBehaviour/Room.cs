@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Room : MonoBehaviour
@@ -15,8 +16,12 @@ public class Room : MonoBehaviour
 
     private void OnMouseDown()
     {
-        // 1. 检查条件
-        if (isVisible && CheckMoveCondition())
+        // 检查条件:房间能点 且 当前是玩家阶段 且 玩家还能移动 且 是玩家能移动到的房间
+        bool isPlayerPhase = PhaseController.Instance.currentPhase == GamePhase.PlayerPhase;
+        bool playerCanMove = CheckPlayerMove();
+        bool canMoveTo = CheckMoveCondition();
+
+        if (isVisible && isPlayerPhase && playerCanMove && canMoveTo)
         {
             MovePlayerToHere();
         }
@@ -26,10 +31,38 @@ public class Room : MonoBehaviour
         }
     }
 
+    private bool CheckPlayerMove()
+    {
+        Room currentRoom = GameManager.Instance.playerCurrentRoom;
+        Tile currentTile = currentRoom.parentTile;
+
+        bool sameTile = (this.parentTile == currentTile);
+
+        //如果是同地块移动，直接返回玩家能否移动
+        if (sameTile)
+        {
+            return GameManager.Instance.player.canMove;
+        }
+        //否则检验能否移动、检验能否跨区块
+        else
+        {
+            return GameManager.Instance.player.canMoveOverTile && GameManager.Instance.player.canMove;
+        }
+    }
+
 
     // 执行移动逻辑
     private void MovePlayerToHere()
     {
+        //如果跨地块，更新玩家状态
+        Room currentRoom = GameManager.Instance.playerCurrentRoom;
+        Tile currentTile = currentRoom.parentTile;
+
+        if(this.parentTile != currentTile)
+        {
+            GameManager.Instance.player.canMoveOverTile = false;
+        }
+
         //修改GameManager存储的玩家位置
         GameManager.Instance.playerCurrentRoom = this;
 
