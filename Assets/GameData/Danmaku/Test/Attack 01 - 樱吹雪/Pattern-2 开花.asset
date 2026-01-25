@@ -28,7 +28,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   radius:
-    baseValue: 2
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
   radiusDirection:

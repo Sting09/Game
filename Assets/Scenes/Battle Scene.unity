@@ -303,7 +303,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1438977235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,13 +435,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51e29bc64a4c8f3458891739948a014e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visualConfigs:
+  bulletConfigs:
   - {fileID: 11400000, guid: 9d800899811a0cb4897c80116d411347, type: 2}
   - {fileID: 11400000, guid: 26f00399b480b1b428339d0663a3e40e, type: 2}
   behaviorProfiles:
   - {fileID: 11400000, guid: 48dbcc1ff97c4b146a2ac2f65d63bebe, type: 2}
   poolRoot: {fileID: 1999661718}
   maxBulletCapacity: 10000
+  m_ActiveCount: 0
   deltaZ: -0.00001
   currentZ: 0
 --- !u!1 &1999661717

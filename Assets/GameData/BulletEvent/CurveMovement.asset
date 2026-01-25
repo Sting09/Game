@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   profileName: CurveMovement
   eventList:
-  - time: 0
+  - time: 0.2
     type: 2
-    valA: 90
-    valB: 0
-    valC: 0
+    valA: 120
+    valB: 5
+    valC: 110
     useRelative: 1
-    useRandom: 0
+    useRandom: 1
