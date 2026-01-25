@@ -11,11 +11,13 @@ public class TweenTask
     public float currentOffset;             //这个任务当前造成了多少offset
     public float duration;                  //多长时间变化完
     public AnimationCurve curve;            //变化方式曲线
+    public float saveTime;
+    public int saveIndex;
     public float currentTime;
 
     public bool IsActive;                   //是否正在处理任务
 
-    public void Init(EmitterRuntime runtime, EmitterPropertyType property, EventModificationType type, float start, float end, float duration, AnimationCurve curve)
+    public void Init(EmitterRuntime runtime, EmitterPropertyType property, EventModificationType type, float start, float end, float duration, AnimationCurve curve, float saveTime, int saveIndex)
     {
         this.runtime = runtime;
         this.property = property;
@@ -27,6 +29,8 @@ public class TweenTask
         this.curve = curve;
         this.currentTime = 0;
         this.IsActive = true;
+        this.saveTime = saveTime;
+        this.saveIndex = saveIndex;
     }
 
     public void Reset()
@@ -88,6 +92,13 @@ public class TweenTask
                 break;
             default:
                 break;
+        }
+
+        bool needSave = currentTime >= saveTime && saveTime >= 0;
+        if (needSave)
+        {
+            if(saveIndex < BattleManager.Instance.globalParameter.Count)
+                BattleManager.Instance.globalParameter[saveIndex] = runtime.GetPropertyOffset(property);
         }
 
         bool finished = currentTime >= duration;

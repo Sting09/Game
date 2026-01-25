@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleManager : SingletonMono<BattleManager> 
 {
     public GameObject player;
+    public List<float> globalParameter = new List<float>(10);
 
     public Vector3 GetPlayerPos()
     {

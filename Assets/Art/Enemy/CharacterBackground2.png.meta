@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 72a4ac4baacfe9244aef12bc38f569a9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7304216433848011157
+    second: CharacterBackground2_0
+  - first:
+      213: 6864380021964207835
+    second: CharacterBackground2_1
+  - first:
+      213: 5025102938260780476
+    second: CharacterBackground2_2
+  - first:
+      213: -7451669129354729688
+    second: CharacterBackground2_3
+  - first:
+      213: 7952565198370183645
+    second: CharacterBackground2_4
+  - first:
+      213: 1446890089197046453
+    second: CharacterBackground2_5
+  - first:
+      213: -6750290027775426513
+    second: CharacterBackground2_6
+  - first:
+      213: -729924044512484501
+    second: CharacterBackground2_7
+  - first:
+      213: -7351716444962057329
+    second: CharacterBackground2_8
+  - first:
+      213: 4550131013997933578
+    second: CharacterBackground2_9
+  - first:
+      213: -1645137959304488297
+    second: CharacterBackground2_10
+  - first:
+      213: -7369237749935472568
+    second: CharacterBackground2_11
+  - first:
+      213: 4765269947174272400
+    second: CharacterBackground2_12
+  - first:
+      213: -8327236446240310212
+    second: CharacterBackground2_13
+  - first:
+      213: 4775615807962879194
+    second: CharacterBackground2_14
+  - first:
+      213: -37206512551099790
+    second: CharacterBackground2_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 225
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CharacterBackground2_0
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 1147
+        width: 319
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b663be15ad532aa90800000000000000
+      internalID: -7304216433848011157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_1
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 1146
+        width: 320
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd6f67cc24d234f50800000000000000
+      internalID: 6864380021964207835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_2
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 1146
+        width: 323
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb53eca8f70ccb540800000000000000
+      internalID: 5025102938260780476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_3
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 1144
+        width: 320
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8272111586a569890800000000000000
+      internalID: -7451669129354729688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_4
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 786
+        width: 323
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd91df5d9ef2d5e60800000000000000
+      internalID: 7952565198370183645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_5
+      rect:
+        serializedVersion: 2
+        x: 1058
+        y: 787
+        width: 316
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ba8f93ced2641410800000000000000
+      internalID: 1446890089197046453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_6
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 786
+        width: 328
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f20859bfbf62252a0800000000000000
+      internalID: -6750290027775426513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_7
+      rect:
+        serializedVersion: 2
+        x: 1834
+        y: 786
+        width: 321
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6321d5e2f9ced5f0800000000000000
+      internalID: -729924044512484501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_8
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 427
+        width: 320
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8393a828d479f990800000000000000
+      internalID: -7351716444962057329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_9
+      rect:
+        serializedVersion: 2
+        x: 1058
+        y: 427
+        width: 316
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a04b5d2bc00552f30800000000000000
+      internalID: 4550131013997933578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_10
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 427
+        width: 317
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79a15290ebb4b29e0800000000000000
+      internalID: -1645137959304488297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_11
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 426
+        width: 316
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84082b17f453bb990800000000000000
+      internalID: -7369237749935472568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_12
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 65
+        width: 318
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09dba2cf4c3a12240800000000000000
+      internalID: 4765269947174272400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_13
+      rect:
+        serializedVersion: 2
+        x: 1054
+        y: 65
+        width: 322
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3cf82d5296bf6c80800000000000000
+      internalID: -8327236446240310212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_14
+      rect:
+        serializedVersion: 2
+        x: 1444
+        y: 66
+        width: 318
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad41e596645664240800000000000000
+      internalID: 4775615807962879194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CharacterBackground2_15
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 65
+        width: 318
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2728f0cbfd0db7ff0800000000000000
+      internalID: -37206512551099790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CharacterBackground2_0: -7304216433848011157
+      CharacterBackground2_1: 6864380021964207835
+      CharacterBackground2_10: -1645137959304488297
+      CharacterBackground2_11: -7369237749935472568
+      CharacterBackground2_12: 4765269947174272400
+      CharacterBackground2_13: -8327236446240310212
+      CharacterBackground2_14: 4775615807962879194
+      CharacterBackground2_15: -37206512551099790
+      CharacterBackground2_2: 5025102938260780476
+      CharacterBackground2_3: -7451669129354729688
+      CharacterBackground2_4: 7952565198370183645
+      CharacterBackground2_5: 1446890089197046453
+      CharacterBackground2_6: -6750290027775426513
+      CharacterBackground2_7: -729924044512484501
+      CharacterBackground2_8: -7351716444962057329
+      CharacterBackground2_9: 4550131013997933578
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

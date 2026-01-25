@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7217208621949521640, guid: a7198badee5734cb383735b4b589ff5c, type: 3}
+  m_Sprite: {fileID: -3572254825769260629, guid: 04c818221673f3341bbaf1070da535fc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -124,8 +124,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.020392954, y: 0.49931133}
-  m_Size: {x: 0.6646719, y: 1.2731686}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1.5, y: 1.5}
   m_Direction: 0
 --- !u!114 &165900485207724265
 MonoBehaviour:
@@ -142,6 +142,9 @@ MonoBehaviour:
   direction: 0
   isVisible: 0
   parentTile: {fileID: 0}
+  haveEnemy: 0
+  remainRewardNum: 0
+  currentOpponentIndex: -1
 --- !u!114 &5849791912684205692
 MonoBehaviour:
   m_ObjectHideFlags: 0

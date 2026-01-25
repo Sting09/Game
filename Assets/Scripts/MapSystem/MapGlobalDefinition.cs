@@ -16,6 +16,7 @@ public enum GamePhase
     TournamentPhase,
     UpdateMapAfterRound,
     RoundEnd,
+    SuddenDeath,
     GameEnd
 }
 
@@ -28,6 +29,37 @@ public enum RoomDirection
     LeftTop,
     RightTop
 }
+
+public enum RoomState
+{
+    Empty,
+    HavePlayer,
+    HaveOpponent,
+    HaveEnemy,
+    HaveFacility,
+    NotApplicable
+}
+
+public enum TileState
+{
+    Normal,
+    WillShrink,
+    AlreadyShrink
+}
+
+public enum ContestantState
+{
+    Alive,
+    Dead,
+}
+
+public enum EnemyAIMode
+{
+    Idiot,
+    Master
+}
+
+
 
 [System.Serializable]
 public struct RoomRef

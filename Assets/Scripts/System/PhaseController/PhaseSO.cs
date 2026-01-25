@@ -52,7 +52,7 @@ public class PhaseSO : ScriptableObject
     public virtual IEnumerator PhaseStartFunction()
     {
         yield return null;
-        Debug.Log(phase.ToString());
+        //Debug.Log(phase.ToString());
     }
 
     /// <summary>

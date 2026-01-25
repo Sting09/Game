@@ -15,7 +15,7 @@ using Unity.Mathematics;
 public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 {
     // --- 配置 (分离外观与行为) ---
-    [Header("Visual Configs (Appearance)")]
+    [Header("Bullet Configs (Gameplay)")]
     public List<BulletBasicConfigSO> visualConfigs;
 
     [Header("Behavior Configs (Logic)")]
@@ -30,7 +30,7 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     private Transform[] m_VisualRoots;
     public Transform poolRoot;
     public int maxBulletCapacity = 10000;
-    public float deltaZ = -0.0001f;
+    public float deltaZ = -1e-05f;
     [SerializeField] private float currentZ = 0;
 
     // --- Native 数据 ---

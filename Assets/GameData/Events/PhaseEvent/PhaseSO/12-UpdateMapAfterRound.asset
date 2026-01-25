@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   phase: 12
   phaseEventSO: {fileID: 11400000, guid: df903fd5cd4e0584ab66b1daa4f6e9cf, type: 2}
-  autoEndDuration: 1
+  autoEndDuration: 0
   phaseName: 
   phaseDescription: 

@@ -71,7 +71,8 @@ public enum EmitterPropertyType
 
     //Circle Pattern◊®”√≈‰÷√
     PatternCircle_Radius,
-    PatternCircle_ShootDirection
+    PatternCircle_ShootDirection,
+    PatternCircle_MinSpeed,
 }
 
 

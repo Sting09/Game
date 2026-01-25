@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
+  m_Name: "Pattern-\u68F1\u5F39"
+  m_EditorClassIdentifier: 
+  bulletName: RedBullet
+  bulletBehavior: None
+  description: 
+  shootWays:
+    baseValue: 5
+    offsetValue: 0
+    randomRange: 0
+  bulletsPerWay:
+    baseValue: 1
+    offsetValue: 0
+    randomRange: 0
+  shootRange:
+    baseValue: 12
+    offsetValue: 0
+    randomRange: 0
+  radius:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  radiusDirection:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  shootDirection:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  startBulletSpeed:
+    baseValue: 4
+    offsetValue: 0
+    randomRange: 0
+  endBulletSpeed:
+    baseValue: 5
+    offsetValue: 0
+    randomRange: 0

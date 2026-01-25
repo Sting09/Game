@@ -82,12 +82,9 @@ MonoBehaviour:
   index: 0
   roomPrefab: {fileID: 1260608679309353371, guid: dd4753d5962143a46a35c093334d697d, type: 3}
   roomsRoot: {fileID: 621703319006302711}
-  leftTopRoom: {fileID: 0}
-  leftRoom: {fileID: 0}
-  leftBottomRoom: {fileID: 0}
-  rightTopRoom: {fileID: 0}
-  rightRoom: {fileID: 0}
-  rightBottomRoom: {fileID: 0}
+  rooms: []
+  bgRenderer: {fileID: 8880531579258310170}
+  tileData: {fileID: 0}
 --- !u!1 &3991731386742444415
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,13 +110,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3991731386742444415}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.2588191, w: 0.9659258}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7119278281314206645}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 30}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8880531579258310170
 SpriteRenderer:
   m_ObjectHideFlags: 0

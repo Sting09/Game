@@ -9,13 +9,16 @@ public class PhaseController : SingletonMono<PhaseController>
     public List<PhaseSO> phaseList;
     public Dictionary<GamePhase, int> phaseToIntDict;
 
-    public int turnNum = 10;       //一回合几个回合
     public int roundNum = 4;       //一共几个轮次
+    public List<int> turnNum;       //一回合几个回合
+    public List<int> shrinkNum;     //本轮次移除几个地块
 
     public int currentTurn;        //当前是第几个回合
     public int currentRound;       //当前是第几个轮次
 
     public float defaultAutoEndDuration;        //用于重置每个阶段的自动结束计时
+
+    public bool suddenDeath = false;                //是否进入了加赛阶段
 
     private void OnEnable()
     {
@@ -43,7 +46,16 @@ public class PhaseController : SingletonMono<PhaseController>
         if (currentPhase == GamePhase.TurnEnd)
         {
             currentTurn++;
-            currentPhaseIndex = currentTurn < turnNum ? phaseToIntDict[GamePhase.TurnStart] : currentPhaseIndex + 1;
+            //已经进入加赛，回到回合开始阶段
+            if (suddenDeath)
+            {
+                currentPhaseIndex = phaseToIntDict[GamePhase.TurnStart];
+            }
+            //否则先检查本轮次是否结束
+            else
+            {
+                currentPhaseIndex = currentTurn < turnNum[currentRound] ? phaseToIntDict[GamePhase.TurnStart] : currentPhaseIndex + 1;
+            }
         }
         //一轮结束时，回到下一轮开始时
         else if (currentPhase == GamePhase.RoundEnd)
@@ -51,6 +63,11 @@ public class PhaseController : SingletonMono<PhaseController>
             currentRound++;
             currentTurn = 0;    //一轮结束时重置currentTurn
             currentPhaseIndex = currentRound < roundNum ? phaseToIntDict[GamePhase.RoundStart] : currentPhaseIndex + 1;
+        }
+        else if (currentPhase == GamePhase.SuddenDeath)
+        {
+            suddenDeath = true;
+            currentPhaseIndex = phaseToIntDict[GamePhase.RoundStart];
         }
         else
         {

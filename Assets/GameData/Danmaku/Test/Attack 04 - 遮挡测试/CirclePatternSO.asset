@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
   m_Name: CirclePatternSO
   m_EditorClassIdentifier: 
+  bulletName: YellowRing
+  bulletBehavior: None
   description: 
   shootWays:
     baseValue: 5
@@ -22,7 +24,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   shootRange:
-    baseValue: 120
+    baseValue: 360
     offsetValue: 0
     randomRange: 0
   radius:
@@ -38,7 +40,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   startBulletSpeed:
-    baseValue: 3
+    baseValue: 1
     offsetValue: 0
     randomRange: 0
   endBulletSpeed:

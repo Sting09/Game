@@ -14,3 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapLevel: 3
   tileEdgeLength: 4.2
+  defaultRoomIcon: {fileID: -3572254825769260629, guid: 04c818221673f3341bbaf1070da535fc, type: 3}
+  contestantNum: 16
+  lowLevelMonsterIcon: {fileID: 1446890089197046453, guid: 72a4ac4baacfe9244aef12bc38f569a9, type: 3}
+  minMediumLevel: 10
+  mediumLevelMonsterIcon: {fileID: -6750290027775426513, guid: 72a4ac4baacfe9244aef12bc38f569a9, type: 3}
+  minHighLevel: 14
+  highLevelMonsterIcon: {fileID: -729924044512484501, guid: 72a4ac4baacfe9244aef12bc38f569a9, type: 3}

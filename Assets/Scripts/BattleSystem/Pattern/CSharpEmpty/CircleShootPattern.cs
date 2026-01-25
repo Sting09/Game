@@ -35,6 +35,7 @@ public class CircleShootPattern : ShootPattern
         ways = circleConfig.shootWays.GetValue();
         bulletsPerWay = circleConfig.bulletsPerWay.GetValue();
         startSpeed = circleConfig.startBulletSpeed.GetValue();
+        startSpeed = ownerEmitterRuntime.GetPropertyValue(EmitterPropertyType.PatternCircle_MinSpeed, startSpeed);
         endSpeed = circleConfig.endBulletSpeed.GetValue();
     }
 

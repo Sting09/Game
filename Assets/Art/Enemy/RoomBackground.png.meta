@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 04c818221673f3341bbaf1070da535fc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3572254825769260629
+    second: RoomBackground_0
+  - first:
+      213: 6241816196567096401
+    second: RoomBackground_1
+  - first:
+      213: -2809858089354954860
+    second: RoomBackground_2
+  - first:
+      213: 7530836608767905407
+    second: RoomBackground_3
+  - first:
+      213: 3785606905945719287
+    second: RoomBackground_4
+  - first:
+      213: 1553510507387826921
+    second: RoomBackground_5
+  - first:
+      213: -3438488200664682240
+    second: RoomBackground_6
+  - first:
+      213: -948946250765279878
+    second: RoomBackground_7
+  - first:
+      213: 1934580219004066222
+    second: RoomBackground_8
+  - first:
+      213: -3961730748836017159
+    second: RoomBackground_9
+  - first:
+      213: -4552276355686503849
+    second: RoomBackground_10
+  - first:
+      213: -9061075981865379069
+    second: RoomBackground_11
+  - first:
+      213: -6237268432948708973
+    second: RoomBackground_12
+  - first:
+      213: 3775324080038803745
+    second: RoomBackground_13
+  - first:
+      213: -3897079447005594220
+    second: RoomBackground_14
+  - first:
+      213: 5535667286576303967
+    second: RoomBackground_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 225
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RoomBackground_0
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 1146
+        width: 318
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba929de992dcc6ec0800000000000000
+      internalID: -3572254825769260629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_1
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 1146
+        width: 320
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15c59ad92c26f9650800000000000000
+      internalID: 6241816196567096401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_2
+      rect:
+        serializedVersion: 2
+        x: 1444
+        y: 1146
+        width: 321
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4977dba74f06109d0800000000000000
+      internalID: -2809858089354954860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_3
+      rect:
+        serializedVersion: 2
+        x: 1828
+        y: 1145
+        width: 327
+        height: 326
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7e4e1fdef7e28860800000000000000
+      internalID: 7530836608767905407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_4
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 786
+        width: 321
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f109288c6d298430800000000000000
+      internalID: 3785606905945719287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_5
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 783
+        width: 326
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e230bb539d2f8510800000000000000
+      internalID: 1553510507387826921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_6
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 785
+        width: 318
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 001720b03390840d0800000000000000
+      internalID: -3438488200664682240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_7
+      rect:
+        serializedVersion: 2
+        x: 1829
+        y: 785
+        width: 327
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7d5234a96aa4d2f0800000000000000
+      internalID: -948946250765279878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_8
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 425
+        width: 327
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea91c37957209da10800000000000000
+      internalID: 1934580219004066222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_9
+      rect:
+        serializedVersion: 2
+        x: 1058
+        y: 426
+        width: 316
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fb03e3cfda1509c0800000000000000
+      internalID: -3961730748836017159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_10
+      rect:
+        serializedVersion: 2
+        x: 1447
+        y: 427
+        width: 317
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75a65e306c013d0c0800000000000000
+      internalID: -4552276355686503849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_11
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 425
+        width: 318
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b1712f667904280800000000000000
+      internalID: -9061075981865379069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_12
+      rect:
+        serializedVersion: 2
+        x: 669
+        y: 66
+        width: 316
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 399b55d1865c079a0800000000000000
+      internalID: -6237268432948708973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_13
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 64
+        width: 321
+        height: 319
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 129f0be8f35a46430800000000000000
+      internalID: 3775324080038803745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_14
+      rect:
+        serializedVersion: 2
+        x: 1444
+        y: 65
+        width: 323
+        height: 318
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49d71cbf3eacae9c0800000000000000
+      internalID: -3897079447005594220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoomBackground_15
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 65
+        width: 318
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5f81236114a2dc40800000000000000
+      internalID: 5535667286576303967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RoomBackground_0: -3572254825769260629
+      RoomBackground_1: 6241816196567096401
+      RoomBackground_10: -4552276355686503849
+      RoomBackground_11: -9061075981865379069
+      RoomBackground_12: -6237268432948708973
+      RoomBackground_13: 3775324080038803745
+      RoomBackground_14: -3897079447005594220
+      RoomBackground_15: 5535667286576303967
+      RoomBackground_2: -2809858089354954860
+      RoomBackground_3: 7530836608767905407
+      RoomBackground_4: 3785606905945719287
+      RoomBackground_5: 1553510507387826921
+      RoomBackground_6: -3438488200664682240
+      RoomBackground_7: -948946250765279878
+      RoomBackground_8: 1934580219004066222
+      RoomBackground_9: -3961730748836017159
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

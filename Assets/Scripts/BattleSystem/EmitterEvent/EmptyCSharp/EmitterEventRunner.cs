@@ -108,11 +108,31 @@ public class EmitterEventRunner
             TweenTask task = TweenTaskPool.Get();
 
             float startVal = targetRuntime.GetPropertyOffset(action.targetProperty);
+
+            float baseVal = 0f;
+
+            if(action.valueIndex < 0)
+            {
+                //取SO文件中配置的值
+                baseVal = action.value;
+            }
+            else
+            {
+                //取全局变量。先合法性检验
+                if (action.valueIndex < BattleManager.Instance.globalParameter.Count)
+                {
+                    baseVal = BattleManager.Instance.globalParameter[action.valueIndex];
+                }
+                else
+                {
+                    baseVal = action.value;
+                }
+            }
             float endVal = action.modificationType switch
-            { 
-                EventModificationType.ChangeTo => action.value,
-                EventModificationType.Add => startVal + action.value,
-                EventModificationType.Reduce => startVal - action.value,
+            {
+                EventModificationType.ChangeTo => baseVal,
+                EventModificationType.Add => startVal + baseVal,
+                EventModificationType.Reduce => startVal - baseVal,
                 _ => startVal
             };
 
@@ -123,7 +143,9 @@ public class EmitterEventRunner
                 startVal,
                 endVal,
                 action.duration,
-                action.curve
+                action.curve,
+                action.saveTime,
+                action.saveIndex
             );
 
             activeTweens.Add(task);

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   phase: 1
   phaseEventSO: {fileID: 11400000, guid: 363752b14966b0f44a5461b0885ba56f, type: 2}
-  autoEndDuration: 1
+  autoEndDuration: 0
   phaseName: 
-  phaseDescription: 
+  phaseDescription: "\u5730\u56FE\u751F\u6210\uFF1A19\u4E2A\u5730\u5757\u5404\u662F\u4EC0\u4E48\u3001\u751F\u6210\u5728\u4EC0\u4E48\u4F4D\u7F6E\uFF1B\u53C2\u8D5B\u8005\u751F\u6210\u5728\u4EC0\u4E48\u4F4D\u7F6E\uFF1B\u6BCF\u4E2A\u5730\u5757\u751F\u62105\u4E2A\u91CE\u602A"
