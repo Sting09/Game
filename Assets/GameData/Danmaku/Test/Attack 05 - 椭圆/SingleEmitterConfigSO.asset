@@ -32,7 +32,7 @@ MonoBehaviour:
     baseValue: 90
     offsetValue: 0
     randomRange: 0
-  bulletPattern: {fileID: 11400000, guid: 3ebf532060ac1924280ca3ed02b6ef71, type: 2}
+  bulletPattern: {fileID: 11400000, guid: 035af869e90f7b74ea1e698daa138fe9, type: 2}
   emitterEvents:
   - {fileID: 11400000, guid: ad56739525e042040a49271136f94c08, type: 2}
   shootTimesPerWave: 1

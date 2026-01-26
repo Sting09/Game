@@ -21,3 +21,10 @@ MonoBehaviour:
   mediumLevelMonsterIcon: {fileID: -6750290027775426513, guid: 72a4ac4baacfe9244aef12bc38f569a9, type: 3}
   minHighLevel: 14
   highLevelMonsterIcon: {fileID: -729924044512484501, guid: 72a4ac4baacfe9244aef12bc38f569a9, type: 3}
+  halfHeight: 7
+  halfWidth: 15
+  playerMoveRangeHalfHeight: 5.5
+  playerMoveRangeHalfWidth: 5.5
+  playerDefaultSpeed: 7
+  slowModeRate: 0.45
+  playerHitboxRadius: 0.07

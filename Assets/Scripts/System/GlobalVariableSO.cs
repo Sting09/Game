@@ -17,4 +17,18 @@ public class GlobalVariableSO : ScriptableObject
     public Sprite mediumLevelMonsterIcon;
     public int minHighLevel;
     public Sprite highLevelMonsterIcon;
+
+    [Header("Battle System")]
+    [Tooltip("战斗场景高度的一半")]
+    public float halfHeight = 7f;
+    [Tooltip("战斗场景宽度的一半")]
+    public float halfWidth = 15f;
+
+    public float playerMoveRangeHalfHeight = 6f;
+    public float playerMoveRangeHalfWidth = 14f;
+
+    public float playerDefaultSpeed = 5f;
+    public float slowModeRate = 0.5f;
+
+    public float playerHitboxRadius = 2.5f;
 }

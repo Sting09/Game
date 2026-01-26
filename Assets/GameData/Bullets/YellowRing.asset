@@ -16,5 +16,5 @@ MonoBehaviour:
   prefab: {fileID: 6173098254462471731, guid: e3013db47e8c6bf46807979d44bdc4aa, type: 3}
   zPriority: 2
   collisionType: 0
-  circleRadius: 0.5
+  circleRadius: 0.1
   boxSize: {x: 1, y: 1}

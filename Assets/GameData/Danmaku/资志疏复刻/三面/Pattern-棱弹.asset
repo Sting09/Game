@@ -16,7 +16,7 @@ MonoBehaviour:
   bulletBehavior: None
   description: 
   shootWays:
-    baseValue: 5
+    baseValue: 6
     offsetValue: 0
     randomRange: 0
   bulletsPerWay:
@@ -24,7 +24,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   shootRange:
-    baseValue: 12
+    baseValue: 15
     offsetValue: 0
     randomRange: 0
   radius:

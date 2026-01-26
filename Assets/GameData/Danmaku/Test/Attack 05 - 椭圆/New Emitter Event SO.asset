@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: New Emitter Event SO
   m_EditorClassIdentifier: 
   startDelay: 0
-  interval: 0.1
+  interval: 3
   loopCount: 0
   conditions: []
   actions:

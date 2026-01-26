@@ -15,6 +15,6 @@ MonoBehaviour:
   bulletName: RedBullet
   prefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
   zPriority: 4
-  collisionType: 0
+  collisionType: 1
   circleRadius: 0.5
-  boxSize: {x: 1, y: 1}
+  boxSize: {x: 0.25, y: 0.05}

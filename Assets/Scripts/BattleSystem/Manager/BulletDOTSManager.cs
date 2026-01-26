@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Jobs;
@@ -6,10 +7,28 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.Mathematics;
 
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 {
+    // --- 玩家碰撞 ---
+    [Header("Player Settings")]
+    [Tooltip("玩家判定半径")]
+    public float playerHitboxRadius; // 玩家判定大小
+    public float playerHitboxRate = 1f; // 玩家判定大小倍率
+    // public CollisionType playerCollisionType; // 判定类型，暂时用圆形碰撞
+    private SpriteRenderer playerSpriteRenderer;
+    private Coroutine hitEffectCoroutine;
+
+    // --- 调试设置 ---
+    [Header("Debug Settings")]
+    [Tooltip("是否在Scene窗口显示子弹判定圆")]
+    public bool showDebugGizmos = true;
+    [Tooltip("子弹判定圆的颜色")]
+    public Color debugGizmoColor = Color.green;
+
     // --- 配置 (分离外观与行为) ---
     [Header("Bullet Configs (Gameplay)")]
     public List<BulletBasicConfigSO> bulletConfigs;     //所有子弹配置信息
@@ -32,8 +51,11 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     public float deltaZ = -1e-05f;
     [SerializeField] private float currentZ = 0;
 
-
-
+    // --- 子弹边界 ---
+    //子弹水平边界为 [-boundsX, boundsX]，Awake时从globalVariableSO中读取
+    private float boundsX;
+    //子弹垂直边界为 [-boundsY, boundsY]，Awake时从globalVariableSO中读取
+    private float boundsY;
 
     #region Job系统的内部属性
     // --- Native 数据 ---
@@ -56,6 +78,14 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     private NativeArray<NativeBulletEvent> m_GlobalEventArray;  //事件列表，所有涉及的事件
     private NativeArray<int2> m_BehaviorRanges; //每个事件组包含的事件，在事件列表m_GlobalEventArray中的起始索引和长度
 
+    // --- 新增：碰撞相关 Native 数据 ---
+    // 0 = Circle, 1 = Square
+    private NativeArray<int> m_CollisionTypes;
+    private NativeArray<float> m_BulletRadii; // 存储每颗子弹的判定半径 (圆形用)
+    private NativeArray<float2> m_BoxSizes;   // 存储每颗子弹的方形尺寸 (Width, Height) (方形用)
+
+    private NativeQueue<int> m_CollisionQueue; // 用于Job向主线程传递碰撞事件(子弹索引)
+
     private TransformAccessArray m_Transforms;        //所有子弹的Transform引用
     private List<GameObject> m_ActiveGOs;       //对所有活跃的子弹GameObject的引用
 
@@ -74,18 +104,44 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
     #endregion
 
-
-
-
-
     #region BulletManager在Awake和Destroy时涉及的逻辑
     protected override void Awake()
     {
         base.Awake();
+        //初始化数据结构
         InitializeConfig();
+        //初始化内存
         InitializeMemory();
+
+        //初始化其他数据
+        // 防止空引用检查
+        if (GlobalSetting.Instance != null && GlobalSetting.Instance.globalVariable != null)
+        {
+            boundsX = GlobalSetting.Instance.globalVariable.halfWidth;
+            boundsY = GlobalSetting.Instance.globalVariable.halfHeight;
+            playerHitboxRadius = GlobalSetting.Instance.globalVariable.playerHitboxRadius;
+        }
+        else
+        {
+            // 默认值，防止报错
+            boundsX = 10f;
+            boundsY = 10f;
+            playerHitboxRadius = 0.05f;
+        }
+
         m_PendingBullets = new List<PendingBullet>();
+
+        //修改是否初始化完成的标志位
         m_IsInitialized = true;
+    }
+
+    private void Start()
+    {
+        // 获取玩家SpriteRenderer用于变色
+        if (BattleManager.Instance != null && BattleManager.Instance.player != null)
+        {
+            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
+        }
     }
 
     void OnDestroy()
@@ -205,6 +261,13 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_BulletBehaviorIDs = new NativeArray<int>(maxBulletCapacity, Allocator.Persistent);
         m_NextEventIndex = new NativeArray<int>(maxBulletCapacity, Allocator.Persistent);
 
+        // 新增：碰撞检测内存
+        m_CollisionTypes = new NativeArray<int>(maxBulletCapacity, Allocator.Persistent);
+        m_BulletRadii = new NativeArray<float>(maxBulletCapacity, Allocator.Persistent);
+        m_BoxSizes = new NativeArray<float2>(maxBulletCapacity, Allocator.Persistent);
+
+        m_CollisionQueue = new NativeQueue<int>(Allocator.Persistent);
+
         //Job系统不能使用System.Random
         m_Randoms = new NativeArray<Unity.Mathematics.Random>(maxBulletCapacity, Allocator.Persistent);
         var seedGen = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks);
@@ -240,15 +303,17 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         if (m_GlobalEventArray.IsCreated) m_GlobalEventArray.Dispose();
         if (m_BehaviorRanges.IsCreated) m_BehaviorRanges.Dispose();
 
+        // 新增：回收碰撞检测内存
+        if (m_CollisionTypes.IsCreated) m_CollisionTypes.Dispose();
+        if (m_BulletRadii.IsCreated) m_BulletRadii.Dispose();
+        if (m_BoxSizes.IsCreated) m_BoxSizes.Dispose();
+        if (m_CollisionQueue.IsCreated) m_CollisionQueue.Dispose();
+
         //注意一下，只有这里需要小写is的i
         if (m_Transforms.isCreated) m_Transforms.Dispose();
     }
 
     #endregion
-
-
-
-
 
     #region 外部发射子弹时调用，向Manager中加入子弹
     /// <summary>
@@ -278,14 +343,14 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     }
     #endregion
 
-
-
-
     #region 内部每帧Update()更新，更新子弹位置、速度等信息
     void Update()
     {
         // 确保上一帧的 Jobs 完成（安全地写入 NativeArray）
         m_JobHandle.Complete();
+
+        // --- 新增：处理上一帧的碰撞事件 ---
+        HandleCollisions();
 
         // Flush pending bullets（在主线程批量把 pending 请求写入 NativeArray & TransformAccessArray）
         FlushPendingBullets();
@@ -295,7 +360,14 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
         float dt = Time.deltaTime;
 
-        //派发三个Job，在Update和LateUpdate之间执行。这期间，其他Update方法、协程也会一起执行，最大化利用时间
+        // 获取玩家位置用于碰撞检测
+        float3 playerPos = float3.zero;
+        if (BattleManager.Instance != null)
+        {
+            playerPos = BattleManager.Instance.GetPlayerPos();
+        }
+
+        //派发Job
         BulletEventJob eventJob = new BulletEventJob
         {
             lifetimes = m_Lifetimes,
@@ -327,15 +399,34 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         };
         m_JobHandle = moveJob.Schedule(m_Transforms, m_JobHandle);
 
+        // --- 新增：碰撞检测 Job (增加了对 Square 的支持) ---
+        BulletCollisionJob collisionJob = new BulletCollisionJob
+        {
+            playerPos = playerPos,
+            playerRadius = playerHitboxRadius * playerHitboxRate,
+            positions = m_Positions,
+            angles = m_Angles, // 旋转矩形判定需要子弹角度
+
+            collisionTypes = m_CollisionTypes,
+            bulletRadii = m_BulletRadii,
+            boxSizes = m_BoxSizes,
+
+            isDead = m_IsDead,
+            collisionEvents = m_CollisionQueue.AsParallelWriter()
+        };
+        // 碰撞检测依赖位置更新完成
+        m_JobHandle = collisionJob.Schedule(m_ActiveCount, 64, m_JobHandle);
+
         BulletCullJob cullJob = new BulletCullJob
         {
             positions = m_Positions,
             lifetimes = m_Lifetimes,
-            maxLifetime = 15f,
-            boundsX = 22f,
-            boundsY = 14f,
+            maxLifetime = 15f,              //当前为硬编码，需要修改
+            cullBoundsX = boundsX,
+            cullBoundsY = boundsY,
             isDeadResults = m_IsDead
         };
+        // 剔除Job依赖碰撞Job（确保同一帧不会又判定碰撞又判定出界导致冲突，虽然都是写isDead）
         m_JobHandle = cullJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
 
@@ -405,6 +496,27 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             m_ActiveVisualIDs[index] = visualID;
             m_BulletBehaviorIDs[index] = behaviorID;
 
+            // --- 新增：设置碰撞参数 ---
+            if (visualID >= 0 && visualID < bulletConfigs.Count)
+            {
+                BulletBasicConfigSO cfg = bulletConfigs[visualID];
+
+                // 设置判定类型 (需强转为int, 假设 enum BulletCollisionType { Circle=0, Square=1 })
+                m_CollisionTypes[index] = (int)cfg.collisionType;
+
+                // 设置圆形半径
+                m_BulletRadii[index] = cfg.circleRadius;
+
+                // 设置方形尺寸
+                m_BoxSizes[index] = cfg.boxSize;
+            }
+            else
+            {
+                m_CollisionTypes[index] = 0; // 默认 Circle
+                m_BulletRadii[index] = 0.1f;
+                m_BoxSizes[index] = new float2(0.2f, 0.2f);
+            }
+
             if (behaviorID >= 0 && behaviorID < m_BehaviorRanges.Length)
             {
                 int2 range = m_BehaviorRanges[behaviorID];
@@ -422,30 +534,51 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
 
         //最后别忘了清空Pending
         m_PendingBullets.Clear();
+    }
 
-        #region 可选：如果有剩余未处理的 pending（因为容量），把未处理部分移到头部保留到下一帧
-
-        /*if (toProcess < pendingTotal)
+    /// <summary>
+    /// 处理碰撞队列
+    /// </summary>
+    private void HandleCollisions()
+    {
+        bool hasHit = false;
+        while (m_CollisionQueue.TryDequeue(out int bulletIndex))
         {
-            // 把未处理的移到列表头
-            int remaining = pendingTotal - toProcess;
-            for (int i = 0; i < remaining; i++)
-            {
-                m_PendingBullets[i] = m_PendingBullets[toProcess + i];
-            }
-            m_PendingBullets.RemoveRange(remaining, toProcess); // remove the processed tail
-            m_PendingBullets.RemoveRange(remaining, 0); // no-op, keeps clarity
-            m_PendingBullets.RemoveRange(remaining, 0); // no-op
-            // Actually the above is a bit awkward due to remove indices; do a simpler approach:
-            m_PendingBullets.RemoveRange(0, toProcess); // remove processed items from front
+            // 在这里处理每一颗撞到玩家的子弹
+            // 由于Job中已经将 isDead[index] 设为 true，LateUpdate会自动回收子弹
+            hasHit = true;
         }
-        else
-        {
-            // 全部处理完
-            m_PendingBullets.Clear();
-        }*/
-        #endregion
 
+        if (hasHit)
+        {
+            OnPlayerHit();
+        }
+    }
+
+    /// <summary>
+    /// 玩家被击中时的表现
+    /// </summary>
+    private void OnPlayerHit()
+    {
+        Debug.Log("<color=red>玩家中弹！(Collision Detected)</color>");
+
+        if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
+        {
+            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
+        }
+
+        if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);
+        hitEffectCoroutine = StartCoroutine(HitFlashRoutine());
+    }
+
+    private IEnumerator HitFlashRoutine()
+    {
+        if (playerSpriteRenderer != null)
+        {
+            playerSpriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            playerSpriteRenderer.color = Color.white;
+        }
     }
 
     /// <summary>
@@ -492,6 +625,12 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
             m_BulletBehaviorIDs[index] = m_BulletBehaviorIDs[lastIndex];
             m_NextEventIndex[index] = m_NextEventIndex[lastIndex];
             m_Randoms[index] = m_Randoms[lastIndex];
+
+            // 交换碰撞数据
+            m_CollisionTypes[index] = m_CollisionTypes[lastIndex];
+            m_BulletRadii[index] = m_BulletRadii[lastIndex];
+            m_BoxSizes[index] = m_BoxSizes[lastIndex];
+
             m_ActiveGOs[index] = m_ActiveGOs[lastIndex];
             m_Transforms.RemoveAtSwapBack(index);
         }
@@ -503,9 +642,6 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         m_ActiveCount--;
     }
     #endregion
-
-
-
 
     #region 对象池相关方法
     /// <summary>
@@ -605,9 +741,6 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     }
     #endregion
 
-
-
-
     #region 外部接口和工具函数
     /// <summary>
     /// 返回当前子弹数量
@@ -633,6 +766,23 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
         if (m_BehaviorNameToID.TryGetValue(name, out int id)) return id;
         // Debug.LogWarning($"Behavior profile not found: {name}");
         return -1;
+    }
+
+
+    /// <summary>
+    /// 修改玩家判定半径大小
+    /// </summary>
+    /// <param name="delta">增加或减少多少</param>
+    /// <param name="rate">按倍率增加或减少多少</param>
+    /// <returns>当前的判定大小</returns>
+    public float UpdatePlayerColiision(float delta, float rate)
+    {
+        playerHitboxRadius += delta;
+        playerHitboxRadius = Mathf.Max(playerHitboxRadius, 0f); //如果希望玩家的判定不会为0，修改这里
+        playerHitboxRate += rate;
+        playerHitboxRate = Mathf.Max(playerHitboxRate, 0f); //如果希望玩家的判定不会为0，修改这里
+
+        return playerHitboxRadius * playerHitboxRate;
     }
 
 
@@ -717,9 +867,87 @@ public class BulletDOTSManager : SingletonMono<BulletDOTSManager>
     }
     #endregion
 
+    #region Debug Gizmos (新增：绘制判定圆)
+    private void OnDrawGizmos()
+    {
+        // 如果未开启调试或未初始化，直接返回
+        if (!showDebugGizmos || !m_IsInitialized) return;
 
+        // 检查NativeArray是否有效，防止在Stop Play Mode时报错
+        if (!m_Positions.IsCreated || !m_BulletRadii.IsCreated) return;
 
+        // 尝试确保Job已完成，避免竞争条件报错
+        if (!m_JobHandle.IsCompleted) m_JobHandle.Complete();
 
+#if UNITY_EDITOR
+        // --- 修复方案：使用 Handles 代替 Gizmos ---
+        // Handles.DrawWireDisc 不会因为半径过小而被剔除，且画出的是纯2D圆环，更清晰
+        UnityEditor.Handles.color = debugGizmoColor;
+
+        // 遍历所有活跃子弹绘制 Gizmo
+        for (int i = 0; i < m_ActiveCount; i++)
+        {
+            Vector3 pos = m_Positions[i];
+            // 强制 Z=0 确保在平面上显示
+            pos.z = 0;
+
+            int type = m_CollisionTypes[i];
+
+            if (type == 0) // Circle
+            {
+                float radius = m_BulletRadii[i];
+                UnityEditor.Handles.DrawWireDisc(pos, Vector3.forward, radius);
+            }
+            else if (type == 1) // Square
+            {
+                float2 size = m_BoxSizes[i];
+                float angleDeg = m_Angles[i];
+                // Unity 旋转是逆时针为正，但我们的逻辑通常 0度向右，逆时针增加。
+                // 这里的 -angleDeg 对应代码中的 Quaternion.Euler(0,0,-angle)
+                Quaternion rot = Quaternion.Euler(0, 0, -angleDeg);
+
+                // 使用 Matrix4x4 构建局部坐标系，直接画矩形
+                Matrix4x4 matrix = Matrix4x4.TRS(pos, rot, Vector3.one);
+                using (new UnityEditor.Handles.DrawingScope(matrix))
+                {
+                    // DrawWireCube 默认中心在 (0,0,0)
+                    UnityEditor.Handles.DrawWireCube(Vector3.zero, new Vector3(size.x, size.y, 0));
+                }
+            }
+        }
+
+        // 绘制玩家判定（红色）
+        if (BattleManager.Instance != null)
+        {
+            Vector3 pPos = BattleManager.Instance.GetPlayerPos();
+            pPos.z = 0;
+            UnityEditor.Handles.color = Color.red;
+            UnityEditor.Handles.DrawWireDisc(pPos, Vector3.forward, playerHitboxRadius * playerHitboxRate);
+        }
+#else
+        // --- 非编辑器环境（打包后）的后备方案 ---
+        Gizmos.color = debugGizmoColor;
+        for (int i = 0; i < m_ActiveCount; i++)
+        {
+            Vector3 pos = m_Positions[i];
+            pos.z = 0;
+            
+            // Gizmos 仅支持简单球体，不支持旋转矩形，打包后调试需自行扩展
+            // 这里仅保留原有的圆形绘制作为Fallback
+            float radius = m_BulletRadii[i]; 
+            Gizmos.DrawWireSphere(pos, radius);
+        }
+        
+        Gizmos.color = Color.red;
+        if (BattleManager.Instance != null)
+        {
+             Vector3 pPos = BattleManager.Instance.GetPlayerPos();
+             pPos.z = 0;
+             Gizmos.DrawWireSphere(pPos, playerHitboxRadius * playerHitboxRate);
+        }
+#endif
+    }
+    #endregion
 }
 
 // --- Jobs ---
@@ -883,9 +1111,102 @@ public struct BulletMoveJob : IJobParallelForTransform
     [BurstDiscard]
     private void CheckBurstStatus()
     {
-        // 这里的 index == 0 是为了防止成千上万个子弹同时报错刷屏，只报一次即可
-        // 也可以使用静态变量控制只报错一次
         Debug.LogWarning($"[性能警告] BulletMoveJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
+    }
+}
+
+// --- 碰撞检测 Job (已修复Z轴问题，支持 Square 和 Circle) ---
+[BurstCompile]
+public struct BulletCollisionJob : IJobParallelFor
+{
+    [ReadOnly] public float3 playerPos;
+    [ReadOnly] public float playerRadius;
+    [ReadOnly] public NativeArray<float3> positions;
+    [ReadOnly] public NativeArray<float> angles; // 旋转矩形需要角度
+
+    // 碰撞配置数据
+    [ReadOnly] public NativeArray<int> collisionTypes; // 0=Circle, 1=Square
+    [ReadOnly] public NativeArray<float> bulletRadii;
+    [ReadOnly] public NativeArray<float2> boxSizes; // xy = width, height
+
+    public NativeArray<bool> isDead;
+    [WriteOnly] public NativeQueue<int>.ParallelWriter collisionEvents;
+
+    public void Execute(int index)
+    {
+        //没有通过Burst编译时报错
+        CheckBurstStatus();
+
+        // 如果已经死了，跳过
+        if (isDead[index]) return;
+
+        float3 bPos = positions[index];
+        int type = collisionTypes[index];
+        bool isHit = false;
+
+        // --- 圆形判定 (Type 0) ---
+        if (type == 0)
+        {
+            float bRadius = bulletRadii[index];
+            // 修复核心：使用 .xy 忽略 Z 轴深度带来的误差
+            float distSq = math.distancesq(bPos.xy, playerPos.xy);
+            float combinedRadius = playerRadius + bRadius;
+
+            if (distSq < combinedRadius * combinedRadius)
+            {
+                isHit = true;
+            }
+        }
+        // --- 方形判定 (Type 1) (OBB vs Circle) ---
+        else if (type == 1)
+        {
+            float2 bSize = boxSizes[index];
+            float bAngle = angles[index];
+
+            // 1. 将玩家坐标转换到子弹的局部坐标系 (Local Space)
+            // 计算相对于子弹的向量
+            float2 diff = playerPos.xy - bPos.xy;
+
+            // 构建逆向旋转：
+            // 子弹在世界中旋转了 -bAngle (因为Unity中顺时针为负，代码中 rotation = Quaternion.Euler(0, 0, -angle))
+            // 要将世界坐标转换到子弹局部坐标，我们需要旋转 +bAngle (即 math.radians(bAngle))
+            float angRad = math.radians(bAngle);
+            float s, c;
+            math.sincos(angRad, out s, out c);
+
+            // 手动旋转向量 (x*c - y*s, x*s + y*c)
+            float2 localPlayerPos = new float2(
+                diff.x * c - diff.y * s,
+                diff.x * s + diff.y * c
+            );
+
+            // 2. 在局部空间做 AABB vs Point(Circle Center) 最近点检测
+            float2 halfExtents = bSize / 2f;
+
+            // 找到矩形上离圆心最近的点 (Clamp 玩家位置到矩形范围内)
+            float2 closestPoint = math.clamp(localPlayerPos, -halfExtents, halfExtents);
+
+            // 3. 计算最近点到圆心的距离
+            float distSq = math.distancesq(localPlayerPos, closestPoint);
+
+            if (distSq < playerRadius * playerRadius)
+            {
+                isHit = true;
+            }
+        }
+
+        if (isHit)
+        {
+            // 发生碰撞
+            isDead[index] = true; // 标记子弹死亡，下一帧回收
+            collisionEvents.Enqueue(index); // 通知主线程
+        }
+    }
+
+    [BurstDiscard]
+    private void CheckBurstStatus()
+    {
+        Debug.LogWarning($"[性能警告] BulletCollisionJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
     }
 }
 
@@ -895,8 +1216,8 @@ public struct BulletCullJob : IJobParallelFor
     [ReadOnly] public NativeArray<float3> positions;
     [ReadOnly] public NativeArray<float> lifetimes;
     public float maxLifetime;
-    public float boundsX;
-    public float boundsY;
+    public float cullBoundsX;
+    public float cullBoundsY;
     public NativeArray<bool> isDeadResults;
 
     public void Execute(int index)
@@ -916,7 +1237,7 @@ public struct BulletCullJob : IJobParallelFor
         {
             //超过屏幕边界，移除
             float3 pos = positions[index];
-            dead = pos.x < -boundsX || pos.x > boundsX || pos.y < -boundsY || pos.y > boundsY;
+            dead = pos.x < -cullBoundsX || pos.x > cullBoundsX || pos.y < -cullBoundsY || pos.y > cullBoundsY;
         }
         isDeadResults[index] = dead;
     }
@@ -924,8 +1245,6 @@ public struct BulletCullJob : IJobParallelFor
     [BurstDiscard]
     private void CheckBurstStatus()
     {
-        // 这里的 index == 0 是为了防止成千上万个子弹同时报错刷屏，只报一次即可
-        // 也可以使用静态变量控制只报错一次
-        Debug.LogWarning($"[性能警告] BulletMoveJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
+        Debug.LogWarning($"[性能警告] BulletCullJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
     }
 }

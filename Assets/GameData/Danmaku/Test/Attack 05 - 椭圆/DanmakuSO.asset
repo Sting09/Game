@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: -1
   emitterList:
-  - {fileID: 11400000, guid: 72cb328e56636cc48aa3de921f844cc7, type: 2}
+  - {fileID: 11400000, guid: 83590621a1e366642a9b377e6cbc3fd5, type: 2}
+  emitterParameterList: []
   requiredBulletNames:
   - YellowRing

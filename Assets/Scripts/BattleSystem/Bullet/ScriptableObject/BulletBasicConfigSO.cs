@@ -11,6 +11,6 @@ public class BulletBasicConfigSO : ScriptableObject
 
     [Header("Collision Logic")]
     public BulletCollisionType collisionType;
-    public float circleRadius = 0.5f;       // Ô²ÐÎ°ë¾¶
-    public Vector2 boxSize = Vector2.one;   // ·½ÐÎ³ß´ç (Width, Height)
+    public float circleRadius;       // Ô²ÐÎ°ë¾¶
+    public Vector2 boxSize;   // ·½ÐÎ³ß´ç (Width, Height)
 }

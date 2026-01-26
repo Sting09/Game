@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "Emitter-test \u98CE\u8F66"
   m_EditorClassIdentifier: 
   description: 
-  bulletPrefab: {fileID: 6173098254462471731, guid: 0cd191b963c8f504985ea5998367691a, type: 3}
+  parentDanmaku: {fileID: 0}
   bulletEvents: []
   shootDelay: 1
   emitterDuration: -1
@@ -32,9 +32,11 @@ MonoBehaviour:
     baseValue: 90
     offsetValue: 0
     randomRange: 0
-  bulletPattern: {fileID: 11400000, guid: 92a43e925e77b53429704f82f859ecbf, type: 2}
+  bulletPattern: {fileID: 11400000, guid: 289d8d47965d75a4b927b0ae2e61a3d2, type: 2}
+  emitterEvents:
+  - {fileID: 11400000, guid: 63fe0062427a69e4fbcb6721fd4df359, type: 2}
   shootTimesPerWave: 20
-  shootInterval: 0.15
+  shootInterval: 0.3
   waveInterval: 3
   shootPointNum: 8
   shootPointRange:
