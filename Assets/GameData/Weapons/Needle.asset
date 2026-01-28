@@ -10,16 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
-  m_Name: "Danmaku\u53D1\u5C04\u654C\u4EBA"
+  m_Name: Needle
   m_EditorClassIdentifier: 
   duration: -1
   emitterList:
-  - {fileID: 11400000, guid: b504ab7a35a8de1418ff316cf52bb134, type: 2}
+  - {fileID: 11400000, guid: 65838d51896d1a44282d98bec67be064, type: 2}
   emitterParameterList: []
   requiredEntities:
   - entityName: RedBullet
-    num: 100
-    type: 0
-  - entityName: Test01
-    num: 5
-    type: 3
+    num: 30
+    type: 2

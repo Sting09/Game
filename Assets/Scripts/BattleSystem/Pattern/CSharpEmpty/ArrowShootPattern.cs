@@ -82,6 +82,9 @@ public class ArrowShootPattern : ShootPattern
                             break;
                         case ShootObjType.BulletGroup:
                             break;
+                        case ShootObjType.PlayerBullet:
+                            PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                            break;
                         case ShootObjType.Enemy:
                             EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
                             break;
@@ -131,6 +134,9 @@ public class ArrowShootPattern : ShootPattern
                         break;
                     case ShootObjType.BulletGroup:
                         break;
+                    case ShootObjType.PlayerBullet:
+                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        break;
                     case ShootObjType.Enemy:
                         EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
                         break;
@@ -154,6 +160,9 @@ public class ArrowShootPattern : ShootPattern
                         BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
                         break;
                     case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.PlayerBullet:
+                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
                         break;
                     case ShootObjType.Enemy:
                         EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Jobs;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Collections;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -29,6 +31,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     private List<PendingEnemy> m_PendingEnemy;
 
 
+    // 敌人独有的属性
 
 
     /// <summary>

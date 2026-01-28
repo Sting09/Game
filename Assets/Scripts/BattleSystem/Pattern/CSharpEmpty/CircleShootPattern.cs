@@ -95,6 +95,9 @@ public class CircleShootPattern : ShootPattern
                         break;
                     case ShootObjType.BulletGroup:
                         break;
+                    case ShootObjType.PlayerBullet:
+                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + offset, info);
+                        break;
                     case ShootObjType.Enemy:
                         EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + offset, info);
                         break;

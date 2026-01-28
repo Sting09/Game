@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
-  m_Name: "Pattern - \u4E00\u4E2A\u654C\u4EBA"
+  m_Name: Needle-Pattern
   m_EditorClassIdentifier: 
-  bulletName: Test01
-  bulletDuration: 5
+  bulletName: RedBullet
+  bulletDuration: 10
   isRelative: 0
-  objType: 3
+  objType: 2
   bulletBehavior: 
   description: 
   shootWays:
@@ -27,11 +27,11 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   shootRange:
-    baseValue: 120
+    baseValue: 5
     offsetValue: 0
     randomRange: 0
   radius:
-    baseValue: 0.5
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
   radiusDirection:
@@ -41,12 +41,12 @@ MonoBehaviour:
   shootDirection:
     baseValue: 0
     offsetValue: 0
-    randomRange: 2
+    randomRange: 0
   startBulletSpeed:
-    baseValue: 8
+    baseValue: 3
     offsetValue: 0
-    randomRange: 0.5
+    randomRange: 0
   endBulletSpeed:
-    baseValue: 10
+    baseValue: 5
     offsetValue: 0
     randomRange: 0

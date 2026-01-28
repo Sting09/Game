@@ -42,6 +42,8 @@ public class BaseShooter : MonoBehaviour
                     case ShootObjType.Enemy:
                         EnemyDOTSManager.Instance.PreparePoolsForLevel(info.entityName, info.num);
                         break;
+                    case ShootObjType.PlayerBullet:
+                        break;
                     default:
                         break;
                 }

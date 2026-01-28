@@ -24,6 +24,9 @@ public abstract class ShootPattern
                 break;
             case ShootObjType.BulletGroup:
                 break;
+            case ShootObjType.PlayerBullet:
+                bulletTypeID = PlayerShootingManager.Instance.GetVisualID(bulletName);
+                break;
             case ShootObjType.Enemy:
                 bulletTypeID = EnemyDOTSManager.Instance.GetVisualID(bulletName);
                 break;

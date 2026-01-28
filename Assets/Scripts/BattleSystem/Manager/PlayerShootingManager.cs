@@ -9,7 +9,7 @@ using Unity.Mathematics;
 using UnityEditor;
 #endif
 
-public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
+public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 {
     // --- ≈‰÷√ ---
     [Header("Bullet Configs (Gameplay)")]
@@ -364,6 +364,10 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
                 m_VisualPools[id].Enqueue(obj);
                 obj.SetActive(false);
             }
+        }
+        else
+        {
+            Debug.Log($"PlayerShootingManager‘§ÃÓ≥‰{name} ß∞‹£°«ÎºÏ≤È≈‰÷√ «∑Ò’˝»∑");
         }
     }
 

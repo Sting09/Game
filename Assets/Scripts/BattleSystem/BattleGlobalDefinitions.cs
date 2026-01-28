@@ -7,8 +7,21 @@ public enum ShootObjType
 {
     Bullet,
     BulletGroup,
+    PlayerBullet,
     Enemy
 }
+
+
+public enum PlayerShootType
+{
+    Always,
+    HighSpeed,
+    LowSpeed,
+    Skill_1,
+    Skill_2,
+    Skill_3
+}
+
 /// <summary>
 /// 子弹的碰撞类型
 /// </summary>

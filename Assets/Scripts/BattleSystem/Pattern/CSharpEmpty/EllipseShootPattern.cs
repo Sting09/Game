@@ -92,6 +92,9 @@ public class EllipseShootPattern : ShootPattern
                         break;
                     case ShootObjType.BulletGroup:
                         break;
+                    case ShootObjType.PlayerBullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
+                        break;
                     case ShootObjType.Enemy:
                         EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos, info);
                         break;
@@ -210,6 +213,9 @@ public class EllipseShootPattern : ShootPattern
                         BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
                         break;
                     case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.PlayerBullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
                         break;
                     case ShootObjType.Enemy:
                         EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos, info);
