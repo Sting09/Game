@@ -32,8 +32,7 @@ public class EllipseShootPattern : ShootPattern
     /// <summary>
     /// 生成旋转的椭圆形弹幕数据
     /// </summary>
-    public override void ShootBullet(int shootPointIndex, int timesInWave, int waveTimes,
-                                     Vector3 pos, float dir)
+    public override void ShootBullet(BulletRuntimeInfo info, Vector3 pos, float dir)
     {
         //每次发射子弹时UpdatePattern()，未来可以改为每波再更新
         UpdatePattern();
@@ -73,22 +72,32 @@ public class EllipseShootPattern : ShootPattern
 
                 float currentSpeed = numerator / denominator;
 
-                BulletRuntimeInfo info = new BulletRuntimeInfo();
-                info.shootPointIndex = shootPointIndex;
+                
                 info.wayIndex = i;
                 info.orderInWay = 1;
                 info.orderInOneShoot = i;
-                info.orderInWave = timesInWave * num + i;
-                info.speed = currentSpeed;
+                info.orderInWave = info.timesInWave * num + i;
 
+                info.speed = currentSpeed;
                 //发射方向还要再加上一个shootDirection
                 info.direction = dir + currentAngle;
-                info.lifetime = 0;
 
                 //pos加上偏移
                 //BulletManager.Instance.AddBullet(pos, info);
                 //Debug.Log("Add Bullet!");
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
+                switch (type)
+                {
+                    case ShootObjType.Bullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
+                        break;
+                    case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.Enemy:
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos, info);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         else
@@ -183,22 +192,31 @@ public class EllipseShootPattern : ShootPattern
                 float finalAngle = rawAngleDeg + direction;
 
 
-                BulletRuntimeInfo info = new BulletRuntimeInfo();
-                info.shootPointIndex = shootPointIndex;
                 info.wayIndex = i;
                 info.orderInWay = 1;
                 info.orderInOneShoot = i;
-                info.orderInWave = timesInWave * num + i;
-                info.speed = speed;
+                info.orderInWave = info.timesInWave * num + i;
 
+                info.speed = speed;
                 //发射方向还要再加上一个shootDirection
                 info.direction = dir + finalAngle;
-                info.lifetime = 0;
 
                 //pos加上偏移
                 //BulletManager.Instance.AddBullet(pos, info);
                 //Debug.Log("Add Bullet!");
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
+                switch (type)
+                {
+                    case ShootObjType.Bullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos, info);
+                        break;
+                    case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.Enemy:
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos, info);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         

@@ -34,8 +34,7 @@ public class ArrowShootPattern : ShootPattern
         centerMaxSpeed = arrowConfig.centerMaxSpeed.GetValue();
     }
 
-    public override void ShootBullet(int shootPointIndex, int timesInWave, int waveTimes,
-                                     Vector3 pos, float dir)
+    public override void ShootBullet(BulletRuntimeInfo info, Vector3 pos, float dir)
     {
         UpdatePattern(); // 每次发射更新参数
 
@@ -68,17 +67,27 @@ public class ArrowShootPattern : ShootPattern
             {
                 if (k == 0)    //正中间的子弹特别处理
                 {
-                    BulletRuntimeInfo info = new BulletRuntimeInfo();
-                    info.shootPointIndex = shootPointIndex;
                     info.wayIndex = 0;
                     info.orderInWay = i;
-                    info.orderInOneShoot = i;    // 本次发射中的总序号
-                    info.orderInWave = i;    // 本波次中的总序号
+                    info.orderInOneShoot = i;    // 本次发射中的总序号，暂时不用，暂时不填
+                    info.orderInWave = i;    // 本波次中的总序号，暂时不用，暂时不填
                     info.speed = speed;
                     info.direction = dir + centerDirection; //正中心子弹的角度
-                    info.lifetime = 0;
+
                     // 最终位置 = 发射器位置 + 箭头形状偏移
-                    BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                    switch (type)
+                    {
+                        case ShootObjType.Bullet:
+                            BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                            break;
+                        case ShootObjType.BulletGroup:
+                            break;
+                        case ShootObjType.Enemy:
+                            EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                            break;
+                        default:
+                            break;
+                    }
 
                     continue;
                 }
@@ -107,30 +116,53 @@ public class ArrowShootPattern : ShootPattern
                 float angleBOAkRad = Mathf.Acos(cosVal);
                 float angleBOAkDeg = angleBOAkRad * Mathf.Rad2Deg;
 
-                BulletRuntimeInfo infoLeft = new BulletRuntimeInfo();
-                infoLeft.shootPointIndex = shootPointIndex;
+                BulletRuntimeInfo infoLeft = info;
                 infoLeft.wayIndex = 2 * k - 1;
                 infoLeft.orderInWay = i;
                 infoLeft.orderInOneShoot = bulletsPerWay * (2 * k - 1) + 2 * i;    // 本次发射中的总序号
-                infoLeft.orderInWave = timesInWave * (2 * n + 1) * bulletsPerWay + 
+                infoLeft.orderInWave = info.timesInWave * (2 * n + 1) * bulletsPerWay + 
                                         bulletsPerWay * (2 * k - 1) + 2 * i;    // 本波次中的总序号
                 infoLeft.speed = lengthOAk;
                 infoLeft.direction = dir + centerDirection + angleBOAkDeg;
-                infoLeft.lifetime = 0;
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir + angleBOAkDeg, distance), infoLeft);
-                
-                BulletRuntimeInfo infoRight = new BulletRuntimeInfo();
-                infoRight.shootPointIndex = shootPointIndex;
+                switch (type)
+                {
+                    case ShootObjType.Bullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        break;
+                    case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.Enemy:
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        break;
+                    default:
+                        break;
+                }
+
+
+
+                BulletRuntimeInfo infoRight = info;
                 infoRight.wayIndex = 2 * k;
                 infoRight.orderInWay = i;
                 infoRight.orderInOneShoot = bulletsPerWay * (2 * k - 1) + 2 * i + 1;    // 本次发射中的总序号
-                infoRight.orderInWave = timesInWave * (2 * n + 1) * bulletsPerWay + 
+                infoRight.orderInWave = info.timesInWave * (2 * n + 1) * bulletsPerWay + 
                                         bulletsPerWay * (2 * k - 1) + 2 * i + 1;    // 本波次中的总序号
                 infoRight.speed = lengthOAk;
                 infoRight.direction = dir + centerDirection - angleBOAkDeg;
-                infoRight.lifetime = 0;
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir - angleBOAkDeg, distance), infoRight);
-                
+                switch (type)
+                {
+                    case ShootObjType.Bullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        break;
+                    case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.Enemy:
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        break;
+                    default:
+                        break;
+                }
+
+
                 // 存入结果
                 /*results.Add(new PointData
                 {

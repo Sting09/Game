@@ -7,14 +7,33 @@ public abstract class ShootPattern
     protected string bulletName;
     protected int bulletTypeID;
     protected int bulletBehaviourID;
+    public float bulletDuration;
+    public bool isRelative;          //是否跟随发弹源移动
+    public ShootObjType type;
 
     public ShootPattern(ShootPatternSO config, EmitterRuntime runtime)
     {
         this.config = config;
         ownerEmitterRuntime = runtime;
         this.bulletName = config.bulletName;
-        bulletTypeID = BulletDOTSManager.Instance.GetVisualID(bulletName);
+        type = config.objType;
+        switch (config.objType)
+        {
+            case ShootObjType.Bullet:
+                bulletTypeID = BulletDOTSManager.Instance.GetVisualID(bulletName);
+                break;
+            case ShootObjType.BulletGroup:
+                break;
+            case ShootObjType.Enemy:
+                bulletTypeID = EnemyDOTSManager.Instance.GetVisualID(bulletName);
+                break;
+            default:
+                bulletTypeID = -1;
+                break;
+        }
         bulletBehaviourID = config.bulletBehavior != "None" ? BulletDOTSManager.Instance.GetBehaviorID(config.bulletBehavior) : -1;
+        bulletDuration = config.bulletDuration;
+        isRelative = config.isRelative;
     }
 
     /// <summary>
@@ -25,14 +44,10 @@ public abstract class ShootPattern
     /// <summary>
     /// 发射一次规定样式的弹幕
     /// </summary>
-    /// <param name="shootPointIndex">发射器的第几个发弹点发弹</param>
-    /// <param name="timesInWave">本波次中第几次发射</param>
-    /// <param name="waveTimes">第几波弹幕</param>
+    /// <param name="bulletInfo">子弹信息，填写必要的内容，再传给pattern填写</param>
     /// <param name="pos">发弹点位置</param>
     /// <param name="dir">发弹点朝向</param>
-    public abstract void ShootBullet(int shootPointIndex,
-                                     int timesInWave,
-                                     int waveTimes,
+    public abstract void ShootBullet(BulletRuntimeInfo bulletInfo,
                                      Vector3 pos,
                                      float dir);
 }

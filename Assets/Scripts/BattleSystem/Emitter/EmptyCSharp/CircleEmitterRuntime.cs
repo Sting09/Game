@@ -44,7 +44,18 @@ public class CircleEmitterRuntime : EmitterRuntime
         //每个发弹点发射一次pattern
         for (int i = 0; i < pointNum; i++)
         {
-            pattern.ShootBullet(i, timesInWave, waveTimes, posBuffer[i], dirBuffer[i]);  //Single发射器只有一个发弹点，不用遍历数组
+            BulletRuntimeInfo info = new BulletRuntimeInfo();
+            info.shootPointIndex = i;
+            info.waveTimes = waveTimes;
+            info.timesInWave = timesInWave;
+
+            info.isRelative = pattern.isRelative;
+            info.parentTransform = start;
+
+            info.lifetime = 0;      //刚发射的子弹，已经存活的时间就是0
+            info.totalLifetime = pattern.bulletDuration;
+
+            pattern.ShootBullet(info, posBuffer[i], dirBuffer[i]);  //Single发射器只有一个发弹点，不用遍历数组
         }
 
         timesInWave++;

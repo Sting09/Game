@@ -1,6 +1,15 @@
 using UnityEngine;
 
 /// <summary>
+/// 发射器发射的Obj类型
+/// </summary>
+public enum ShootObjType
+{
+    Bullet,
+    BulletGroup,
+    Enemy
+}
+/// <summary>
 /// 子弹的碰撞类型
 /// </summary>
 public enum BulletCollisionType
@@ -87,7 +96,7 @@ public enum EventModificationType
 }
 
 
-public enum BulletEventType
+public enum EntityEventType
 {
     None = 0,
     ChangeSpeed,        // 修改速度
@@ -99,10 +108,10 @@ public enum BulletEventType
 }
 
 // 对应 Job 的纯数据事件结构
-public struct NativeBulletEvent
+public struct NativeEntityEvent
 {
     public float triggerTime;       // 触发时间 (Lifetime)
-    public BulletEventType type;    // 事件类型
+    public EntityEventType type;    // 事件类型
 
     // 通用参数 (根据 type 不同有不同含义)
     public float valueA;            // 目标值 / 最小值 / X
@@ -111,6 +120,16 @@ public struct NativeBulletEvent
 
     public bool useRelative;        // 是否相对当前值 (+/-)
     public bool useRandom;          // 是否随机 (在 valueA ~ valueC 之间)
+}
+
+
+
+[System.Serializable]
+public struct RequiredEntityInfo
+{
+    public string entityName;
+    public int num;
+    public ShootObjType type;
 }
 
 

@@ -24,7 +24,6 @@ public class ShooterTimer
         waveTimer = 0f;
         timesShotThisWave = 0;
         duringWave = false;
-
         config = emitter;
         runtime = emitter.CreateRuntime();
     }

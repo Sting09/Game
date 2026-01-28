@@ -29,7 +29,19 @@ public class SingleEmitterRuntime : EmitterRuntime
         }
         CalcluateActualPos(start, posBuffer, newWave);
         CalculateActualDir(start, dirBuffer, newWave);   //一定先算位置再算角度
-        pattern.ShootBullet(0, timesInWave, waveTimes, posBuffer[0], dirBuffer[0]);  //Single发射器只有一个发弹点，不用遍历数组
+
+        BulletRuntimeInfo info = new BulletRuntimeInfo();
+        info.shootPointIndex = 0;
+        info.waveTimes = waveTimes;
+        info.timesInWave = timesInWave;
+
+        info.isRelative = pattern.isRelative;
+        info.parentTransform = start;
+
+        info.lifetime = 0;      //刚发射的子弹，已经存活的时间就是0
+        info.totalLifetime = pattern.bulletDuration;
+
+        pattern.ShootBullet(info, posBuffer[0], dirBuffer[0]);  //Single发射器只有一个发弹点，不用遍历数组
         timesInWave++;
     }
 

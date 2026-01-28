@@ -10,13 +10,47 @@ public class BaseShooter : MonoBehaviour
     [SerializeField]private float currentDanmakuDuration;        //当前符卡的持续时间
     private List<ShooterTimer> timers;           //每个Emitter的计时器
 
+    public bool needPrewarm = false;        //是否需要根据弹幕列表，预热对象池
+
     private void Awake()
     {
         timers = new List<ShooterTimer>();
     }
 
-
     private void Start()
+    {
+        if (needPrewarm)
+        {
+            PrewarmEntityPool();
+        }
+    }
+
+    public void PrewarmEntityPool()
+    {
+        for (int i = 0; i < danmakuToShoot.Count; i++)
+        {
+            DanmakuSO currentDanmaku = danmakuToShoot[i];
+            foreach (var info in currentDanmaku.requiredEntities)
+            {
+                switch (info.type)
+                {
+                    case ShootObjType.Bullet:
+                        BulletDOTSManager.Instance.PreparePoolsForLevel(info.entityName, info.num);
+                        break;
+                    case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.Enemy:
+                        EnemyDOTSManager.Instance.PreparePoolsForLevel(info.entityName, info.num);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+
+    private void OnEnable()
     {
         currentDanmakuIndex = 0;    //初始化，从第一个弹幕开始发射
 
@@ -65,8 +99,6 @@ public class BaseShooter : MonoBehaviour
             {
                 timers.Add(new ShooterTimer(emitter));
             }
-
-            BulletDOTSManager.Instance.PreparePoolsForLevel(currentDanmaku.requiredBulletNames);
 
             currentDanmakuDuration = currentDanmaku.duration;   //读取符卡持续时间
             danmakuTimer = 0f;      //重置计时器

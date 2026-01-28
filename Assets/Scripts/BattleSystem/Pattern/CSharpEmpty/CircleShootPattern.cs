@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class CircleShootPattern : ShootPattern
 {
@@ -39,8 +40,7 @@ public class CircleShootPattern : ShootPattern
         endSpeed = circleConfig.endBulletSpeed.GetValue();
     }
 
-    public override void ShootBullet(int shootPointIndex, int timesInWave, int waveTimes,
-                                     Vector3 pos, float dir)
+    public override void ShootBullet(BulletRuntimeInfo info, Vector3 pos, float dir)
     {
         UpdatePattern();        //每次发射更新pattern。未来可能设计成每波更新
         dir += radiusDirection;
@@ -76,22 +76,31 @@ public class CircleShootPattern : ShootPattern
             for (int orderInLine = 0; orderInLine < bulletsPerWay; orderInLine++)
             //速度由慢到快这是本列第几颗子弹
             {
-                BulletRuntimeInfo info = new BulletRuntimeInfo();
-                info.shootPointIndex = shootPointIndex;
                 info.wayIndex = lineNum;
                 info.orderInWay = orderInLine;
                 info.orderInOneShoot = lineNum * ways + orderInLine;
-                info.orderInWave = timesInWave * ways * bulletsPerWay +
+                info.orderInWave = info.timesInWave * ways * bulletsPerWay +
                               lineNum * ways + orderInLine;
-                info.speed = startSpeed + orderInLine * speedDelta;
 
+                info.speed = startSpeed + orderInLine * speedDelta;
                 //发射方向还要再加上一个shootDirection
                 info.direction = startAngle + lineNum * angleDelta + shootDirection;
-                info.lifetime = 0;
 
                 //pos加上偏移
                 //BulletManager.Instance.AddBullet(pos, info);
-                BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + offset, info);
+                switch (type)
+                {
+                    case ShootObjType.Bullet:
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + offset, info);
+                        break;
+                    case ShootObjType.BulletGroup:
+                        break;
+                    case ShootObjType.Enemy:
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + offset, info);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

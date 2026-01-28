@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
-  m_Name: "Pattern-\u68F1\u5F39"
+  m_Name: "Pattern - \u4E00\u4E2A\u654C\u4EBA"
   m_EditorClassIdentifier: 
-  bulletName: RedBullet
-  bulletDuration: 10
+  bulletName: Test01
+  bulletDuration: 5
   isRelative: 0
-  bulletBehavior: None
+  objType: 2
+  bulletBehavior: 
   description: 
   shootWays:
-    baseValue: 6
+    baseValue: 1
     offsetValue: 0
     randomRange: 0
   bulletsPerWay:
@@ -26,11 +27,11 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   shootRange:
-    baseValue: 15
+    baseValue: 120
     offsetValue: 0
     randomRange: 0
   radius:
-    baseValue: 0
+    baseValue: 0.5
     offsetValue: 0
     randomRange: 0
   radiusDirection:
@@ -40,12 +41,12 @@ MonoBehaviour:
   shootDirection:
     baseValue: 0
     offsetValue: 0
-    randomRange: 0
+    randomRange: 2
   startBulletSpeed:
-    baseValue: 4
+    baseValue: 8
     offsetValue: 0
-    randomRange: 0
+    randomRange: 0.5
   endBulletSpeed:
-    baseValue: 5
+    baseValue: 10
     offsetValue: 0
     randomRange: 0

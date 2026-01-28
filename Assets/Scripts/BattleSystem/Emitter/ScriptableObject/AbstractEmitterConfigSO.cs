@@ -8,8 +8,6 @@ public abstract class AbstractEmitterConfigSO : ScriptableObject
     [Tooltip("发射子弹形状的描述")]
     [TextArea(4, 20)]
     public string description;
-    [Tooltip("属于哪个弹幕DanmakuSO")]
-    public DanmakuSO parentDanmaku;
 
 
 

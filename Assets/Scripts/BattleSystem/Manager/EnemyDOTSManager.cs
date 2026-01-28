@@ -9,24 +9,24 @@ using Unity.Mathematics;
 using UnityEditor;
 #endif
 
-public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
+public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 {
     // --- 配置 ---
-    [Header("Bullet Configs (Gameplay)")]
-    public List<BulletBasicConfigSO> bulletConfigs;
+    [Header("Enemy Configs (Gameplay)")]
+    public List<EnemyBasicConfigSO> enemyConfigs;
 
-    // --- 子弹样式 ID 查找表 ---
+    // --- 敌人名称 到 ID 查找表 ---
     private Dictionary<string, int> m_VisualNameToID = new Dictionary<string, int>();
 
     // 当前帧要加入池子的子弹列表
-    private struct PendingBullet
+    private struct PendingEnemy
     {
         public int visualID;
         public int behaviorID;
         public Vector3 startPos;
         public BulletRuntimeInfo info;
     }
-    private List<PendingBullet> m_PendingBullets;
+    private List<PendingEnemy> m_PendingEnemy;
 
 
 
@@ -39,18 +39,18 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     /// <param name="startPos">初始位置</param>
     /// <param name="info">运行参数</param>
     /// <param name="emitter">发射者Transform（如果是相对移动子弹，此参数必须不为空）</param>
-    public void AddBullet(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
+    public void AddEnemy(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
-        if (m_PendingBullets == null) m_PendingBullets = new List<PendingBullet>();
+        if (m_PendingEnemy == null) m_PendingEnemy = new List<PendingEnemy>();
 
-        int pendingCount = m_PendingBullets.Count;
+        int pendingCount = m_PendingEnemy.Count;
         if (m_ActiveCount + pendingCount >= maxEntityCapacity)
         {
             Debug.LogWarning("Bullet capacity reached; dropping bullet.");
             return;
         }
 
-        m_PendingBullets.Add(new PendingBullet
+        m_PendingEnemy.Add(new PendingEnemy
         {
             visualID = visualID,
             behaviorID = behaviorID,
@@ -106,11 +106,11 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
     private void ScheduleCollisionJob()
     {
-        var policy = new BulletCollisionPolicy
+        var policy = new EnemyCollisionPolicy
         {
             collisionEvents = m_CollisionQueue.AsParallelWriter(),
         };
-        var collisionJob = new ObjectCollisionJob<BulletCollisionPolicy>
+        var collisionJob = new ObjectCollisionJob<EnemyCollisionPolicy>
         {
             playerPos = playerPos,
             playerRadius = playerHitboxRadius * playerHitboxRate,
@@ -127,13 +127,10 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
     private void ScheduleCullJob()
     {
-        BulletCullJob cullJob = new BulletCullJob
+        EnemyCullJob cullJob = new EnemyCullJob
         {
-            positions = m_Positions,
             lifetimes = m_Lifetimes,
             maxLifetimes = m_MaxLifetimes, // 修改：传入每颗子弹的最大寿命数组
-            cullBoundsX = boundsX,
-            cullBoundsY = boundsY,
             isDeadResults = m_IsDead
         };
         m_JobHandle = cullJob.Schedule(m_ActiveCount, 64, m_JobHandle);
@@ -146,21 +143,21 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     #region 实现抽象类
     protected override void FlushPending()
     {
-        if (m_PendingBullets == null || m_PendingBullets.Count == 0) return;
+        if (m_PendingEnemy == null || m_PendingEnemy.Count == 0) return;
 
-        int pendingTotal = m_PendingBullets.Count;
+        int pendingTotal = m_PendingEnemy.Count;
         int available = maxEntityCapacity - m_ActiveCount;
         int toProcess = math.min(pendingTotal, available);
 
         if (toProcess <= 0)
         {
-            m_PendingBullets.Clear();
+            m_PendingEnemy.Clear();
             return;
         }
 
         for (int i = 0; i < toProcess; i++)
         {
-            var pb = m_PendingBullets[i];
+            var pb = m_PendingEnemy[i];
             int visualID = pb.visualID;
             int behaviorID = pb.behaviorID;
             Vector3 startPos = pb.startPos;
@@ -175,7 +172,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
             int index = m_ActiveCount;
             currentZ += deltaZ;
-            float zPriority = (visualID >= 0 && visualID < bulletConfigs.Count) ? bulletConfigs[visualID].zPriority : 0f;
+            float zPriority = (visualID >= 0 && visualID < enemyConfigs.Count) ? enemyConfigs[visualID].zPriority : 0f;
 
             m_Positions[index] = new float3(startPos.x, startPos.y, currentZ - zPriority);
             m_Speeds[index] = info.speed;
@@ -197,9 +194,9 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             bool isRel = false;
             int eID = 0;
 
-            if (visualID >= 0 && visualID < bulletConfigs.Count)
+            if (visualID >= 0 && visualID < enemyConfigs.Count)
             {
-                BulletBasicConfigSO cfg = bulletConfigs[visualID];
+                EnemyBasicConfigSO cfg = enemyConfigs[visualID];
                 m_CollisionTypes[index] = (int)cfg.collisionType;
                 m_CircleRadii[index] = cfg.circleRadius;
                 m_BoxSizes[index] = cfg.boxSize;
@@ -246,7 +243,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             m_ActiveGOs.Add(obj);
             m_ActiveCount++;
         }
-        m_PendingBullets.Clear();
+        m_PendingEnemy.Clear();
     }
 
     protected override void HandleCollisions()
@@ -273,25 +270,25 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     {
         m_VisualNameToID.Clear();
 
-        if (bulletConfigs != null)
+        if (enemyConfigs != null)
         {
-            m_VisualPools = new Queue<GameObject>[bulletConfigs.Count];
-            m_VisualRoots = new Transform[bulletConfigs.Count];
+            m_VisualPools = new Queue<GameObject>[enemyConfigs.Count];
+            m_VisualRoots = new Transform[enemyConfigs.Count];
 
-            for (int i = 0; i < bulletConfigs.Count; i++)
+            for (int i = 0; i < enemyConfigs.Count; i++)
             {
-                if (bulletConfigs[i] != null)
+                if (enemyConfigs[i] != null)
                 {
-                    if (!m_VisualNameToID.ContainsKey(bulletConfigs[i].bulletName))
+                    if (!m_VisualNameToID.ContainsKey(enemyConfigs[i].enemyName))
                     {
-                        m_VisualNameToID.Add(bulletConfigs[i].bulletName, i);
+                        m_VisualNameToID.Add(enemyConfigs[i].enemyName, i);
                     }
                 }
             }
         }
         else
         {
-            Debug.Log("在BulletManager中未配置子弹类型列表!");
+            Debug.Log("在EnemyManager中未配置子弹类型列表!");
         }
     }
 
@@ -343,7 +340,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         if (pool.Count > 0) return pool.Dequeue();
         else
         {
-            BulletBasicConfigSO cfg = bulletConfigs[visualID];
+            EnemyBasicConfigSO cfg = enemyConfigs[visualID];
             Transform parent = GetOrCreateVisualRoot(visualID);
             return Instantiate(cfg.prefab, parent);
         }
@@ -372,7 +369,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     {
         if (m_VisualRoots[visualID] == null)
         {
-            string bulletTypeName = bulletConfigs[visualID].bulletName;
+            string bulletTypeName = enemyConfigs[visualID].enemyName;
             GameObject subRootObj = new GameObject($"Pool_{bulletTypeName}");
             subRootObj.transform.SetParent(poolRoot);
             subRootObj.transform.localPosition = Vector3.zero;
@@ -422,14 +419,6 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
                     UnityEditor.Handles.DrawWireCube(Vector3.zero, new Vector3(size.x, size.y, 0));
                 }
             }
-        }
-
-        if (BattleManager.Instance != null)
-        {
-            Vector3 pPos = BattleManager.Instance.GetPlayerPos();
-            pPos.z = 0;
-            UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.DrawWireDisc(pPos, Vector3.forward, playerHitboxRadius * playerHitboxRate);
         }
 #endif
     }
