@@ -350,6 +350,7 @@ public struct EnemyCullJob : IJobParallelFor
     [ReadOnly] public NativeArray<float> lifetimes;
     [ReadOnly] public NativeArray<float> maxLifetimes; // 修改：使用NativeArray存储最大生命周期
     public NativeArray<bool> isDeadResults;
+    [ReadOnly] public NativeArray<float> hp;
 
     public void Execute(int index)
     {
@@ -358,8 +359,9 @@ public struct EnemyCullJob : IJobParallelFor
         if (isDeadResults[index]) return;
 
         // 修改：使用每个子弹的最大生命周期进行判断
-        bool dead = lifetimes[index] > maxLifetimes[index];
-        isDeadResults[index] = dead;
+        bool lifeDead = lifetimes[index] > maxLifetimes[index];
+        bool hpDead = hp[index] <= 0;
+        isDeadResults[index] = lifeDead || hpDead;
     }
 
     [BurstDiscard]
@@ -368,3 +370,4 @@ public struct EnemyCullJob : IJobParallelFor
         Debug.LogWarning($"[性能警告] EnemyCullJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
     }
 }
+

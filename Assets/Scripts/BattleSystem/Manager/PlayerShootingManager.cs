@@ -11,14 +11,14 @@ using UnityEditor;
 
 public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 {
-    // --- ÅäÖÃ ---
+    // --- ï¿½ï¿½ï¿½ï¿½ ---
     [Header("Bullet Configs (Gameplay)")]
     public List<BulletBasicConfigSO> bulletConfigs;
 
-    // --- ×Óµ¯ÑùÊ½ ID ²éÕÒ±í ---
+    // --- ï¿½Óµï¿½ï¿½ï¿½Ê½ ID ï¿½ï¿½ï¿½Ò±ï¿½ ---
     private Dictionary<string, int> m_VisualNameToID = new Dictionary<string, int>();
 
-    // µ±Ç°Ö¡Òª¼ÓÈë³Ø×ÓµÄ×Óµ¯ÁĞ±í
+    // ï¿½ï¿½Ç°Ö¡Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Óµï¿½ï¿½Ğ±ï¿½
     private struct PendingBullet
     {
         public int visualID;
@@ -31,13 +31,13 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
 
     /// <summary>
-    /// Ìí¼Ó×Óµ¯¡£
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½
     /// </summary>
-    /// <param name="visualID">Íâ¹ÛID</param>
-    /// <param name="behaviorID">ĞĞÎªID</param>
-    /// <param name="startPos">³õÊ¼Î»ÖÃ</param>
-    /// <param name="info">ÔËĞĞ²ÎÊı</param>
-    /// <param name="emitter">·¢ÉäÕßTransform£¨Èç¹ûÊÇÏà¶ÔÒÆ¶¯×Óµ¯£¬´Ë²ÎÊı±ØĞë²»Îª¿Õ£©</param>
+    /// <param name="visualID">ï¿½ï¿½ï¿½ID</param>
+    /// <param name="behaviorID">ï¿½ï¿½ÎªID</param>
+    /// <param name="startPos">ï¿½ï¿½Ê¼Î»ï¿½ï¿½</param>
+    /// <param name="info">ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½</param>
+    /// <param name="emitter">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Transformï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë²»Îªï¿½Õ£ï¿½</param>
     public void AddBullet(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
         if (m_PendingBullets == null) m_PendingBullets = new List<PendingBullet>();
@@ -59,7 +59,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
     }
 
 
-    #region ÒªÅÉ·¢µÄJob
+    #region Òªï¿½É·ï¿½ï¿½ï¿½Job
     private void ScheduleEventJob()
     {
         ObjectEventJob eventJob = new ObjectEventJob
@@ -94,34 +94,19 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             accelAngles = m_AccelAngles,
             angularVelocities = m_AngularVelocities,
 
-            // Ïà¶ÔÒÆ¶¯²ÎÊı
+            // ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
             isRelative = m_IsRelative,
             emitterIDs = m_EmitterIDs,
             emitterDeltas = m_EmitterDeltas
         };
-        // ÕâÀïµÄÒÀÀµ¹ØÏµ£ºJob ÒÀÀµÓÚ m_JobHandle (EventJob)£¬²¢ÇÒ»á¶ÁÈ¡ m_EmitterDeltas
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½Job ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ m_JobHandle (EventJob)ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½È¡ m_EmitterDeltas
         m_JobHandle = moveJob.Schedule(m_Transforms, m_JobHandle);
     }
 
     private void ScheduleCollisionJob()
     {
-        var policy = new BulletCollisionPolicy
-        {
-            collisionEvents = m_CollisionQueue.AsParallelWriter(),
-        };
-        var collisionJob = new ObjectCollisionJob<BulletCollisionPolicy>
-        {
-            playerPos = playerPos,
-            playerRadius = playerHitboxRadius * playerHitboxRate,
-            positions = m_Positions,
-            angles = m_Angles,
-            collisionTypes = m_CollisionTypes,
-            bulletRadii = m_CircleRadii,
-            boxSizes = m_BoxSizes,
-            isDead = m_IsDead,
-            policyData = policy
-        };
-        m_JobHandle = collisionJob.Schedule(m_ActiveCount, 64, m_JobHandle);
+        // ç©å®¶å­å¼¹ä¸ä¸ç©å®¶å‘ç”Ÿç¢°æ’ï¼Œè¿™é‡Œä¸è°ƒåº¦ ObjectCollisionJob
+        // ä¸æ•Œäººçš„ç¢°æ’åœ¨ HandleCollisions ä¸­åœ¨ä¸»çº¿ç¨‹å®Œæˆ
     }
 
     private void ScheduleCullJob()
@@ -130,7 +115,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         {
             positions = m_Positions,
             lifetimes = m_Lifetimes,
-            maxLifetimes = m_MaxLifetimes, // ĞŞ¸Ä£º´«ÈëÃ¿¿Å×Óµ¯µÄ×î´óÊÙÃüÊı×é
+            maxLifetimes = m_MaxLifetimes, // ï¿½Ş¸Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             cullBoundsX = boundsX,
             cullBoundsY = boundsY,
             isDeadResults = m_IsDead
@@ -142,7 +127,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
 
 
-    #region ÊµÏÖ³éÏóÀà
+    #region Êµï¿½Ö³ï¿½ï¿½ï¿½ï¿½ï¿½
     protected override void FlushPending()
     {
         if (m_PendingBullets == null || m_PendingBullets.Count == 0) return;
@@ -180,7 +165,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             m_Speeds[index] = info.speed;
             m_Angles[index] = info.direction;
             m_Lifetimes[index] = 0f;
-            // ÉèÖÃ×î´ó´æ»îÊ±¼ä£¬Èç¹ûÎ´ÉèÖÃ(<=0)ÔòÄ¬ÈÏÎª15Ãë
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½(<=0)ï¿½ï¿½Ä¬ï¿½ï¿½Îª15ï¿½ï¿½
             m_MaxLifetimes[index] = info.totalLifetime > 0 ? info.totalLifetime : 15f;
             m_LastAngles[index] = info.direction;
             m_IsDead[index] = false;
@@ -192,7 +177,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             m_ActiveVisualIDs[index] = visualID;
             m_EntityBehaviorIDs[index] = behaviorID;
 
-            // --- Ïà¶ÔÒÆ¶¯Âß¼­ ---
+            // --- ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ß¼ï¿½ ---
             bool isRel = false;
             int eID = 0;
 
@@ -203,17 +188,17 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
                 m_CircleRadii[index] = cfg.circleRadius;
                 m_BoxSizes[index] = cfg.boxSize;
 
-                // ¼ì²éÅäÖÃÊÇ·ñ¿ªÆôÏà¶ÔÒÆ¶¯£¬ÇÒ·¢ÉäÕßÊÇ·ñ´æÔÚ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
                 if (pb.info.isRelative && emitter != null)
                 {
                     isRel = true;
                     eID = emitter.GetInstanceID();
 
-                    // ×¢²áµ½»îÔ¾·¢ÉäÕßÁĞ±í£¬ÒÔ±ã Update ¼ÆËãÎ»ÒÆ
+                    // ×¢ï¿½áµ½ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ Update ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
                     if (!m_ActiveEmitters.ContainsKey(eID))
                     {
                         m_ActiveEmitters.Add(eID, emitter);
-                        // ³õÊ¼»¯ÉÏÒ»Ö¡Î»ÖÃÎªµ±Ç°Î»ÖÃ£¨·ÀÖ¹µÚÒ»Ö¡Ìø±ä£©
+                        // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ò»Ö¡Î»ï¿½ï¿½Îªï¿½ï¿½Ç°Î»ï¿½Ã£ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½ä£©
                         if (!m_LastEmitterPos.ContainsKey(eID))
                         {
                             m_LastEmitterPos.Add(eID, emitter.position);
@@ -250,16 +235,80 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
     protected override void HandleCollisions()
     {
-        //Èç¹û±¾Ö¡ÓĞ×Óµ¯ÃüÖĞÍæ¼Ò£¬Ôò´¥·¢OnPlayerHit
-        bool hasHit = false;
-        while (m_CollisionQueue.TryDequeue(out int bulletIndex))
-        {
-            hasHit = true;
-        }
+        // ç©å®¶å­å¼¹ä¸ä¸ç©å®¶å‘ç”Ÿç¢°æ’ï¼Œå› æ­¤è¿™é‡Œä¸å¤„ç† m_CollisionQueueï¼ˆè¯¥é˜Ÿåˆ—åªç”¨äºç©å®¶åœ†å½¢ç¢°æ’ï¼‰
+        while (m_CollisionQueue.TryDequeue(out _)) { }
 
-        if (hasHit)
+        // ä¸æ•Œäººè¿›è¡Œé€å¸§ç¢°æ’æ£€æµ‹ï¼ˆç©å®¶å­å¼¹ VS æ•Œäººï¼‰
+        EnemyDOTSManager enemyMgr = EnemyDOTSManager.Instance;
+        if (enemyMgr == null) return;
+
+        int bulletCount = m_ActiveCount;
+        int enemyCount = enemyMgr.ActiveCount;
+        if (bulletCount == 0 || enemyCount == 0) return;
+
+        var bulletPositions = m_Positions;
+        var bulletAngles = m_Angles;
+        var bulletTypes = m_CollisionTypes;
+        var bulletRadii = m_CircleRadii;
+        var bulletBoxes = m_BoxSizes;
+        var bulletIsDead = m_IsDead;
+
+        var enemyPositions = enemyMgr.m_Positions;
+        var enemyAngles = enemyMgr.m_Angles;
+        var enemyTypes = enemyMgr.m_CollisionTypes;
+        var enemyRadii = enemyMgr.m_CircleRadii;
+        var enemyBoxes = enemyMgr.m_BoxSizes;
+        var enemyHP = enemyMgr.m_HP;
+
+        const float damagePerHit = 5f;
+
+        for (int i = 0; i < bulletCount; i++)
         {
-            OnPlayerHit();
+            if (bulletIsDead[i]) continue;
+
+            float3 bPos = bulletPositions[i];
+            int bType = bulletTypes[i];
+            float bRadius = bulletRadii[i];
+            float2 bSize = bulletBoxes[i];
+            float bAngle = bulletAngles[i];
+
+            bool bulletHit = false;
+
+            for (int j = 0; j < enemyCount; j++)
+            {
+                // å·²æ­»äº¡æˆ– HP å·²ç©ºçš„æ•Œäººæ— éœ€å†å‚ä¸ç¢°æ’
+                if (enemyHP[j] <= 0f) continue;
+
+                float3 ePos = enemyPositions[j];
+                int eType = enemyTypes[j];
+                float eRadius = enemyRadii[j];
+                float2 eSize = enemyBoxes[j];
+                float eAngle = enemyAngles[j];
+
+                bool hit = CheckBulletEnemyCollision(
+                    bPos.xy, bType, bRadius, bSize, bAngle,
+                    ePos.xy, eType, eRadius, eSize, eAngle
+                );
+
+                if (!hit) continue;
+
+                // å‘½ä¸­ï¼šæ‰£é™¤æ•Œäºº HPï¼Œå¹¶æ ‡è®°å­å¼¹ä¸ºæ­»äº¡ï¼ˆCullï¼‰
+                float newHp = enemyHP[j] - damagePerHit;
+                enemyHP[j] = newHp;
+
+                if (newHp <= 0f)
+                {
+                    // HP <= 0 æ—¶ï¼Œæ•Œäººä¼šåœ¨ EnemyCullJob ä¸­è¢«æ ‡è®° isDead å¹¶åœ¨ LateUpdate ä¸­ç§»é™¤
+                    enemyHP[j] = 0f;
+                }
+
+                bulletIsDead[i] = true;
+                bulletHit = true;
+                break; // ä¸€ä¸ªå­å¼¹å‘½ä¸­ä¸€ä¸ªæ•Œäººåå³è¢«ç§»é™¤
+            }
+
+            // å­å¼¹å·²ç»è¢«æ ‡è®°æ­»äº¡ï¼Œä¸å†å‚ä¸åç»­æ•Œäººçš„æ£€æµ‹
+            if (bulletHit) continue;
         }
     }
 
@@ -290,7 +339,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         }
         else
         {
-            Debug.Log("ÔÚBulletManagerÖĞÎ´ÅäÖÃ×Óµ¯ÀàĞÍÁĞ±í!");
+            Debug.Log("ï¿½ï¿½BulletManagerï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½!");
         }
     }
 
@@ -304,31 +353,139 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
     protected override void OnSwapData(int index, int lastIndex)
     {
-        // Ö»ĞèÒª´¦Àí×ÓÀàÌØÓĞµÄÊı×é½»»»
+        // Ö»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½ï¿½é½»ï¿½ï¿½
     }
 
     #endregion
 
-    #region Íæ¼Ò±»ÃüÖĞµÄÂß¼­
+    #region ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ß¼ï¿½
     private void OnPlayerHit()
     {
-        Debug.Log("<color=red>Íæ¼ÒÖĞµ¯£¡</color>");
-        if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
+
+    }
+    #endregion
+
+    #region Collision Helpers
+    /// <summary>
+    /// å­å¼¹ä¸æ•Œäººçš„é€šç”¨ç¢°æ’å…¥å£ï¼ˆåœ†å½¢ / æ–¹å½¢ï¼‰
+    /// </summary>
+    private static bool CheckBulletEnemyCollision(
+        float2 bulletPos, int bulletType, float bulletRadius, float2 bulletSize, float bulletAngle,
+        float2 enemyPos, int enemyType, float enemyRadius, float2 enemySize, float enemyAngle)
+    {
+        // 0: åœ†å½¢, 1: æ–¹å½¢ï¼ˆä¸é…ç½® ScriptableObject ä¿æŒä¸€è‡´ï¼‰
+        if (bulletType == 0)
         {
-            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
+            if (enemyType == 0)
+            {
+                return CircleVsCircle(bulletPos, bulletRadius, enemyPos, enemyRadius);
+            }
+            else
+            {
+                return CircleVsBox(bulletPos, bulletRadius, enemyPos, enemySize, enemyAngle);
+            }
         }
-        if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);
-        hitEffectCoroutine = StartCoroutine(HitFlashRoutine());
+        else
+        {
+            if (enemyType == 0)
+            {
+                // æ–¹å½¢å­å¼¹ VS åœ†å½¢æ•Œäºº
+                return CircleVsBox(enemyPos, enemyRadius, bulletPos, bulletSize, bulletAngle);
+            }
+            else
+            {
+                return BoxVsBox(bulletPos, bulletSize, bulletAngle, enemyPos, enemySize, enemyAngle);
+            }
+        }
     }
 
-    private IEnumerator HitFlashRoutine()
+    private static bool CircleVsCircle(float2 c1, float r1, float2 c2, float r2)
     {
-        if (playerSpriteRenderer != null)
+        float2 diff = c1 - c2;
+        float distSq = math.lengthsq(diff);
+        float r = r1 + r2;
+        return distSq < r * r;
+    }
+
+    private static bool CircleVsBox(float2 circleCenter, float radius, float2 boxCenter, float2 boxSize, float boxAngleDeg)
+    {
+        // ä¸ ObjectCollisionJob ä¸­ã€Œç©å®¶åœ†å½¢ VS å­å¼¹æ–¹å½¢ã€ä¸€è‡´çš„åšæ³•
+        float2 diff = circleCenter - boxCenter;
+        float angRad = math.radians(boxAngleDeg);
+        float s, c;
+        math.sincos(angRad, out s, out c);
+
+        float2 localCirclePos = new float2(
+            diff.x * c - diff.y * s,
+            diff.x * s + diff.y * c
+        );
+
+        float2 halfExtents = boxSize / 2f;
+        float2 closestPoint = math.clamp(localCirclePos, -halfExtents, halfExtents);
+        float distSq = math.distancesq(localCirclePos, closestPoint);
+
+        return distSq < radius * radius;
+    }
+
+    private static bool BoxVsBox(float2 centerA, float2 sizeA, float angleADeg,
+                                 float2 centerB, float2 sizeB, float angleBDeg)
+    {
+        float2 halfA = sizeA / 2f;
+        float2 halfB = sizeB / 2f;
+
+        float angARad = math.radians(angleADeg);
+        float sA, cA;
+        math.sincos(angARad, out sA, out cA);
+
+        float angBRad = math.radians(angleBDeg);
+        float sB, cB;
+        math.sincos(angBRad, out sB, out cB);
+
+        float2[] axes = new float2[4];
+        axes[0] = new float2(cA, sA);
+        axes[1] = new float2(-sA, cA);
+        axes[2] = new float2(cB, sB);
+        axes[3] = new float2(-sB, cB);
+
+        float2[] cornersA = new float2[4];
+        cornersA[0] = centerA + new float2(halfA.x * cA - halfA.y * sA, halfA.x * sA + halfA.y * cA);
+        cornersA[1] = centerA + new float2(-halfA.x * cA - halfA.y * sA, -halfA.x * sA + halfA.y * cA);
+        cornersA[2] = centerA + new float2(halfA.x * cA + halfA.y * sA, halfA.x * sA - halfA.y * cA);
+        cornersA[3] = centerA + new float2(-halfA.x * cA + halfA.y * sA, -halfA.x * sA - halfA.y * cA);
+
+        float2[] cornersB = new float2[4];
+        cornersB[0] = centerB + new float2(halfB.x * cB - halfB.y * sB, halfB.x * sB + halfB.y * cB);
+        cornersB[1] = centerB + new float2(-halfB.x * cB - halfB.y * sB, -halfB.x * sB + halfB.y * cB);
+        cornersB[2] = centerB + new float2(halfB.x * cB + halfB.y * sB, halfB.x * sB - halfB.y * cB);
+        cornersB[3] = centerB + new float2(-halfB.x * cB + halfB.y * sB, -halfB.x * sB - halfB.y * cB);
+
+        for (int k = 0; k < 4; k++)
         {
-            playerSpriteRenderer.color = Color.red;
-            yield return new WaitForSeconds(0.1f);
-            playerSpriteRenderer.color = Color.white;
+            float2 axis = axes[k];
+            float minA = float.MaxValue;
+            float maxA = float.MinValue;
+            float minB = float.MaxValue;
+            float maxB = float.MinValue;
+
+            for (int i = 0; i < 4; i++)
+            {
+                float projA = math.dot(cornersA[i], axis);
+                minA = math.min(minA, projA);
+                maxA = math.max(maxA, projA);
+
+                float projB = math.dot(cornersB[i], axis);
+                minB = math.min(minB, projB);
+                maxB = math.max(maxB, projB);
+            }
+
+            if (maxA < minB || maxB < minA)
+            {
+                // åœ¨è¯¥åˆ†ç¦»è½´ä¸Šæ— é‡å ï¼Œä¸¤ä¸ªç›’å­ä¸ç›¸äº¤
+                return false;
+            }
         }
+
+        return true;
     }
     #endregion
 
@@ -367,7 +524,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         }
         else
         {
-            Debug.Log($"PlayerShootingManagerÔ¤Ìî³ä{name}Ê§°Ü£¡Çë¼ì²éÅäÖÃÊÇ·ñÕıÈ·");
+            Debug.Log($"PlayerShootingManagerÔ¤ï¿½ï¿½ï¿½{name}Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½È·");
         }
     }
 
@@ -426,16 +583,10 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
                 }
             }
         }
-
-        if (BattleManager.Instance != null)
-        {
-            Vector3 pPos = BattleManager.Instance.GetPlayerPos();
-            pPos.z = 0;
-            UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.DrawWireDisc(pPos, Vector3.forward, playerHitboxRadius * playerHitboxRate);
-        }
 #endif
     }
 
     #endregion
 }
+
+/*è¿™æ˜¯ä¸€ä¸ªä½¿ç”¨Unityå¼€å‘çš„STGæ¸¸æˆã€‚PlayerShootingManager.cs ç®¡ç†ç©å®¶å‘å°„çš„å­å¼¹ã€‚è¯·å®ç°ç©å®¶å‘å°„çš„å­å¼¹çš„é€»è¾‘ï¼Œæ»¡è¶³ä»¥ä¸‹åŠŸèƒ½ï¼šä¸æ£€æŸ¥ç©å®¶å­å¼¹å’Œç©å®¶çš„ç¢°æ’ï¼›æ¯å¸§æ£€æŸ¥ç©å®¶å­å¼¹å’Œæ‰€æœ‰æ•Œäººçš„ç¢°æ’ï¼Œæ•Œäººç”±EnemyDOTSManager.cs ç®¡ç†ï¼›ç¢°æ’åˆ†åœ†å½¢å’Œæ–¹å½¢ä¸¤ç§ï¼›å¦‚æœç©å®¶å­å¼¹ä¸æ•Œäººæœ‰ç¢°æ’ï¼Œæ•Œäººhpå‡å°‘5ï¼Œç©å®¶å­å¼¹ç§»é™¤ï¼ˆCullï¼‰ï¼›æ•Œäººhpä¸º0æ—¶ï¼Œæ•Œäººç§»é™¤ã€‚*/

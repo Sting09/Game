@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
-  m_Name: Needle
+  m_Script: {fileID: 11500000, guid: 9b85c030d331c054b9d9dafec999d560, type: 3}
+  m_Name: Needle-Bullet
   m_EditorClassIdentifier: 
-  duration: -1
-  emitterList:
-  - {fileID: 11400000, guid: 65838d51896d1a44282d98bec67be064, type: 2}
-  emitterParameterList: []
-  requiredEntities:
-  - entityName: Needle
-    num: 30
-    type: 2
+  bulletName: Needle
+  prefab: {fileID: 6173098254462471731, guid: b5f36c32ca22a0149ad876fe571452fa, type: 3}
+  zPriority: 2
+  collisionType: 1
+  circleRadius: 0.5
+  boxSize: {x: 1.75, y: 0.25}

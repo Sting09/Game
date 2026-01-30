@@ -32,6 +32,8 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
 
     // 敌人独有的属性
+    // 记得修改：FlushPending()、OnSwapData()、OnDispose()、OnInitialize()
+    public NativeArray<float> m_HP;
 
 
     /// <summary>
@@ -134,7 +136,8 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         {
             lifetimes = m_Lifetimes,
             maxLifetimes = m_MaxLifetimes, // 修改：传入每颗子弹的最大寿命数组
-            isDeadResults = m_IsDead
+            isDeadResults = m_IsDead,
+            hp = m_HP
         };
         m_JobHandle = cullJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
@@ -192,6 +195,8 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
             m_ActiveVisualIDs[index] = visualID;
             m_EntityBehaviorIDs[index] = behaviorID;
+
+            m_HP[index] = 30f;
 
             // --- 相对移动逻辑 ---
             bool isRel = false;
@@ -266,7 +271,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     protected override void OnDispose()
     {
-        return;
+        if (m_HP.IsCreated) m_HP.Dispose();
     }
 
     protected override void OnInitialize()
@@ -293,6 +298,10 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         {
             Debug.Log("在EnemyManager中未配置子弹类型列表!");
         }
+
+
+        //初始化新属性
+        m_HP = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
     }
 
     protected override void ScheduleSpecificJobs()
@@ -306,6 +315,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     protected override void OnSwapData(int index, int lastIndex)
     {
         // 只需要处理子类特有的数组交换
+        m_HP[index] = m_HP[lastIndex];
     }
 
     #endregion

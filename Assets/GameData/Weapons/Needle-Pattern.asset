@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
   m_Name: Needle-Pattern
   m_EditorClassIdentifier: 
-  bulletName: RedBullet
+  bulletName: Needle
   bulletDuration: 10
   isRelative: 0
   objType: 2
@@ -43,10 +43,10 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   startBulletSpeed:
-    baseValue: 3
+    baseValue: 12
     offsetValue: 0
     randomRange: 0
   endBulletSpeed:
-    baseValue: 5
+    baseValue: 12
     offsetValue: 0
     randomRange: 0

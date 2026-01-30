@@ -11,58 +11,58 @@ using UnityEditor;
 
 public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjManager<T>
 {
-    // --- Íæ¼ÒÅö×² ---
+    // --- ?????? ---
     [Header("Player Settings")]
-    [Tooltip("Íæ¼ÒÅÐ¶¨°ë¾¶")]
+    [Tooltip("????????")]
     public float playerHitboxRadius;
     public float playerHitboxRate = 1f;
     protected SpriteRenderer playerSpriteRenderer;
     protected Coroutine hitEffectCoroutine;
 
-    // --- µ÷ÊÔÉèÖÃ ---
+    // --- ???????? ---
     [Header("Debug Settings")]
-    [Tooltip("ÊÇ·ñÔÚScene´°¿ÚÏÔÊ¾×Óµ¯ÅÐ¶¨·¶Î§")]
+    [Tooltip("?????Scene????????????????")]
     public bool showDebugGizmos = true;
-    [Tooltip("×Óµ¯ÅÐ¶¨Ô²µÄÑÕÉ«")]
+    [Tooltip("????????????")]
     public Color debugGizmoColor = Color.green;
 
-    // --- ÅäÖÃ ---
+    // --- ???? ---
     [Header("Behavior Configs (Logic)")]
     public List<EntityEventGroup> behaviorProfiles;
 
-    // --- ID ²éÕÒ±í ---
+    // --- ID ????? ---
     protected Dictionary<string, int> m_BehaviorNameToID = new Dictionary<string, int>();
 
-    // --- ¶ÔÏó³Ø ---
+    // --- ????? ---
     public Queue<GameObject>[] m_VisualPools;
     public Transform[] m_VisualRoots;
     public Transform poolRoot;
     public int maxEntityCapacity = 10000;
     [SerializeField] protected int m_ActiveCount = 0;
 
-    // --- ÕÚµ²¹ØÏµ¿ØÖÆ ---
+    // --- ?????????? ---
     public float deltaZ = -1e-05f;
     [SerializeField] protected float currentZ = 0;
 
-    // --- ÆÁÄ»±ß½ç ---
+    // --- ?????? ---
     protected float boundsX;
     protected float boundsY;
 
-    // --- Ã¿Ö¡µÄÊý¾Ý»º´æ ---
+    // --- ??????????? ---
     protected float dt;
     protected float3 playerPos;
 
-    #region JobÏµÍ³µÄÄÚ²¿ÊôÐÔ
-    // --- Native Êý¾Ý ---
+    #region Job???????????
+    // --- Native ???? ---
 
     //====================================================================================================
-    // Ìí¼ÓÊý×éÊ±£¬Îñ±ØÔÚ BaseRemoveObjectAt¡¢ ×ÓÀàOnSwapData ºÍ DisposeMemory ÖÐÖðÒ»ºË¶Ô£¬È·±£²»ÖØ²»Â©¡£
+    // ???????????????? BaseRemoveObjectAt?? ????OnSwapData ?? DisposeMemory ????????????????????
     //====================================================================================================
 
 
-    protected NativeArray<float3> m_Positions;
+    public NativeArray<float3> m_Positions;
     protected NativeArray<float> m_Speeds;
-    protected NativeArray<float> m_Angles;
+    public NativeArray<float> m_Angles;
     protected NativeArray<float> m_LastAngles;
 
     protected NativeArray<float> m_Lifetimes;
@@ -81,24 +81,26 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     protected NativeArray<NativeEntityEvent> m_GlobalEventArray;
     protected NativeArray<int2> m_BehaviorRanges;
 
-    // --- Åö×²Ïà¹Ø Native Êý¾Ý ---
-    protected NativeArray<int> m_CollisionTypes;
-    protected NativeArray<float> m_CircleRadii;
-    protected NativeArray<float2> m_BoxSizes;
+    // --- ?????? Native ???? ---
+    public NativeArray<int> m_CollisionTypes;
+    public NativeArray<float> m_CircleRadii;
+    public NativeArray<float2> m_BoxSizes;
 
     protected NativeQueue<int> m_CollisionQueue;
 
-    // --- Ïà¶ÔÒÆ¶¯Ïà¹Ø Native Êý¾Ý (ÐÂÔö) ---
-    protected NativeArray<bool> m_IsRelative; // ÊÇ·ñ¸úËæ·¢ÉäÕß
-    protected NativeArray<int> m_EmitterIDs;  // ·¢ÉäÕßµÄ InstanceID
+    // --- ????????? Native ???? (????) ---
+    protected NativeArray<bool> m_IsRelative; // ??????????
+    protected NativeArray<int> m_EmitterIDs;  // ??????? InstanceID
 
-    // --- Ïà¶ÔÒÆ¶¯Ö÷Ïß³Ì¸¨ÖúÊý¾Ý (ÐÂÔö) ---
-    // ¼ÇÂ¼ËùÓÐÐèÒª×·×ÙµÄ·¢ÉäÕß Transform (Key: InstanceID)
+    // --- ?????????????????? (????) ---
+    // ??????????????????? Transform (Key: InstanceID)
     protected Dictionary<int, Transform> m_ActiveEmitters = new Dictionary<int, Transform>();
-    // ¼ÇÂ¼ÉÏÒ»Ö¡·¢ÉäÕßµÄÎ»ÖÃ£¬ÓÃÓÚ¼ÆËã²îÖµ (Key: InstanceID)
+    // ??????????????????????????? (Key: InstanceID)
     protected Dictionary<int, float3> m_LastEmitterPos = new Dictionary<int, float3>();
-    protected List<int> m_EmittersToRemoveCache = new List<int>(128); // Ô¤ÉèÈÝÁ¿£¬¼õÉÙÀ©ÈÝ
-    // ´«¸ø Job µÄÃ¿Ö¡Î»ÒÆÊý¾Ý
+    protected List<int> m_EmittersToRemoveCache = new List<int>(128); // ?????????????????
+    // ?????????????/????????? ID ?????????????????????????
+    protected List<int> m_DeadEmittersThisFrame = new List<int>(128);
+    // ???? Job ???????????
     protected NativeHashMap<int, float3> m_EmitterDeltas;
 
     protected TransformAccessArray m_Transforms;
@@ -111,19 +113,19 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     #region Awake / Start / Destroy
     protected override void Awake()
     {
-        // 1. ±ØÐëÏÈµ÷ÓÃ¸¸Àà Awake£¬Ö´ÐÐµ¥Àý¸³ÖµºÍÈ¥ÖØÂß¼­
+        // 1. ???????????? Awake???????????????????
         base.Awake();
 
-        // ¡¾¹Ø¼ü²½Öè¡¿¼ì²éµ¥Àý×´Ì¬
+        // ????????????????
         if (Instance != this)
         {
             return;
         }
 
-        // 3. Ö»ÓÐÈ·ÈÏ×Ô¼ºÊÇÕæÕýµÄµ¥Àýºó£¬²Å³õÊ¼»¯ÄÚ´æ
+        // 3. ???????????????????????????????
         InitializeBaseConfig();
         InitializeBaseMemory();
-        //×ÓÀà×Ô¼ºµÄ³õÊ¼»¯·½·¨
+        //?????????????????
         OnInitialize();
 
         if (GlobalSetting.Instance != null && GlobalSetting.Instance.globalVariable != null)
@@ -157,7 +159,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     }
     #endregion
 
-    #region ³õÊ¼»¯ÓëÄÚ´æ¹ÜÀí
+    #region ?????????????
     private void InitializeBaseConfig()
     {
         m_BehaviorNameToID.Clear();
@@ -213,7 +215,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         m_Speeds = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
         m_Angles = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
         m_Lifetimes = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
-        m_MaxLifetimes = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent); // ÐÂÔö³õÊ¼»¯
+        m_MaxLifetimes = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent); // ?????????
         m_LastAngles = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
         m_IsDead = new NativeArray<bool>(maxEntityCapacity, Allocator.Persistent);
 
@@ -230,11 +232,11 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         m_BoxSizes = new NativeArray<float2>(maxEntityCapacity, Allocator.Persistent);
         m_CollisionQueue = new NativeQueue<int>(Allocator.Persistent);
 
-        // --- ³õÊ¼»¯Ïà¶ÔÒÆ¶¯Êý×é ---
+        // --- ??????????????? ---
         m_IsRelative = new NativeArray<bool>(maxEntityCapacity, Allocator.Persistent);
         m_EmitterIDs = new NativeArray<int>(maxEntityCapacity, Allocator.Persistent);
         m_EmitterDeltas = new NativeHashMap<int, float3>(128, Allocator.Persistent);
-        // m_EmitterDeltas ÔÚ Update ÖÐÃ¿Ö¡´´½¨/ÊÍ·Å (Allocator.TempJob)
+        // m_EmitterDeltas ?? Update ????????/??? (Allocator.TempJob)
 
         m_Randoms = new NativeArray<Unity.Mathematics.Random>(maxEntityCapacity, Allocator.Persistent);
         var seedGen = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks);
@@ -257,7 +259,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         if (m_Speeds.IsCreated) m_Speeds.Dispose();
         if (m_Angles.IsCreated) m_Angles.Dispose();
         if (m_Lifetimes.IsCreated) m_Lifetimes.Dispose();
-        if (m_MaxLifetimes.IsCreated) m_MaxLifetimes.Dispose(); // ÐÂÔö»ØÊÕ
+        if (m_MaxLifetimes.IsCreated) m_MaxLifetimes.Dispose(); // ????????
         if (m_LastAngles.IsCreated) m_LastAngles.Dispose();
         if (m_IsDead.IsCreated) m_IsDead.Dispose();
         if (m_Accelerations.IsCreated) m_Accelerations.Dispose();
@@ -275,45 +277,48 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         if (m_BoxSizes.IsCreated) m_BoxSizes.Dispose();
         if (m_CollisionQueue.IsCreated) m_CollisionQueue.Dispose();
 
-        // --- ÊÍ·ÅÏà¶ÔÒÆ¶¯Êý×é ---
+        // --- ????????????? ---
         if (m_IsRelative.IsCreated) m_IsRelative.Dispose();
         if (m_EmitterIDs.IsCreated) m_EmitterIDs.Dispose();
-        // m_EmitterDeltas ÓÉ JobHandle ¹ÜÀí»òÊÖ¶¯ÊÍ·Å£¬È·±£ Destroy Ê±ËüÊÇ Clean µÄ
+        // m_EmitterDeltas ?? JobHandle ???????????????? Destroy ????? Clean ??
         if (m_EmitterDeltas.IsCreated) m_EmitterDeltas.Dispose();
 
         if (m_Transforms.isCreated) m_Transforms.Dispose();
     }
 
 
-    // --- ³éÏó½Ó¿Ú£ºÇ¿ÖÆ×ÓÀàÊµÏÖ ---
+    // --- ????????????????? ---
     /// <summary>
-    /// ×ÓÀà³õÊ¼»¯×¨ÓÃ½Ó¿Ú£¨Ìæ´ú Awake£©¡£
-    /// ÔÚÕâÀïÉêÇë×ÓÀàÌØÓÐµÄ NativeArray¡£
+    /// ????????????????? Awake????
+    /// ??????????????????? NativeArray??
     /// </summary>
     protected abstract void OnInitialize();
 
     /// <summary>
-    /// ×ÓÀàÏú»Ù×¨ÓÃ½Ó¿Ú£¨Ìæ´ú OnDestroy£©¡£
-    /// ÔÚÕâÀï Dispose ×ÓÀàÌØÓÐµÄ NativeArray¡£
+    /// ????????????????? OnDestroy????
+    /// ?????? Dispose ????????? NativeArray??
     /// </summary>
     protected abstract void OnDispose();
     #endregion
 
-    #region Update Ñ­»·
+    #region Update ???
     protected virtual void Update()
     {
-        // È·±£ÉÏÒ»Ö¡ Job Íê³É
+        // 1. ??????? Job ????
         m_JobHandle.Complete();
 
-        // Çå¿ÕÉÏÒ»Ö¡µÄ HashMap
+        // 2. ??????????? HashMap
         m_EmitterDeltas.Clear();
 
+        // 3. ???????????????????
         HandleCollisions();
 
+        // 4. ??????????????
         FlushPending();
 
         if (m_ActiveCount == 0) return;
 
+        // 5. ?? dt ?????
         dt = Time.deltaTime;
         playerPos = float3.zero;
         if (BattleManager.Instance != null)
@@ -321,25 +326,27 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
             playerPos = BattleManager.Instance.GetPlayerPos();
         }
 
-        // --- ¼ÆËãËùÓÐ»îÔ¾·¢ÉäÕßµÄÎ»ÒÆ (Delta) ---
+        // --- 6. ???????????????????? (Delta) ---
         m_EmittersToRemoveCache.Clear();
+        m_DeadEmittersThisFrame.Clear();
 
         foreach (var kvp in m_ActiveEmitters)
         {
             int id = kvp.Key;
             Transform t = kvp.Value;
 
-            // Èç¹ûµÐÈËËÀÁË/Ïú»ÙÁË
-            if (t == null)
+            // ????????????? SetActive(false)???????????
+            if (t == null || !t.gameObject.activeInHierarchy)
             {
                 m_EmittersToRemoveCache.Add(id);
+                m_DeadEmittersThisFrame.Add(id);
                 continue;
             }
 
             float3 currentPos = t.position;
             float3 lastPos = currentPos;
 
-            // »ñÈ¡ÉÏÒ»Ö¡Î»ÖÃ£¬¼ÆËã²îÖµ
+            // ?????????? delta
             if (m_LastEmitterPos.TryGetValue(id, out float3 prev))
             {
                 lastPos = prev;
@@ -347,20 +354,27 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
 
             float3 delta = currentPos - lastPos;
 
-            // ´æÈë HashMap ¹© Job Ê¹ÓÃ
+            // ?? HashMap?? ObjectMoveJob ??
             m_EmitterDeltas.TryAdd(id, delta);
 
-            // ¸üÐÂ¼ÇÂ¼
+            // ???????
             m_LastEmitterPos[id] = currentPos;
         }
 
-        // ÇåÀíÒÑÏú»ÙµÄ·¢ÉäÕß
+        // 7. ????????????
         foreach (var id in m_EmittersToRemoveCache)
         {
             m_ActiveEmitters.Remove(id);
             m_LastEmitterPos.Remove(id);
         }
 
+        // 8. ????????????????????????????????????????
+        if (m_DeadEmittersThisFrame.Count > 0)
+        {
+            OnEmittersDeadThisFrame(m_DeadEmittersThisFrame);
+        }
+
+        // 9. ??????? / ?? / ?? / Cull ? Job
         ScheduleSpecificJobs();
     }
 
@@ -373,7 +387,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     }
 
 
-    protected abstract void ScheduleSpecificJobs(); // µ÷¶ÈÅö×²µÈ Job
+    protected abstract void ScheduleSpecificJobs(); // ????????? Job
 
     protected abstract void FlushPending();
 
@@ -401,21 +415,21 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         if (visualID >= 0 && visualID < m_VisualPools.Length) m_VisualPools[visualID].Enqueue(objToRemove);
         else Destroy(objToRemove);
 
-        // Èç¹û²»ÊÇÒÆ³ý×îºóÒ»¸ö£¬ÐèÒª½»»»Êý¾Ý
+        // ?????????????????????????????
         if (index != lastIndex)
         {
-            // ¡¾¹Ø¼üÐÞ¸Ä¡¿ÔÚ¸¸Àà½»»»Êý¾ÝÇ°£¬ÏÈÈÃ×ÓÀà½»»»ËüµÄË½ÓÐÊý¾Ý
-            // ´ËÊ± lastIndex »¹ÊÇ×¼È·µÄ
+            // ????????????????????????????????????????????
+            // ??? lastIndex ????????
             OnSwapData(index, lastIndex);
 
-            // --- ¸¸Àà½»»»Í¨ÓÃÊý¾Ý ---
+            // --- ????????????? ---
             m_Positions[index] = m_Positions[lastIndex];
             m_Speeds[index] = m_Speeds[lastIndex];
             m_Angles[index] = m_Angles[lastIndex];
             m_Lifetimes[index] = m_Lifetimes[lastIndex];
             m_MaxLifetimes[index] = m_MaxLifetimes[lastIndex];
             m_LastAngles[index] = m_LastAngles[lastIndex];
-            m_IsDead[index] = m_IsDead[lastIndex]; // ×¢ÒâÕâÀï
+            m_IsDead[index] = m_IsDead[lastIndex]; // ???????
             m_Accelerations[index] = m_Accelerations[lastIndex];
             m_AccelAngles[index] = m_AccelAngles[lastIndex];
             m_AngularVelocities[index] = m_AngularVelocities[lastIndex];
@@ -439,14 +453,113 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
             m_Transforms.RemoveAtSwapBack(index);
         }
 
-        // ×îºó²Å¼õÉÙ¼ÆÊý
+        // ??????????
         m_ActiveGOs.RemoveAt(lastIndex);
         m_ActiveCount--;
     }
 
-    // ¾ø¶Ô²»ÄÜÒÀÀµ m_ActiveCount À´¼ÆËã lastIndex£¬ÒòÎª´ËÊ± m_ActiveCount »¹Ã»¼õ
-    // ÒªÊ¹ÓÃ lastIndex: ×îºóÒ»¸öÓÐÐ§ÔªËØµÄÎ»ÖÃ
+    // ??????????? m_ActiveCount ?????? lastIndex???????? m_ActiveCount ?????
+    // ???? lastIndex: ????????????????
     protected abstract void OnSwapData(int index, int lastIndex);
+
+    /// <summary>
+    /// ?????????????????ï¿½??????
+    /// - ????? m_IsRelative[index] == true ????????????????????
+    /// - ????? m_EmitterIDs[index] ??ï¿½???????????????????? InstanceID
+    ///
+    /// ??????????????????????????????? "????" ??
+    /// ????????????? m_IsDead[index] = true ????????? LateUpdate ???????? BaseRemoveObjectAt ?????????
+    ///
+    /// ???????ï¿½??
+    /// 1. ??????????????????????????????????????? PlayerShootingManager ?? BulletDOTSManager ??
+    ///    protected override void OnEmittersDeadThisFrame(List&lt;int&gt; deadEmitterIds)
+    ///    {
+    ///        // ???ï¿½?????????????????ï¿½????????????????
+    ///        if (deadEmitterIds == null || deadEmitterIds.Count == 0) return;
+    ///
+    ///        // ??? someConfig / behaviorID / visualID ???????????????
+    ///        // ???????????????????????????????????OnEmitterDeathMode??
+    ///        // OnEmitterDeathMode ??????????? Cull / ToPlayer / Explode / CustomEvent ??
+    ///
+    ///        for (int i = 0; i &lt; m_ActiveCount; i++)
+    ///        {
+    ///            if (!m_IsRelative[i]) continue;
+    ///            int emitterId = m_EmitterIDs[i];
+    ///
+    ///            // ????????????????? IDs ?? O(N*M) ????????????
+    ///            bool isAttachedToDeadEmitter = false;
+    ///            for (int k = 0; k &lt; deadEmitterIds.Count; k++)
+    ///            {
+    ///                if (deadEmitterIds[k] == emitterId)
+    ///                {
+    ///                    isAttachedToDeadEmitter = true;
+    ///                    break;
+    ///                }
+    ///            }
+    ///            if (!isAttachedToDeadEmitter) continue;
+    ///
+    ///            // ????????????????????ï¿½???????????????????
+    ///            // pseudo-code:
+    ///            // var mode = ResolveOnEmitterDeathModeForEntity(i);
+    ///            // switch (mode)
+    ///            // {
+    ///            //     case OnEmitterDeathMode.Cull:
+    ///            //         m_IsDead[i] = true;
+    ///            //         break;
+    ///            //     case OnEmitterDeathMode.ToPlayer:
+    ///            //         // ?????????????????????????????????
+    ///            //         // ?????????
+    ///            //         // float2 dir = math.normalize((float2)playerPos - m_Positions[i].xy);
+    ///            //         // m_Angles[i] = math.degrees(math.atan2(dir.y, dir.x));
+    ///            //         // m_Speeds[i] = someSpeed;
+    ///            //         break;
+    ///            //     case OnEmitterDeathMode.Explode:
+    ///            //         // ??ï¿½?????????ï¿½?/????????????????/Job ???????????
+    ///            //         // MarkForExplosion(i);
+    ///            //         break;
+    ///            //     case OnEmitterDeathMode.CustomEvent:
+    ///            //         // ?????????????????????????????/?ï¿½????
+    ///            //         break;
+    ///            // }
+    ///        }
+    ///    }
+    ///
+    /// ????????????????????????????????????????????????
+    /// </summary>
+    /// <param name="deadEmitterIds">????????? "????" ???????????????? InstanceID ???</param>
+    protected virtual void OnEmittersDeadThisFrame(List<int> deadEmitterIds)
+    {
+        // ??????: ????????????????????????
+        if (deadEmitterIds == null || deadEmitterIds.Count == 0) return;
+
+        int deadCount = deadEmitterIds.Count;
+        int count = m_ActiveCount;
+
+        // ?????????????????????????:
+        // 1. ???????????????????? HashSet<int> ?????????? O(1) ????
+        // 2. ????????????????????????????
+        for (int i = 0; i < count; i++)
+        {
+            if (!m_IsRelative[i]) continue;
+            int emitterId = m_EmitterIDs[i];
+
+            bool isAttachedToDeadEmitter = false;
+            for (int k = 0; k < deadCount; k++)
+            {
+                if (deadEmitterIds[k] == emitterId)
+                {
+                    isAttachedToDeadEmitter = true;
+                    break;
+                }
+            }
+
+            if (!isAttachedToDeadEmitter) continue;
+
+            // ?????????????????????????ï¿½???????
+            // ????? isDead ??????? LateUpdate ??? CheckAndRemoveObjects ????????
+            m_IsDead[i] = true;
+        }
+    }
 
     #endregion
 
