@@ -5,6 +5,8 @@ using UnityEngine.Jobs;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Collections;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
+
 
 
 #if UNITY_EDITOR
@@ -140,6 +142,14 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             hp = m_HP
         };
         m_JobHandle = cullJob.Schedule(m_ActiveCount, 64, m_JobHandle);
+    }
+
+
+    public void CompleteAllJobs()
+    {
+        // m_JobHandle 是你在 BaseObjManager 或本类中定义的控制所有 Job 的句柄
+        // 如果你的变量名是 m_MoveJobHandle 或其他名字，请替换成对应的变量名
+        m_JobHandle.Complete();
     }
 
     #endregion

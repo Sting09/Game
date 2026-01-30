@@ -371,3 +371,199 @@ public struct EnemyCullJob : IJobParallelFor
     }
 }
 
+
+
+
+
+// 在 JobSystem.cs 的末尾添加以下代码
+
+/// <summary>
+/// 玩家子弹与敌人的碰撞检测 Job
+/// 使用 IJobParallelFor 并行处理每一颗子弹
+/// </summary>
+[BurstCompile]
+public struct PlayerBulletEnemyCollisionJob : IJobParallelFor
+{
+    // --- 玩家子弹数据 (只读) ---
+    [ReadOnly] public NativeArray<float3> bulletPositions;
+    [ReadOnly] public NativeArray<int> bulletTypes; // 0=Circle, 1=Box
+    [ReadOnly] public NativeArray<float> bulletRadii;
+    [ReadOnly] public NativeArray<float2> bulletBoxSizes;
+    [ReadOnly] public NativeArray<float> bulletAngles;
+    [ReadOnly] public NativeArray<bool> bulletIsDead;
+
+    // --- 敌人数据 (只读) ---
+    [ReadOnly] public NativeArray<float3> enemyPositions;
+    [ReadOnly] public NativeArray<int> enemyTypes; // 0=Circle, 1=Box
+    [ReadOnly] public NativeArray<float> enemyRadii;
+    [ReadOnly] public NativeArray<float2> enemyBoxSizes;
+    [ReadOnly] public NativeArray<float> enemyAngles;
+    [ReadOnly] public NativeArray<float> enemyHP;
+
+    // --- 输出结果 ---
+    // x = bulletIndex, y = enemyIndex
+    [WriteOnly] public NativeQueue<int2>.ParallelWriter hitResults;
+
+    public void Execute(int i)
+    {
+        // 如果子弹已死，直接跳过
+        if (bulletIsDead[i]) return;
+
+        float3 bPos = bulletPositions[i];
+        int bType = bulletTypes[i];
+        float bRadius = bulletRadii[i];
+        float2 bSize = bulletBoxSizes[i];
+        float bAngle = bulletAngles[i];
+
+        // 遍历所有敌人
+        // 虽然这里是双重循环，但因为并行化 + Burst SIMD 优化，处理几千次检测非常快
+        for (int j = 0; j < enemyPositions.Length; j++)
+        {
+            // 如果敌人已死 (HP<=0)，跳过
+            if (enemyHP[j] <= 0f) continue;
+
+            bool hit = CheckCollision(
+                bPos.xy, bType, bRadius, bSize, bAngle,
+                enemyPositions[j].xy, enemyTypes[j], enemyRadii[j], enemyBoxSizes[j], enemyAngles[j]
+            );
+
+            if (hit)
+            {
+                // 记录碰撞对 (子弹索引, 敌人索引)
+                hitResults.Enqueue(new int2(i, j));
+
+                // 一颗子弹击中一个敌人后立即停止检测（防止单颗子弹同一帧打中多个敌人，或穿透）
+                break;
+            }
+        }
+    }
+
+    // --- 内部数学计算库 (Burst Compatible) ---
+
+    private bool CheckCollision(float2 p1, int t1, float r1, float2 s1, float a1,
+                                float2 p2, int t2, float r2, float2 s2, float a2)
+    {
+        if (t1 == 0) // Bullet is Circle
+        {
+            if (t2 == 0) return CircleVsCircle(p1, r1, p2, r2);
+            else return CircleVsBox(p1, r1, p2, s2, a2);
+        }
+        else // Bullet is Box
+        {
+            if (t2 == 0) return CircleVsBox(p2, r2, p1, s1, a1);
+            else return BoxVsBox(p1, s1, a1, p2, s2, a2);
+        }
+    }
+
+    private bool CircleVsCircle(float2 c1, float r1, float2 c2, float r2)
+    {
+        float distSq = math.distancesq(c1, c2);
+        float r = r1 + r2;
+        return distSq < r * r;
+    }
+
+    private bool CircleVsBox(float2 circleCenter, float radius, float2 boxCenter, float2 boxSize, float boxAngleDeg)
+    {
+        float2 diff = circleCenter - boxCenter;
+        float angRad = math.radians(boxAngleDeg);
+        float s, c;
+        math.sincos(angRad, out s, out c);
+
+        // 将圆形中心转换到盒子的局部坐标系
+        float2 localCirclePos = new float2(
+            diff.x * c + diff.y * s, // 修正旋转公式：逆向旋转
+            -diff.x * s + diff.y * c
+        );
+
+        float2 halfExtents = boxSize / 2f;
+        float2 closestPoint = math.clamp(localCirclePos, -halfExtents, halfExtents);
+        float distSq = math.distancesq(localCirclePos, closestPoint);
+
+        return distSq < radius * radius;
+    }
+
+    /// <summary>
+    /// 优化后的 BoxVsBox (分离轴定理 SAT - 投影半径法)
+    /// 无需数组分配，完全兼容 Burst
+    /// </summary>
+    private bool BoxVsBox(float2 centerA, float2 sizeA, float angleADeg, float2 centerB, float2 sizeB, float angleBDeg)
+    {
+        float2 halfA = sizeA / 2f;
+        float2 halfB = sizeB / 2f;
+        float2 dist = centerB - centerA; // 中心距向量
+
+        // 计算 A 的两个轴
+        float radA = math.radians(angleADeg);
+        float sA, cA;
+        math.sincos(radA, out sA, out cA);
+        float2 axA_X = new float2(cA, sA);  // A 的 X 轴
+        float2 axA_Y = new float2(-sA, cA); // A 的 Y 轴
+
+        // 计算 B 的两个轴
+        float radB = math.radians(angleBDeg);
+        float sB, cB;
+        math.sincos(radB, out sB, out cB);
+        float2 axB_X = new float2(cB, sB);  // B 的 X 轴
+        float2 axB_Y = new float2(-sB, cB); // B 的 Y 轴
+
+        // 检查 4 个分离轴：A_X, A_Y, B_X, B_Y
+        // 如果任意一个轴上没有重叠，则两个盒子不相交
+        if (!OverlapOnAxis(dist, axA_X, halfA, axA_X, axA_Y, halfB, axB_X, axB_Y)) return false;
+        if (!OverlapOnAxis(dist, axA_Y, halfA, axA_X, axA_Y, halfB, axB_X, axB_Y)) return false;
+        if (!OverlapOnAxis(dist, axB_X, halfA, axA_X, axA_Y, halfB, axB_X, axB_Y)) return false;
+        if (!OverlapOnAxis(dist, axB_Y, halfA, axA_X, axA_Y, halfB, axB_X, axB_Y)) return false;
+
+        return true;
+    }
+
+    // 检查在特定轴 axis 上的投影是否重叠
+    private bool OverlapOnAxis(float2 distVec, float2 axis,
+        float2 halfA, float2 axA_X, float2 axA_Y,
+        float2 halfB, float2 axB_X, float2 axB_Y)
+    {
+        // 1. 将中心距投影到轴上
+        float projDist = math.abs(math.dot(distVec, axis));
+
+        // 2. 计算 Box A 在该轴上的最大投影半径
+        // Box A 的半径 = |HalfX * (AxisX dot Axis)| + |HalfY * (AxisY dot Axis)|
+        float rA = halfA.x * math.abs(math.dot(axA_X, axis)) + halfA.y * math.abs(math.dot(axA_Y, axis));
+
+        // 3. 计算 Box B 在该轴上的最大投影半径
+        float rB = halfB.x * math.abs(math.dot(axB_X, axis)) + halfB.y * math.abs(math.dot(axB_Y, axis));
+
+        // 4. 如果 投影距离 > 半径之和，则无重叠
+        return projDist <= (rA + rB);
+    }
+}
+
+
+
+/// <summary>
+/// 处理发射器死亡的 Job
+/// </summary>
+[BurstCompile]
+public struct EmitterDeathHandlingJob : IJobParallelFor
+{
+    [ReadOnly] public NativeArray<bool> isRelative;
+    [ReadOnly] public NativeArray<int> emitterIDs;
+
+    // =========================================================
+    // 【修改点】：删除了 [DeallocateOnJobCompletion] 特性
+    // 我们将在调度后手动调用 .Dispose(JobHandle)
+    // =========================================================
+    [ReadOnly]
+    public NativeHashSet<int> deadEmitterSet;
+
+    public NativeArray<bool> isDead;
+
+    public void Execute(int i)
+    {
+        if (!isRelative[i]) return;
+
+        int eID = emitterIDs[i];
+        if (deadEmitterSet.Contains(eID))
+        {
+            isDead[i] = true;
+        }
+    }
+}

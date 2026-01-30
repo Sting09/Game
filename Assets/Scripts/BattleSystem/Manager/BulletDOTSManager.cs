@@ -77,7 +77,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             nextEventIndex = m_NextEventIndex,
             randoms = m_Randoms
         };
-        m_JobHandle = eventJob.Schedule(m_ActiveCount, 64);
+        m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
 
     private void ScheduleMoveJob()
