@@ -31,6 +31,13 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
     private List<PendingBullet> m_PendingBullets;
 
 
+    // --- 新增成员 ---
+    // 用于跨帧存储碰撞结果，必须用 Persistent
+    private NativeQueue<int2> m_HitResults;
+    // 专门记录碰撞 Job 的句柄
+    private JobHandle m_CollisionJobHandle;
+
+
 
     /// <summary>
     /// 添加子弹
@@ -78,7 +85,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             nextEventIndex = m_NextEventIndex,
             randoms = m_Randoms
         };
-        m_JobHandle = eventJob.Schedule(m_ActiveCount, 64);
+        m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
 
     private void ScheduleMoveJob()
@@ -105,8 +112,47 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
     private void ScheduleCollisionJob()
     {
-        // 玩家子弹不与玩家发生碰撞，这里不调度 ObjectCollisionJob
-        // 与敌人的碰撞在 HandleCollisions 中在主线程完成
+        // 1. 获取敌人管理器
+        EnemyDOTSManager enemyMgr = EnemyDOTSManager.Instance;
+        if (enemyMgr == null || enemyMgr.ActiveCount == 0 || m_ActiveCount == 0)
+        {
+            // 如果没有敌人或子弹，不调度 Job，直接返回
+            return;
+        }
+
+        // 2. 准备 Job 数据
+        PlayerBulletEnemyCollisionJob collisionJob = new PlayerBulletEnemyCollisionJob
+        {
+            bulletPositions = m_Positions,
+            bulletTypes = m_CollisionTypes,
+            bulletRadii = m_CircleRadii,
+            bulletBoxSizes = m_BoxSizes,
+            bulletAngles = m_Angles,
+            bulletIsDead = m_IsDead,
+
+            enemyPositions = enemyMgr.m_Positions,
+            enemyTypes = enemyMgr.m_CollisionTypes,
+            enemyRadii = enemyMgr.m_CircleRadii,
+            enemyBoxSizes = enemyMgr.m_BoxSizes,
+            enemyAngles = enemyMgr.m_Angles,
+            enemyHP = enemyMgr.m_HP,
+
+            hitResults = m_HitResults.AsParallelWriter()
+        };
+
+        // 3. 构建依赖：(等待子弹移动) + (等待敌人移动)
+        JobHandle enemyMoveHandle = enemyMgr.GetJobHandle();
+        JobHandle combinedDependencies = JobHandle.CombineDependencies(m_JobHandle, enemyMoveHandle);
+
+        // 4. 调度 Job
+        m_CollisionJobHandle = collisionJob.Schedule(m_ActiveCount, 64, combinedDependencies);
+
+        // 5. 更新主依赖链
+        // 让后续的 Job (如 CullJob) 等待碰撞完成
+        m_JobHandle = m_CollisionJobHandle;
+
+        // 6. 注册外部依赖（让下一帧敌人移动等待此碰撞完成）
+        enemyMgr.RegisterExternalDependency(m_CollisionJobHandle);
     }
 
     private void ScheduleCullJob()
@@ -234,86 +280,27 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
     protected override void HandleCollisions()
     {
-        // 1. 清理基类用于玩家圆形判定的队列 (PlayerShootingManager 不需要这个)
         while (m_CollisionQueue.TryDequeue(out _)) { }
-
-        // 2. 获取敌人管理器，如果没有敌人或没有子弹，直接返回
-        EnemyDOTSManager enemyMgr = EnemyDOTSManager.Instance;
-        if (enemyMgr == null || enemyMgr.ActiveCount == 0 || m_ActiveCount == 0) return;
-
-
-        enemyMgr.CompleteAllJobs();
-
-        // 3. 准备 Job 数据
-        // Allocator.TempJob 表示分配的内存仅在 Job 完成前有效，速度很快
-        NativeQueue<int2> hitResults = new NativeQueue<int2>(Allocator.TempJob);
-
-        PlayerBulletEnemyCollisionJob collisionJob = new PlayerBulletEnemyCollisionJob
-        {
-            // 玩家子弹数据 (从 BaseObjManager 继承的 NativeArray)
-            bulletPositions = m_Positions,
-            bulletTypes = m_CollisionTypes,
-            bulletRadii = m_CircleRadii,
-            bulletBoxSizes = m_BoxSizes,
-            bulletAngles = m_Angles,
-            bulletIsDead = m_IsDead,
-
-            // 敌人数据 (直接读取 EnemyDOTSManager 的 public NativeArray)
-            enemyPositions = enemyMgr.m_Positions,
-            enemyTypes = enemyMgr.m_CollisionTypes,
-            enemyRadii = enemyMgr.m_CircleRadii,
-            enemyBoxSizes = enemyMgr.m_BoxSizes,
-            enemyAngles = enemyMgr.m_Angles,
-            enemyHP = enemyMgr.m_HP,
-
-            // 输出
-            hitResults = hitResults.AsParallelWriter()
-        };
-
-        // 4. 调度 Job
-        // BatchCount 设为 32 或 64，表示每核处理 64 个子弹
-        JobHandle handle = collisionJob.Schedule(m_ActiveCount, 64);
-
-        // 5. 立即等待完成 (Complete 会阻塞主线程直到 Job 结束)
-        // 注意：如果你希望更高性能，可以将 Complete 延迟到 LateUpdate，
-        // 但那样需要将处理逻辑分开。为了逻辑简单，这里直接 Complete。
-        handle.Complete();
-
-        // 6. 处理结果
-        const float damagePerHit = 5f;
-
-        while (hitResults.TryDequeue(out int2 hit))
-        {
-            int bulletIdx = hit.x;
-            int enemyIdx = hit.y;
-
-            // 双重检查：
-            // 1. 子弹可能在这一帧已经判定过（比如之前的 Job 设计防止了一弹多中，但这里再保险一下）
-            if (m_IsDead[bulletIdx]) continue;
-            // 2. 敌人可能在这一帧已经被前面的子弹打死了
-            if (enemyMgr.m_HP[enemyIdx] <= 0f) continue;
-
-            // 敌人扣血
-            float newHp = enemyMgr.m_HP[enemyIdx] - damagePerHit;
-            enemyMgr.m_HP[enemyIdx] = newHp;
-
-            // 玩家子弹 Cull (移除)
-            m_IsDead[bulletIdx] = true;
-
-            // 如果敌人死了，EnemyCullJob 会在 LateUpdate 处理它，这里不需要额外操作
-        }
-
-        // 7. 释放 NativeQueue
-        hitResults.Dispose();
     }
 
     protected override void OnDispose()
     {
+        // 取消订阅，防止内存泄漏或空引用
+        if (EnemyDOTSManager.Instance != null)
+        {
+            EnemyDOTSManager.Instance.OnSafeToApplyDamage -= ApplyDamageSafely;
+        }
+
+        // 销毁前必须确保 Job 完成
+        m_CollisionJobHandle.Complete();
+        // 释放队列
+        if (m_HitResults.IsCreated) m_HitResults.Dispose();
         return;
     }
 
     protected override void OnInitialize()
     {
+        //初始化查找表
         m_VisualNameToID.Clear();
 
         if (bulletConfigs != null)
@@ -336,6 +323,17 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         {
             Debug.Log("��BulletManager��δ�����ӵ������б�!");
         }
+
+
+
+        // 初始化持久化队列
+        m_HitResults = new NativeQueue<int2>(Allocator.Persistent);
+
+        // 订阅敌人的安全事件
+        if (EnemyDOTSManager.Instance != null)
+        {
+            EnemyDOTSManager.Instance.OnSafeToApplyDamage += ApplyDamageSafely;
+        }
     }
 
     protected override void ScheduleSpecificJobs()
@@ -349,6 +347,33 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
     protected override void OnSwapData(int index, int lastIndex)
     {
         // ֻ��Ҫ�����������е����齻��
+    }
+
+    // 这个方法会在 EnemyDOTSManager 的“安全窗口期”被调用
+    private void ApplyDamageSafely()
+    {
+        EnemyDOTSManager enemyMgr = EnemyDOTSManager.Instance;
+        if (enemyMgr == null) return;
+
+        // 1. 确保上一帧的碰撞计算已完成
+        // (由于 EnemyDOTSManager 已经在 Update 开头 Complete 了依赖链，这里其实已经完成了，但为了保险再调一次)
+        m_CollisionJobHandle.Complete();
+
+        // 2. 处理命中队列（结算伤害）
+        const float damagePerHit = 5f;
+        while (m_HitResults.TryDequeue(out int2 hit))
+        {
+            int bulletIdx = hit.x;
+            int enemyIdx = hit.y;
+
+            // 安全检查
+            if (bulletIdx < m_IsDead.Length && !m_IsDead[bulletIdx] &&
+                enemyIdx < enemyMgr.m_HP.Length && enemyMgr.m_HP[enemyIdx] > 0f)
+            {
+                enemyMgr.m_HP[enemyIdx] -= damagePerHit; // 现在这里是安全的！
+                m_IsDead[bulletIdx] = true;
+            }
+        }
     }
 
     #endregion

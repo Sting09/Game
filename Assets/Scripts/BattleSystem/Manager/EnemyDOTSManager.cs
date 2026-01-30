@@ -32,6 +32,9 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     }
     private List<PendingEnemy> m_PendingEnemy;
 
+    //通知本帧可以计算伤害的时间点
+    public event System.Action OnSafeToApplyDamage;
+
 
     // 敌人独有的属性
     // 记得修改：FlushPending()、OnSwapData()、OnDispose()、OnInitialize()
@@ -85,7 +88,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             nextEventIndex = m_NextEventIndex,
             randoms = m_Randoms
         };
-        m_JobHandle = eventJob.Schedule(m_ActiveCount, 64);
+        m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
 
     private void ScheduleMoveJob()
@@ -157,6 +160,20 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
 
     #region 实现抽象类
+
+    /// <summary>
+    /// 【延迟结算核心】
+    /// 允许外部（如 PlayerShootingManager）注入依赖。
+    /// 这样，下一帧 EnemyDOTSManager 在 Update 开头调用 m_JobHandle.Complete() 时，
+    /// 就会自动等待这个外部 Job 完成，从而保证数据安全。
+    /// </summary>
+    public void RegisterExternalDependency(JobHandle dependency)
+    {
+        // 将外部的 handle 合并到自己的 handle 中
+        m_JobHandle = JobHandle.CombineDependencies(m_JobHandle, dependency);
+    }
+
+
     protected override void FlushPending()
     {
         if (m_PendingEnemy == null || m_PendingEnemy.Count == 0) return;
@@ -277,6 +294,8 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         {
             OnPlayerHit();
         }
+
+        OnSafeToApplyDamage?.Invoke();
     }
 
     protected override void OnDispose()

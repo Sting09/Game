@@ -520,5 +520,12 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     {
         InitializeBaseConfig();
     }
+
+    // 在 BaseObjManager<T> 类中添加这个公共方法
+    public JobHandle GetJobHandle()
+    {
+        return m_JobHandle;
+    }
+
     #endregion
 }
