@@ -31,7 +31,7 @@ public abstract class EmitterRuntime
         propertyOffsets = new float[PropertyCount];
 
         int eventCount = emitter.emitterEvents?.Count?? 0;
-        eventRunners = new List<EmitterEventRunner>(eventCount);    //容量就等于事件个数
+        eventRunners = new List<EmitterEventRunner>(eventCount);    //容量等于事件个数
         if (emitter.emitterEvents != null)
         {
             foreach (var evt in emitter.emitterEvents)  //为每个事件创建eventRunner

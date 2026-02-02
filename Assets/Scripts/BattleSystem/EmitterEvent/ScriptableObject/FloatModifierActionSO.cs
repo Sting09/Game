@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Battle System/Emitter Event/Float Modifier")]
@@ -7,18 +8,22 @@ public class FloatModifierActionSO : ScriptableObject
     public EmitterPropertyType targetProperty;
     public EventModificationType modificationType;
     public float value;
-    [Tooltip("从BattleManager里读数据。自然数表示索引，负数表示使用上面的value")]
-    public int valueIndex = -1;
+    public bool needMod360 = false;
+
 
     [Header("Tween Info")]
     [Tooltip("变化过程需要多长时间")]
     public float duration = 0f;
     [Tooltip("变化曲线 (0~1)")]
-    public AnimationCurve curve = AnimationCurve.Linear(0, 0, 1, 1);
+    public AnimationCurve curve = AnimationCurve.Linear(0, 1, 1, 1);
 
-    [Header("Save Info")]
-    [Tooltip("任务执行第多少秒保存数据到BattleManager")]
-    public float saveTime = -1;
-    [Tooltip("数据保存到BattleManager第几个参数")]
-    public int saveIndex = -1;
+
+    [Header("Dynamic Growth")]
+    [Tooltip("是否启用基于曲线的动态增长")]
+    public bool useGrowthCurve = false;
+    [Tooltip("动态变化基本值，可以用来实现波粒等效果")]
+    public float dynamicValue = 0f;
+    [Tooltip("自定义增长函数。\n X轴：执行次数\n Y轴：value + y * dynamicValue")]
+    public AnimationCurve growthCurve = AnimationCurve.Linear(0, 1, 10, 1);
+
 }

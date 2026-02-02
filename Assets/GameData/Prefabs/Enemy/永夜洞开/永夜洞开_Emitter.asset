@@ -10,10 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e70c1a926fc6fec449c21a052a61355f, type: 3}
-  m_Name: "Emitter-test \u98CE\u8F66"
+  m_Name: "\u6C38\u591C\u6D1E\u5F00_Emitter"
   m_EditorClassIdentifier: 
   description: 
-  bulletEvents: []
+  bulletEvents:
+  - description: 
+    repeatTimes: 0
+    condition: {fileID: 0}
+    modifier: {fileID: 0}
   shootDelay: 1
   emitterDuration: -1
   emitterPosTypeX: 0
@@ -30,29 +34,29 @@ MonoBehaviour:
   emitterDirection:
     baseValue: 90
     offsetValue: 0
-    randomRange: 0
-  bulletPattern: {fileID: 11400000, guid: 289d8d47965d75a4b927b0ae2e61a3d2, type: 2}
+    randomRange: 360
+  bulletPattern: {fileID: 11400000, guid: ac1ece51315b8964198aee977f7ff988, type: 2}
   emitterEvents:
-  - {fileID: 11400000, guid: 63fe0062427a69e4fbcb6721fd4df359, type: 2}
-  shootTimesPerWave: 20
-  shootInterval: 0.3
-  waveInterval: 3
-  shootPointNum: 8
+  - {fileID: 11400000, guid: 1142a0648158bcb43b6431b1881bb48f, type: 2}
+  shootTimesPerWave: 12
+  shootInterval: 0.25
+  waveInterval: 1
+  shootPointNum: 5
   shootPointRange:
-    baseValue: 360
+    baseValue: 12
     offsetValue: 0
     randomRange: 0
   radius:
-    baseValue: 0.5
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
   radiusDirection:
-    baseValue: 45
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
   angleType: 5
   angle:
-    baseValue: 0
+    baseValue: 90
     offsetValue: 0
     randomRange: 0
   posOffsetX:

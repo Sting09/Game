@@ -9,6 +9,7 @@ public class EmitterEventRunner
     private EmitterRuntime targetRuntime;   //所属的发射器运行时
 
     private float timer;        //检查事件是否执行的计时器
+    private float totalTime;    //发射器事件运行的总时间（不重置）
     private int executedCount;  //已检查的次数
     private bool isRunning;     //是否正在运行。暂时用不上，先保留着，时停一类功能用得上
 
@@ -42,6 +43,7 @@ public class EmitterEventRunner
         this.config = config;
         this.targetRuntime = runtime;
         this.timer = 0f;
+        this.totalTime = 0f;
         this.executedCount = 0;
         this.activeTweens = new List<TweenTask>(16);  //预分配 List 容量，减少扩容 GC
         this.isRunning = true;
@@ -56,6 +58,7 @@ public class EmitterEventRunner
         if (!isRunning) return;
 
         timer += dt;
+        totalTime += dt;
 
         // timer累积到多少才执行事件
         float triggerTime = executedCount == 0 ? config.startDelay : config.interval;
@@ -109,25 +112,17 @@ public class EmitterEventRunner
 
             float startVal = targetRuntime.GetPropertyOffset(action.targetProperty);
 
-            float baseVal = 0f;
+            float baseVal = action.value;
+            // 计算动态叠加值
+            if (action.useGrowthCurve)
+            {
+                float curveValue = action.growthCurve.Evaluate(executedCount);
 
-            if(action.valueIndex < 0)
-            {
-                //取SO文件中配置的值
-                baseVal = action.value;
+                // 叠加到基础值上
+                baseVal += curveValue * action.dynamicValue;
             }
-            else
-            {
-                //取全局变量。先合法性检验
-                if (action.valueIndex < BattleManager.Instance.globalParameter.Count)
-                {
-                    baseVal = BattleManager.Instance.globalParameter[action.valueIndex];
-                }
-                else
-                {
-                    baseVal = action.value;
-                }
-            }
+
+
             float endVal = action.modificationType switch
             {
                 EventModificationType.ChangeTo => baseVal,
@@ -144,8 +139,7 @@ public class EmitterEventRunner
                 endVal,
                 action.duration,
                 action.curve,
-                action.saveTime,
-                action.saveIndex
+                action.needMod360
             );
 
             activeTweens.Add(task);

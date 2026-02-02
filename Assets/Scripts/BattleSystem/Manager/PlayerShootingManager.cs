@@ -32,6 +32,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
 
     // --- 新增成员 ---
+    // 记得修改：FlushPending()、OnSwapData()、OnDispose()、OnInitialize()
     // 用于跨帧存储碰撞结果，必须用 Persistent
     private NativeQueue<int2> m_HitResults;
     // 专门记录碰撞 Job 的句柄
@@ -83,7 +84,10 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             angularVelocities = m_AngularVelocities,
             isDead = m_IsDead,
             nextEventIndex = m_NextEventIndex,
-            randoms = m_Randoms
+            randoms = m_Randoms,
+
+            // 发射信息参数
+            shootPointIndices = m_ShootPointIndices,
         };
         m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
@@ -110,6 +114,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         m_JobHandle = moveJob.Schedule(m_Transforms, m_JobHandle);
     }
 
+    // 检查玩家发射的子弹和所有敌人的碰撞
     private void ScheduleCollisionJob()
     {
         // 1. 获取敌人管理器
@@ -141,10 +146,13 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         };
 
         // 3. 构建依赖：(等待子弹移动) + (等待敌人移动)
+        // 获取敌人管理器的Job句柄
         JobHandle enemyMoveHandle = enemyMgr.GetJobHandle();
+        //声明：敌人的Job、玩家子弹移动的Job，两个Job都执行完后，再执行下一个Job
         JobHandle combinedDependencies = JobHandle.CombineDependencies(m_JobHandle, enemyMoveHandle);
 
         // 4. 调度 Job
+        //前述两个Job都执行完后，再执行敌人和玩家子弹碰撞检测的Job
         m_CollisionJobHandle = collisionJob.Schedule(m_ActiveCount, 64, combinedDependencies);
 
         // 5. 更新主依赖链
@@ -152,6 +160,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         m_JobHandle = m_CollisionJobHandle;
 
         // 6. 注册外部依赖（让下一帧敌人移动等待此碰撞完成）
+        //下一帧开始时，敌人管理器调用Complete前，要等待敌人和玩家子弹碰撞检测的Job完成
         enemyMgr.RegisterExternalDependency(m_CollisionJobHandle);
     }
 
@@ -280,6 +289,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
     protected override void HandleCollisions()
     {
+        //可以在这里播放射击命中敌人的音效
         while (m_CollisionQueue.TryDequeue(out _)) { }
     }
 
@@ -321,7 +331,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         }
         else
         {
-            Debug.Log("��BulletManager��δ�����ӵ������б�!");
+            Debug.Log("PlayerShootingManager中，未配置发射的子弹的数据!");
         }
 
 
@@ -346,7 +356,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
 
     protected override void OnSwapData(int index, int lastIndex)
     {
-        // ֻ��Ҫ�����������е����齻��
+        
     }
 
     // 这个方法会在 EnemyDOTSManager 的“安全窗口期”被调用
@@ -376,13 +386,6 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         }
     }
 
-    #endregion
-
-    #region ��ұ����е��߼�
-    private void OnPlayerHit()
-    {
-
-    }
     #endregion
 
     #region Pool & Helper Methods

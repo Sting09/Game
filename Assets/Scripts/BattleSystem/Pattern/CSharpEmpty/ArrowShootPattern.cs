@@ -130,15 +130,15 @@ public class ArrowShootPattern : ShootPattern
                 switch (type)
                 {
                     case ShootObjType.Bullet:
-                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), infoLeft);
                         break;
                     case ShootObjType.BulletGroup:
                         break;
                     case ShootObjType.PlayerBullet:
-                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), infoLeft);
                         break;
                     case ShootObjType.Enemy:
-                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), infoLeft);
                         break;
                     default:
                         break;
@@ -157,15 +157,15 @@ public class ArrowShootPattern : ShootPattern
                 switch (type)
                 {
                     case ShootObjType.Bullet:
-                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        BulletDOTSManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), infoRight);
                         break;
                     case ShootObjType.BulletGroup:
                         break;
                     case ShootObjType.PlayerBullet:
-                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        PlayerShootingManager.Instance.AddBullet(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), infoRight);
                         break;
                     case ShootObjType.Enemy:
-                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), info);
+                        EnemyDOTSManager.Instance.AddEnemy(bulletTypeID, bulletBehaviourID, pos + CalculatePosOffset(dir, distance), infoRight);
                         break;
                     default:
                         break;

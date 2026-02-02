@@ -24,6 +24,9 @@ public struct ObjectEventJob : IJobParallelFor
     [ReadOnly] public NativeArray<int2> behaviorRanges;
     [ReadOnly] public NativeArray<NativeEntityEvent> globalEvents;
 
+    // 新增的发射信息
+    [ReadOnly] public NativeArray<int> shootPointIndices;
+
     public void Execute(int index)
     {
         CheckBurstStatus();
@@ -92,8 +95,9 @@ public struct ObjectMoveJob : IJobParallelForTransform
     public NativeArray<float> lastAngles;
     public NativeArray<float> speeds;
     public NativeArray<float> angles;
+
     [ReadOnly] public NativeArray<float> accelerations;
-    [ReadOnly] public NativeArray<float> accelAngles;
+    [ReadOnly] public NativeArray<float> accelAngles;       // 现在这个值代表"相对角度" (0=前方, 90=右侧)
     [ReadOnly] public NativeArray<float> angularVelocities;
     [ReadOnly] public float dt;
 
@@ -109,38 +113,66 @@ public struct ObjectMoveJob : IJobParallelForTransform
         lifetimes[index] += dt;
 
         float currentSpeed = speeds[index];
-        float currentAngle = angles[index];
-        float accel = accelerations[index];
+        float currentAngle = angles[index];     // 当前朝向（单位：度）
+        float accel = accelerations[index];     // 加速度大小
         float angVel = angularVelocities[index];
 
-        if (math.abs(angVel) > 0.001f) currentAngle += angVel * dt;
+        // 1. 处理角速度 (先旋转)
+        // 如果有角速度，先改变当前的朝向
+        if (math.abs(angVel) > 0.001f)
+        {
+            currentAngle += angVel * dt;
+        }
 
+        // 2. 将当前速度转换为向量
+        // 注意：原代码使用了 radians(-currentAngle)，保持坐标系一致性
         float angleRad = math.radians(-currentAngle);
         float s, c;
         math.sincos(angleRad, out s, out c);
         float2 velVec = new float2(c, s) * currentSpeed;
 
-        if (accel > 0.0001f)
+        // 3. 处理加速度 (核心修改部分)
+        // 【修复1】使用 abs 允许负加速度生效
+        if (math.abs(accel) > 0.0001f)
         {
-            float accRad = math.radians(-accelAngles[index]);
+            // 【修复2】计算相对加速度方向
+            // accelAngles[index] 现在被视为相对于子弹当前朝向的偏移量
+            // 0度 = 沿当前速度方向加速
+            // 180度 = 沿当前速度反方向加速
+            float relativeAccelAngle = accelAngles[index];
+            float finalAccelAngle = currentAngle + relativeAccelAngle;
+
+            // 转换为弧度向量 (保持与上面一致的 -angle 转换逻辑)
+            float accRad = math.radians(-finalAccelAngle);
             float2 accVec = new float2(math.cos(accRad), math.sin(accRad)) * accel;
+
+            // 矢量相加：速度 + 加速度 * 时间
             velVec += accVec * dt;
+
+            // 根据新的速度向量，反推新的速度大小和朝向
             float newSpeed = math.length(velVec);
+
+            // 只有当速度大于微小值时才更新角度，防止速度为0时角度归零
             if (newSpeed > 0.001f)
             {
+                // atan2 返回的是 CCW 弧度，需要转换回原本的 "负角度" 系统
+                // 因为上面用了 radians(-angle)，这里反向操作就是 -degrees(atan2)
                 float newRad = math.atan2(velVec.y, velVec.x);
                 currentAngle = -math.degrees(newRad);
             }
+
             currentSpeed = newSpeed;
         }
 
+        // 4. 写回数据
         speeds[index] = currentSpeed;
         angles[index] = currentAngle;
 
+        // 5. 计算位移并更新位置
         float3 move = new float3(velVec.x, velVec.y, 0) * dt;
         float3 newPos = positions[index] + move;
 
-        // --- 相对移动逻辑：叠加发射者的位移 delta ---
+        // --- 相对移动逻辑 ---
         if (isRelative[index])
         {
             int eID = emitterIDs[index];
@@ -153,8 +185,10 @@ public struct ObjectMoveJob : IJobParallelForTransform
         positions[index] = newPos;
         transform.position = new Vector3(newPos.x, newPos.y, newPos.z);
 
+        // 6. 更新旋转 (减少不必要的 SetRotation 调用)
         if (math.abs(currentAngle - lastAngles[index]) > 0.001f)
         {
+            // 同样保持 -currentAngle 的旋转逻辑
             quaternion q = quaternion.RotateZ(math.radians(-currentAngle));
             transform.rotation = new Quaternion(q.value.x, q.value.y, q.value.z, q.value.w);
             lastAngles[index] = currentAngle;
@@ -268,13 +302,14 @@ public struct BulletCollisionPolicy : ICollisionPolicy
 
     public bool CullAfterCollison()
     {
+        //玩家撞到子弹时，子弹将被消除
         return true;
     }
 
     public void ObjectOnCollision(int index)
     {
-        //玩家撞到子弹时，子弹将被消除
-        //BulletManager在下一帧Update最开始时，执行玩家事件
+        //记录哪些id的子弹碰撞到了玩家
+        //BulletManager在下一帧Update最开始时，处理这些子弹
         collisionEvents.Enqueue(index);
     }
 
@@ -288,13 +323,15 @@ public struct EnemyCollisionPolicy : ICollisionPolicy
 
     public bool CullAfterCollison()
     {
+        //玩家撞到敌人时，敌人不消失
         return false;
     }
 
     public void ObjectOnCollision(int index)
     {
-        //玩家撞到敌人时，敌人什么都不做
-        //EnemyManager在下一帧Update最开始时，执行玩家事件
+        //记录哪些id的敌人碰撞到了玩家
+        //EnemyManager在下一帧Update最开始时，处理这些敌人
+        collisionEvents.Enqueue(index);
     }
 }
 

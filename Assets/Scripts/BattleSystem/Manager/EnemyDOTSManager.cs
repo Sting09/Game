@@ -5,7 +5,6 @@ using UnityEngine.Jobs;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Collections;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 
 
@@ -15,14 +14,14 @@ using UnityEditor;
 
 public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 {
-    // --- 配置 ---
+    // --- 所有敌人的配置列表 ---
     [Header("Enemy Configs (Gameplay)")]
     public List<EnemyBasicConfigSO> enemyConfigs;
 
     // --- 敌人名称 到 ID 查找表 ---
     private Dictionary<string, int> m_VisualNameToID = new Dictionary<string, int>();
 
-    // 当前帧要加入池子的子弹列表
+    // 当前帧要加入池子的敌人列表
     private struct PendingEnemy
     {
         public int visualID;
@@ -32,7 +31,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     }
     private List<PendingEnemy> m_PendingEnemy;
 
-    //通知本帧可以计算伤害的时间点
+    //通知其他Manager，可以计算玩家子弹和敌人碰撞的时间点
     public event System.Action OnSafeToApplyDamage;
 
 
@@ -42,12 +41,12 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
 
     /// <summary>
-    /// 添加子弹。
+    /// 添加敌人。
     /// </summary>
     /// <param name="visualID">外观ID</param>
     /// <param name="behaviorID">行为ID</param>
     /// <param name="startPos">初始位置</param>
-    /// <param name="info">运行参数</param>
+    /// <param name="info">运行信息</param>
     /// <param name="emitter">发射者Transform（如果是相对移动子弹，此参数必须不为空）</param>
     public void AddEnemy(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
@@ -69,8 +68,39 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         });
     }
 
+    #region 玩家被命中的逻辑
+    /// <summary>
+    /// 触发玩家与敌人碰撞的逻辑
+    /// </summary>
+    private void OnPlayerHit()
+    {
+        Debug.Log("<color=red>玩家中弹！</color>");
+        if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
+        {
+            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
+        }
+        if (hitPlayerCoroutine != null) StopCoroutine(hitPlayerCoroutine);
+        hitPlayerCoroutine = StartCoroutine(HitFlashRoutine());
+    }
 
-    #region 要派发的Job
+    /// <summary>
+    /// 玩家贴图闪烁红光
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator HitFlashRoutine()
+    {
+        if (playerSpriteRenderer != null)
+        {
+            playerSpriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            playerSpriteRenderer.color = Color.white;
+        }
+    }
+    #endregion
+
+
+
+    #region 要派发的Job（事件、移动、碰撞、移除）
     private void ScheduleEventJob()
     {
         ObjectEventJob eventJob = new ObjectEventJob
@@ -86,7 +116,10 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             angularVelocities = m_AngularVelocities,
             isDead = m_IsDead,
             nextEventIndex = m_NextEventIndex,
-            randoms = m_Randoms
+            randoms = m_Randoms,
+
+            // 发射信息参数
+            shootPointIndices = m_ShootPointIndices,
         };
         m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
@@ -140,19 +173,11 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         EnemyCullJob cullJob = new EnemyCullJob
         {
             lifetimes = m_Lifetimes,
-            maxLifetimes = m_MaxLifetimes, // 修改：传入每颗子弹的最大寿命数组
+            maxLifetimes = m_MaxLifetimes,
             isDeadResults = m_IsDead,
             hp = m_HP
         };
         m_JobHandle = cullJob.Schedule(m_ActiveCount, 64, m_JobHandle);
-    }
-
-
-    public void CompleteAllJobs()
-    {
-        // m_JobHandle 是你在 BaseObjManager 或本类中定义的控制所有 Job 的句柄
-        // 如果你的变量名是 m_MoveJobHandle 或其他名字，请替换成对应的变量名
-        m_JobHandle.Complete();
     }
 
     #endregion
@@ -160,20 +185,9 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
 
     #region 实现抽象类
-
     /// <summary>
-    /// 【延迟结算核心】
-    /// 允许外部（如 PlayerShootingManager）注入依赖。
-    /// 这样，下一帧 EnemyDOTSManager 在 Update 开头调用 m_JobHandle.Complete() 时，
-    /// 就会自动等待这个外部 Job 完成，从而保证数据安全。
+    /// 添加本帧的obj
     /// </summary>
-    public void RegisterExternalDependency(JobHandle dependency)
-    {
-        // 将外部的 handle 合并到自己的 handle 中
-        m_JobHandle = JobHandle.CombineDependencies(m_JobHandle, dependency);
-    }
-
-
     protected override void FlushPending()
     {
         if (m_PendingEnemy == null || m_PendingEnemy.Count == 0) return;
@@ -283,6 +297,12 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     protected override void HandleCollisions()
     {
+
+
+        // 通知其他类，敌人和玩家的碰撞检测已完毕，可以检测玩家子弹和敌人的碰撞了
+        OnSafeToApplyDamage?.Invoke();
+
+
         //如果本帧有子弹命中玩家，则触发OnPlayerHit
         bool hasHit = false;
         while (m_CollisionQueue.TryDequeue(out int bulletIndex))
@@ -292,10 +312,9 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
         if (hasHit)
         {
+            Debug.Log("<color=red>玩家被敌人体术！</color>");
             OnPlayerHit();
         }
-
-        OnSafeToApplyDamage?.Invoke();
     }
 
     protected override void OnDispose()
@@ -305,6 +324,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     protected override void OnInitialize()
     {
+        //初始化查找表
         m_VisualNameToID.Clear();
 
         if (enemyConfigs != null)
@@ -349,30 +369,9 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     #endregion
 
-    #region 玩家被命中的逻辑
-    private void OnPlayerHit()
-    {
-        Debug.Log("<color=red>玩家中弹！</color>");
-        if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
-        {
-            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
-        }
-        if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);
-        hitEffectCoroutine = StartCoroutine(HitFlashRoutine());
-    }
+    
 
-    private IEnumerator HitFlashRoutine()
-    {
-        if (playerSpriteRenderer != null)
-        {
-            playerSpriteRenderer.color = Color.red;
-            yield return new WaitForSeconds(0.1f);
-            playerSpriteRenderer.color = Color.white;
-        }
-    }
-    #endregion
-
-    #region Pool & Helper Methods
+    #region 对象池管理方法  和  辅助方法
     private GameObject GetBulletFromPool(int visualID)
     {
         if (visualID < 0 || visualID >= m_VisualPools.Length) return null;
@@ -427,7 +426,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     }
     #endregion
 
-    #region Debug Gizmos
+    #region 调试方法：画敌人判定
     private void OnDrawGizmos()
     {
         if (!showDebugGizmos || !m_IsInitialized) return;

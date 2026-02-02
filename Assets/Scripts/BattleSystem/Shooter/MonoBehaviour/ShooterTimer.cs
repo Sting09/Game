@@ -43,6 +43,9 @@ public class ShooterTimer
 
         if (isStart && notEnd)
         {
+            //先更新发射器事件，再发射子弹
+            runtime.UpdateEventRunners(deltaTime);
+
             // 核心修复：使用循环处理同一帧内可能发生的多次状态切换
             // (例如：发射结束 -> 瞬间完成等待 -> 再次发射)
             // 只有当时间被消耗完，或者进入了真正的等待状态时才停止
@@ -95,10 +98,6 @@ public class ShooterTimer
                     }
                 }
             }
-
-
-            //先发射子弹，再更新发射器事件，保证第一发子弹满足编辑的样式
-            runtime.UpdateEventRunners(deltaTime);
         }
     }
 }

@@ -9,44 +9,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24fcecf5d77356f41a74a8391619cfaf, type: 3}
-  m_Name: "Pattern-1 for 1 \u7BAD\u5934"
+  m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
+  m_Name: "\u6C38\u591C\u6D1E\u5F00_Pattern"
   m_EditorClassIdentifier: 
   bulletName: YellowRing
-  bulletDuration: 10
+  bulletDuration: 5
   isRelative: 0
   objType: 0
-  bulletBehavior: None
+  bulletBehavior: "\u6C38\u591C\u6D1E\u5F00_SlowDown"
   description: 
-  shootWaysHalf:
-    baseValue: 4
+  shootWays:
+    baseValue: 24
     offsetValue: 0
     randomRange: 0
   bulletsPerWay:
     baseValue: 1
     offsetValue: 0
     randomRange: 0
-  centerDirection:
-    baseValue: 90
+  shootRange:
+    baseValue: 360
     offsetValue: 0
     randomRange: 0
-  edgeAngle:
-    baseValue: 30
+  radius:
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
-  internalAngle:
-    baseValue: 15
+  radiusDirection:
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
-  distance:
-    baseValue: 2
+  shootDirection:
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
-  centerMinSpeed:
-    baseValue: 5
+  startBulletSpeed:
+    baseValue: 6
     offsetValue: 0
     randomRange: 0
-  centerMaxSpeed:
-    baseValue: 7
+  endBulletSpeed:
+    baseValue: 6
     offsetValue: 0
     randomRange: 0

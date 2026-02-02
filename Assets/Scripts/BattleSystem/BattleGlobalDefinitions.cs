@@ -108,6 +108,15 @@ public enum EventModificationType
     Reduce
 }
 
+public enum EventModificationValueType
+{
+    Value,
+    EmitterPara,    //从发射器读
+    EventPara,      //从事件组读
+    DanmakuPara,    //从弹幕读，用于某值被发射器共享时
+    ManagerPara,    //从Manager读，用于某值被全局共享时
+}
+
 
 public enum EntityEventType
 {
@@ -133,6 +142,44 @@ public struct NativeEntityEvent
 
     public bool useRelative;        // 是否相对当前值 (+/-)
     public bool useRandom;          // 是否随机 (在 valueA ~ valueC 之间)
+}
+
+public enum DynamicParameterType
+{
+    None = 0,
+    TimeAlive = 1,       // 子弹存活时间
+    ShootPointIndex = 2,
+    WayIndex = 3,
+    OrderInWay = 4,
+    WaveTimes = 5,
+    TimesInWave = 6,
+    OrderInOneShoot = 7,
+    OrderInWave = 8,
+    Random = 9          // 随机数
+}
+
+// 用于 NativeArray 的事件结构体 (Blittable)
+public struct EntityEventParameters
+{
+    public EntityEventType type;
+    public float triggerTime;
+
+    // 基础值
+    public float baseValue;
+
+    // 动态参数 1
+    public DynamicParameterType dynamicType1;
+    public float dynamicFactor1; // 倍率
+
+    // 动态参数 2 (支持两种参数混合，比如：随着时间推移(T) + 不同的子弹条数(Way))
+    public DynamicParameterType dynamicType2;
+    public float dynamicFactor2;
+
+    // 辅助参数 (保留用于 SetAcceleration 的 valueB/C 等)
+    public float extraParam1;
+    public float extraParam2;
+
+    public bool useRelative; // 是否是增量修改
 }
 
 

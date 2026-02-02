@@ -58,6 +58,29 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         });
     }
 
+    #region 玩家被命中的逻辑
+    private void OnPlayerHit()
+    {
+        Debug.Log("<color=red>玩家中弹！</color>");
+        if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
+        {
+            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
+        }
+        if (hitPlayerCoroutine != null) StopCoroutine(hitPlayerCoroutine);
+        hitPlayerCoroutine = StartCoroutine(HitFlashRoutine());
+    }
+
+    private IEnumerator HitFlashRoutine()
+    {
+        if (playerSpriteRenderer != null)
+        {
+            playerSpriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            playerSpriteRenderer.color = Color.white;
+        }
+    }
+    #endregion
+
 
     #region 要派发的Job
     private void ScheduleEventJob()
@@ -75,7 +98,10 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             angularVelocities = m_AngularVelocities,
             isDead = m_IsDead,
             nextEventIndex = m_NextEventIndex,
-            randoms = m_Randoms
+            randoms = m_Randoms,
+
+            // 发射信息参数
+            shootPointIndices = m_ShootPointIndices,
         };
         m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
     }
@@ -99,7 +125,6 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             emitterIDs = m_EmitterIDs,
             emitterDeltas = m_EmitterDeltas
         };
-        // 这里的依赖关系：Job 依赖于 m_JobHandle (EventJob)，并且会读取 m_EmitterDeltas
         m_JobHandle = moveJob.Schedule(m_Transforms, m_JobHandle);
     }
 
@@ -130,7 +155,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         {
             positions = m_Positions,
             lifetimes = m_Lifetimes,
-            maxLifetimes = m_MaxLifetimes, // 修改：传入每颗子弹的最大寿命数组
+            maxLifetimes = m_MaxLifetimes,
             cullBoundsX = boundsX,
             cullBoundsY = boundsY,
             isDeadResults = m_IsDead
@@ -184,6 +209,8 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             m_MaxLifetimes[index] = info.totalLifetime > 0 ? info.totalLifetime : 15f;
             m_LastAngles[index] = info.direction;
             m_IsDead[index] = false;
+
+            m_ShootPointIndices[index] = info.shootPointIndex;
 
             m_Accelerations[index] = 0f;
             m_AccelAngles[index] = 0f;
@@ -309,28 +336,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
     #endregion
 
-    #region 玩家被命中的逻辑
-    private void OnPlayerHit()
-    {
-        Debug.Log("<color=red>玩家中弹！</color>");
-        if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
-        {
-            playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
-        }
-        if (hitEffectCoroutine != null) StopCoroutine(hitEffectCoroutine);
-        hitEffectCoroutine = StartCoroutine(HitFlashRoutine());
-    }
-
-    private IEnumerator HitFlashRoutine()
-    {
-        if (playerSpriteRenderer != null)
-        {
-            playerSpriteRenderer.color = Color.red;
-            yield return new WaitForSeconds(0.1f);
-            playerSpriteRenderer.color = Color.white;
-        }
-    }
-    #endregion
+    
 
     #region Pool & Helper Methods
     private GameObject GetBulletFromPool(int visualID)

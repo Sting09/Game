@@ -31,6 +31,7 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
             return instance;
         }
     }
+
     //使用virtual虚函数，子类继承可能还需要用Awake()
     protected virtual void Awake()
     {
