@@ -121,10 +121,25 @@ public class DanmakuCreatorWindow : EditorWindow
             emitterSO.bulletPattern = patternSO;
             EditorUtility.SetDirty(emitterSO); // 标记修改
 
-            // (可选) 创建 EmitterEvent
+            // (可选) 创建 EmitterEvent 和 FloatModifierAction
             if (createEmitterEvent)
             {
+                // 创建 Event
                 EmitterEventSO eventSO = CreateAsset<EmitterEventSO>(fullPath, $"{baseName}_Event{suffix}");
+
+                FloatModifierActionSO actionSO = CreateAsset<FloatModifierActionSO>(fullPath, $"{baseName}_Modifier{suffix}");
+
+                // 确保 actions 列表已初始化
+                if (eventSO.actions == null)
+                {
+                    eventSO.actions = new List<FloatModifierActionSO>();
+                }
+
+                // 将 Action 添加到 Event 的列表中
+                eventSO.actions.Add(actionSO);
+                EditorUtility.SetDirty(eventSO); // 标记 Event 已修改（保存引用）
+
+                // 链接 Event -> Emitter
                 emitterSO.emitterEvents = new List<EmitterEventSO> { eventSO };
                 EditorUtility.SetDirty(emitterSO);
             }
@@ -147,7 +162,7 @@ public class DanmakuCreatorWindow : EditorWindow
 
         // 选中生成的 DanmakuSO
         Selection.activeObject = danmakuSO;
-        Debug.Log($"<color=green>成功创建弹幕组：{baseName}</color> \n位置：{fullPath}");
+        Debug.Log($"<color=green>成功创建弹幕组：{baseName}</color> \n位置：{fullPath}\n包含 Action：{createEmitterEvent}");
     }
 
     // === 辅助方法 ===

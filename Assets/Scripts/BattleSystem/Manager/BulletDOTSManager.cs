@@ -391,6 +391,14 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         if (m_VisualNameToID.TryGetValue(name, out int id)) return id;
         return -1;
     }
+
+
+
+    [ContextMenu("Reload Behavior Configs")]
+    public void ReloadBehaviorConfigs()
+    {
+        InitializeBaseConfig();
+    }
     #endregion
 
     #region Debug Gizmos

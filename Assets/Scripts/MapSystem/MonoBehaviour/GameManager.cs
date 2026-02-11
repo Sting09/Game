@@ -1,5 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class GameManager : SingletonMono<GameManager>
 {
@@ -160,45 +163,85 @@ public class GameManager : SingletonMono<GameManager>
     /// <param name="room">与哪个房间的敌人战斗</param>
     public void PlayerBattle(Room room)
     {
-        //更新玩家状态
-        player.battleNum--;
-
-        //进入战斗场景
-
-        //返回玩家战斗结果
-        bool ifPlayerWin = true;        
-
-        if(ifPlayerWin)
+        // 1. 防呆检查
+        if (room == null || room.currentAttack == null)
         {
-            //玩家获得奖励
-            //情况一：击败的是野怪。获得区块内的一个奖励
-            if(!room.currentAttack.isOpponent)
-            {
-                int num = room.parentTile.tileData.rewardList.Count;
-                RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
-                player.ChangePower(reward.powerValue);
-            }
-            //情况二：击败的是对手。获得他身上的一个道具、对手死亡
-            else
-            {
-                player.ChangePower(15f);
-
-                OpponentDie(room.currentOpponentIndex);
-            }
-
-
-            //更新玩家状态
-
-            //更新房间状态
-            room.haveEnemy = false;
-            room.currentAttack = null;
-            room.currentOpponentIndex = -1;
-            room.currentOpponent = null;
+            Debug.LogError("房间或敌人数据为空！请检查配置！");
+            return;
         }
 
-        //更新地图视野
-        UpdatePlayerSight();
+        // 2. 更新玩家状态
+        player.battleNum--;
+
+        //-----------------------------------------------------------------------
+        // 3. 锁定玩家操作 (防止在加载时玩家乱点别的房间)
+        // PlayerInput.Instance.DisableInput(); 
+
+        // 重置摄像机
+        //
+        //-----------------------------------------------------------------------
+
+
+        // 4. 配置战斗上下文 (填充公告板)
+        BattleContext.roomData = room;
+        BattleContext.currentAttack = room.currentAttack;
+
+        // 5. 定义“战斗结束后要做什么” (这就是你的 bool 返回逻辑)
+        BattleContext.OnBattleResult = (isWin) =>
+        {
+            // --- 这里是战斗结束归来后执行的代码 ---
+
+            // =================================================
+            // 恢复摄像机
+            // ====================================================
+
+            // B. 处理胜负逻辑
+            if (isWin)
+            {
+                Debug.Log("战斗胜利！");
+                //玩家获得奖励
+                //情况一：击败的是野怪。获得区块内的一个奖励
+                if (!room.currentAttack.isOpponent)
+                {
+                    int num = room.parentTile.tileData.rewardList.Count;
+                    RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
+                    player.ChangePower(reward.powerValue);
+                }
+                //情况二：击败的是对手。获得他身上的一个道具、对手死亡
+                else
+                {
+                    player.ChangePower(15f);
+
+                    OpponentDie(room.currentOpponentIndex);
+                }
+                // 调用 Room 脚本的函数，标记为已通关
+                room.SetCleared(true);
+                // 可以在这里发放奖励...
+            }
+            else
+            {
+                Debug.Log("战斗失败...");
+                // 执行死亡惩罚，或者重新挑战
+                // Player.Instance.Die();
+            }
+
+            // ======================C. 解锁玩家操作=======================
+            // PlayerInput.Instance.EnableInput();
+            //============================================================
+
+            // D. 清理回调防止内存泄漏
+            BattleContext.OnBattleResult = null;
+
+            // E. 更新地图视野
+            UpdatePlayerSight();
+        };
+
+        // 5. 启动加载流程
+        StartCoroutine(SceneLoader.Instance.LoadBattleScene());
     }
+
+
+    
 
 
 

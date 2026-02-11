@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : SingletonMono<BattleManager> 
 {
@@ -30,5 +32,29 @@ public class BattleManager : SingletonMono<BattleManager>
         // Unity默认：逆时针旋转为正 (正上为90，正下为-90)
         // 解决方法：直接取负号
         return -degrees;
+    }
+
+
+    // 当战斗结束时调用此函数
+    public void EndBattle(bool isPlayerWin)
+    {
+        StartCoroutine(CloseBattleProcess(isPlayerWin));
+        StartCoroutine(SceneLoader.Instance.LoadMapScene());
+    }
+
+    private IEnumerator CloseBattleProcess(bool isWin)
+    {
+        // (可选) 播放个胜利动画/失败动画
+        // yield return new WaitForSeconds(2f);
+
+        // 1. 触发回调，把结果传回 Map Scene
+        if (BattleContext.OnBattleResult != null)
+        {
+            BattleContext.OnBattleResult.Invoke(isWin);
+        }
+
+        // 2. 卸载自己 (战斗场景)
+        // 注意：因为是 Additive 加载的，所以要 Unload
+        yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
     }
 }

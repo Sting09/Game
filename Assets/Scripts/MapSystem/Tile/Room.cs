@@ -64,6 +64,16 @@ public class Room : MonoBehaviour
     }
 
     
+    public void SetCleared(bool battleResult)
+    {
+        haveEnemy = battleResult;
+        if(battleResult)
+        {
+            currentAttack = null;
+            currentOpponentIndex = -1;
+            currentOpponent = null;
+        }
+    }
 
 
     // Ö´ÐÐÒÆ¶¯Âß¼­

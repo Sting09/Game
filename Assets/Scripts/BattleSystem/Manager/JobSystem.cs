@@ -45,33 +45,71 @@ public struct ObjectEventJob : IJobParallelFor
             NativeEntityEvent evt = globalEvents[evtIdx];
             if (lifetimes[index] < evt.triggerTime) break;
 
-            float val = evt.valueA;
+            // 计算动态数值： Val = Base + (Factor1 * Param1) + (Factor2 * Param2)
+            float finalValue = evt.baseValue;
+
+            if (evt.dynamicType1 != DynamicParameterType.None)
+                finalValue += GetDynamicParam(index, evt.dynamicType1) * evt.dynamicFactor1;
+
+            if (evt.dynamicType2 != DynamicParameterType.None)
+                finalValue += GetDynamicParam(index, evt.dynamicType2) * evt.dynamicFactor2;
+            
             if (evt.useRandom)
             {
                 var rng = randoms[index];
-                val = rng.NextFloat(evt.valueA, evt.valueC);
+                finalValue = rng.NextFloat(finalValue - evt.randomRange, finalValue + evt.randomRange);
                 randoms[index] = rng;
             }
 
             switch (evt.type)
             {
                 case EntityEventType.ChangeSpeed:
-                    if (evt.useRelative) speeds[index] += val; else speeds[index] = val; break;
+                    if (evt.useRelative) speeds[index] += finalValue; else speeds[index] = finalValue;
+                    break;
                 case EntityEventType.ChangeDirection:
-                    if (evt.useRelative) angles[index] += val; else angles[index] = val; break;
+                    if (evt.useRelative) angles[index] += finalValue; else angles[index] = finalValue;
+                    break;
                 case EntityEventType.SetAcceleration:
-                    accelerations[index] = val;
-                    if (evt.valueB > 0.5f) accelAngles[index] = angles[index]; else accelAngles[index] = evt.valueC; break;
+                    accelerations[index] = finalValue;
+                    // 使用 extraParam1/2 替代原来的 valueB/valueC
+                    if (evt.extraParam1 > 0.5f) accelAngles[index] = angles[index]; else accelAngles[index] = evt.extraParam2;
+                    break;
                 case EntityEventType.SetAngularVelocity:
-                    angularVelocities[index] = val; break;
+                    angularVelocities[index] = finalValue;
+                    break;
                 case EntityEventType.Stop:
-                    speeds[index] = 0; accelerations[index] = 0; angularVelocities[index] = 0; break;
+                    speeds[index] = 0; accelerations[index] = 0; angularVelocities[index] = 0;
+                    break;
                 case EntityEventType.Recycle:
-                    isDead[index] = true; break;
+                    isDead[index] = true;
+                    break;
             }
             evtIdx++;
         }
         nextEventIndex[index] = (evtIdx >= globalEndIndex) ? -1 : evtIdx;
+    }
+
+    // 辅助方法：获取参数值
+    private float GetDynamicParam(int index, DynamicParameterType type)
+    {
+        switch (type)
+        {
+            case DynamicParameterType.TimeAlive: return lifetimes[index];
+            case DynamicParameterType.ShootPointIndex: return (float)shootPointIndices[index];
+            /*case DynamicParameterType.WayIndex: return (float)wayIndices[index];
+            case DynamicParameterType.OrderInWay: return (float)orderInWays[index];
+            case DynamicParameterType.WaveTimes: return (float)waveTimes[index];
+            case DynamicParameterType.TimesInWave: return (float)timesInWaves[index];
+            case DynamicParameterType.OrderInOneShoot: return (float)orderInOneShoots[index];
+            case DynamicParameterType.OrderInWave: return (float)orderInWaves[index];
+            case DynamicParameterType.Random:
+                // 注意：在ParallelJob里写Random需要小心，这里仅做示例，建议用预生成的Random数组
+                var rng = randoms[index];
+                float r = rng.NextFloat(0, 1);
+                randoms[index] = rng; // 写回状态
+                return r;*/
+            default: return 0f;
+        }
     }
 
     [BurstDiscard]

@@ -7,17 +7,5 @@ public class EntityEventGroup : ScriptableObject
 {
     public string profileName;
     // 所有的事件列表
-    public List<EntityEventData> eventList;
-}
-
-[System.Serializable]
-public struct EntityEventData
-{
-    public float time;
-    public EntityEventType type;
-    public float valA;
-    public float valB;
-    public float valC;
-    public bool useRelative;
-    public bool useRandom;
+    public List<NativeEntityEvent> eventList;
 }

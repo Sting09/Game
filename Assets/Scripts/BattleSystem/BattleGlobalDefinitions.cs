@@ -130,36 +130,8 @@ public enum EntityEventType
 }
 
 // 对应 Job 的纯数据事件结构
+[System.Serializable]
 public struct NativeEntityEvent
-{
-    public float triggerTime;       // 触发时间 (Lifetime)
-    public EntityEventType type;    // 事件类型
-
-    // 通用参数 (根据 type 不同有不同含义)
-    public float valueA;            // 目标值 / 最小值 / X
-    public float valueB;            // 持续时间 / 标志位 / Y
-    public float valueC;            // 最大值 (用于随机)
-
-    public bool useRelative;        // 是否相对当前值 (+/-)
-    public bool useRandom;          // 是否随机 (在 valueA ~ valueC 之间)
-}
-
-public enum DynamicParameterType
-{
-    None = 0,
-    TimeAlive = 1,       // 子弹存活时间
-    ShootPointIndex = 2,
-    WayIndex = 3,
-    OrderInWay = 4,
-    WaveTimes = 5,
-    TimesInWave = 6,
-    OrderInOneShoot = 7,
-    OrderInWave = 8,
-    Random = 9          // 随机数
-}
-
-// 用于 NativeArray 的事件结构体 (Blittable)
-public struct EntityEventParameters
 {
     public EntityEventType type;
     public float triggerTime;
@@ -178,9 +150,26 @@ public struct EntityEventParameters
     // 辅助参数 (保留用于 SetAcceleration 的 valueB/C 等)
     public float extraParam1;
     public float extraParam2;
+    public float randomRange;
 
     public bool useRelative; // 是否是增量修改
+    public bool useRandom;
 }
+
+public enum DynamicParameterType
+{
+    None = 0,
+    TimeAlive = 1,       // 子弹存活时间
+    ShootPointIndex = 2,
+    WayIndex = 3,
+    OrderInWay = 4,
+    WaveTimes = 5,
+    TimesInWave = 6,
+    OrderInOneShoot = 7,
+    OrderInWave = 8,
+    Random = 9          // 随机数
+}
+
 
 
 

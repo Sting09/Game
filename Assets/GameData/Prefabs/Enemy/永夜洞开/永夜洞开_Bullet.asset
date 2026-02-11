@@ -14,17 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   profileName: "\u6C38\u591C\u6D1E\u5F00_SlowDown"
   eventList:
-  - time: 0
-    type: 3
-    valA: -3
-    valB: 0
-    valC: 0
+  - type: 3
+    triggerTime: 0
+    baseValue: -3.8
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
     useRelative: 0
     useRandom: 0
-  - time: 2
-    type: 3
-    valA: 0
-    valB: 0
-    valC: 0
+  - type: 3
+    triggerTime: 1
+    baseValue: 0
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
     useRelative: 0
+    useRandom: 0
+  - type: 1
+    triggerTime: 1.3
+    baseValue: 5
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
+    useRelative: 0
+    useRandom: 0
+  - type: 2
+    triggerTime: 1.3
+    baseValue: 22
+    dynamicType1: 2
+    dynamicFactor1: -11
+    dynamicType2: 5
+    dynamicFactor2: -2
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
+    useRelative: 1
     useRandom: 0

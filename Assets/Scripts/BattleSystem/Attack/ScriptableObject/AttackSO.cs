@@ -7,4 +7,6 @@ public class AttackSO : ScriptableObject
     public bool isOpponent;     //是否是对手。若为false，表示是野怪
 
     public float startTime;     //本波攻击的开始时间
+
+    public GameObject attackDirector;       //包含元发射器的物体
 }

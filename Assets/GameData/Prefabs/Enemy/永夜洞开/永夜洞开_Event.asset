@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: "\u6C38\u591C\u6D1E\u5F00_Event"
   m_EditorClassIdentifier: 
   startDelay: 0
-  interval: -1
+  interval: 0.25
   loopCount: 0
   conditions: []
-  actions: []
+  actions:
+  - {fileID: 11400000, guid: 6bffdaeeee231004e80530f83400c68f, type: 2}

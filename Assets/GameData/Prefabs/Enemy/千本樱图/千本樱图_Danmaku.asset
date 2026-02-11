@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
+  m_Name: "\u5343\u672C\u6A31\u56FE_Danmaku"
+  m_EditorClassIdentifier: 
+  duration: -1
+  emitterList:
+  - {fileID: 11400000, guid: 8c42ea994f0ef35488e14f133cf231b1, type: 2}
+  - {fileID: 11400000, guid: 6de8f2ce3213ebc488a6bc7cf151764b, type: 2}
+  - {fileID: 11400000, guid: 6541ea90b1bb75346bd347fe6c89e6c2, type: 2}
+  requiredEntities: []

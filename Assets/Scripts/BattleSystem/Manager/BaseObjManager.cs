@@ -183,7 +183,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     /// <summary>
     /// Obj管理器的通用方法，初始化必要的数据结构
     /// </summary>
-    private void InitializeBaseConfig()
+    protected void InitializeBaseConfig()
     {
 
         // 1. 初始化obj事件
@@ -210,16 +210,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
                         count = profile.eventList.Count;
                         foreach (var evt in profile.eventList)
                         {
-                            tempAllEvents.Add(new NativeEntityEvent
-                            {
-                                triggerTime = evt.time,
-                                type = evt.type,
-                                valueA = evt.valA,
-                                valueB = evt.valB,
-                                valueC = evt.valC,
-                                useRelative = evt.useRelative,
-                                useRandom = evt.useRandom
-                            });
+                            tempAllEvents.Add(evt);
                         }
                     }
                 }
@@ -580,12 +571,6 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         playerHitboxRate += rate;
         playerHitboxRate = Mathf.Max(playerHitboxRate, 0f);
         return playerHitboxRadius * playerHitboxRate;
-    }
-
-    [ContextMenu("Reload Behavior Configs")]
-    public void ReloadBehaviorConfigs()
-    {
-        InitializeBaseConfig();
     }
 
     // 在 BaseObjManager<T> 类中添加这个公共方法

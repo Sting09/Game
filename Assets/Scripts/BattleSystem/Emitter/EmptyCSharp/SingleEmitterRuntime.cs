@@ -109,13 +109,17 @@ public class SingleEmitterRuntime : EmitterRuntime
                     break;
             }
 
+            x = GetPropertyValue(EmitterPropertyType.EmitterPosX, x);
+            y = GetPropertyValue(EmitterPropertyType.EmitterPosX, y);
             posBuffer[0] = new Vector3(x, y, 0);
             emitterPosX = x;
             emitterPosY = y;
         }
         else
         {
-            posBuffer[0] = new Vector3(emitterPosX, emitterPosY, 0);
+            posBuffer[0] = new Vector3( GetPropertyValue(EmitterPropertyType.EmitterPosX, emitterPosX),
+                                        GetPropertyValue(EmitterPropertyType.EmitterPosY, emitterPosY),
+                                        0);
         }
         #endregion
 

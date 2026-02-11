@@ -56,7 +56,7 @@ MonoBehaviour:
     randomRange: 0
   angleType: 5
   angle:
-    baseValue: 90
+    baseValue: 0
     offsetValue: 0
     randomRange: 0
   posOffsetX:

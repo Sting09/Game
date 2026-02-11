@@ -9528,8 +9528,8 @@ MonoBehaviour:
   tilesRoot: {fileID: 286609886}
   tilePrefab: {fileID: 3763283925583069170, guid: a2420cf4e6d42804d9642bd0065a4f6b, type: 3}
   roomPrefab: {fileID: 1260608679309353371, guid: dd4753d5962143a46a35c093334d697d, type: 3}
-  test_showFullMap: 1
-  test_unlimitedCrossBound: 1
+  test_showFullMap: 0
+  test_unlimitedCrossBound: 0
 --- !u!1 &662637024
 GameObject:
   m_ObjectHideFlags: 0
