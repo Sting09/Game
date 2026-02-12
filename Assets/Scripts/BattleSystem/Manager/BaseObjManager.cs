@@ -437,12 +437,15 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     protected void BaseRemoveObjectAt(int index)
     {
         int lastIndex = m_ActiveCount - 1;
-        GameObject objToRemove = m_ActiveGOs[index];
         int visualID = m_ActiveVisualIDs[index];
 
-        objToRemove.SetActive(false);
-        if (visualID >= 0 && visualID < m_VisualPools.Length) m_VisualPools[visualID].Enqueue(objToRemove);
-        else Destroy(objToRemove);
+        GameObject objToRemove = m_ActiveGOs[index];
+        if(objToRemove != null)
+        {
+            objToRemove.SetActive(false);
+            if (visualID >= 0 && visualID < m_VisualPools.Length) m_VisualPools[visualID].Enqueue(objToRemove);
+            else Destroy(objToRemove);
+        }
 
         // swapData 更新内存
         if (index != lastIndex)
