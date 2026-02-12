@@ -14,10 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   profileName: RotateMovement_72
   eventList:
-  - time: 0
-    type: 4
-    valA: 72
-    valB: 0
-    valC: 0
+  - type: 4
+    triggerTime: 0
+    baseValue: 72
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
     useRelative: 0
     useRandom: 0

@@ -16,7 +16,7 @@ MonoBehaviour:
   bulletDuration: 600
   isRelative: 1
   objType: 0
-  bulletBehavior: RotateMovement
+  bulletBehavior: RotateMovement_72
   description: 
   shootWays:
     baseValue: 5

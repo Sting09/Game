@@ -3800,6 +3800,7 @@ Transform:
   - {fileID: 1392709087}
   - {fileID: 957719606}
   - {fileID: 225140099}
+  - {fileID: 7883304652708255463}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &295362389
@@ -10166,6 +10167,8 @@ MonoBehaviour:
   currentOpponentNum: 0
   playerNewPositionEvent: {fileID: 11400000, guid: 6da35155f9d29d14c883eddad196d765, type: 2}
   tilesToShrink: []
+  mapSceneCanvas: {fileID: 108175595}
+  mapSceneMap: {fileID: 286609886}
 --- !u!1 &788169935
 GameObject:
   m_ObjectHideFlags: 0
@@ -27076,12 +27079,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4103516530517955513}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3984, y: 0.69, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.664, y: 1.15, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 286609887}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7883304652708255464
 MonoBehaviour:
@@ -27108,7 +27111,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 108175596}
   - {fileID: 286609887}
-  - {fileID: 7883304652708255463}
   - {fileID: 2017235218}
   - {fileID: 661108803}
   - {fileID: 778009819}

@@ -66,7 +66,7 @@ public class Room : MonoBehaviour
     
     public void SetCleared(bool battleResult)
     {
-        haveEnemy = battleResult;
+        haveEnemy = !battleResult;
         if(battleResult)
         {
             currentAttack = null;

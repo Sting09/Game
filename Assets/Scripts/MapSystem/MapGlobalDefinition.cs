@@ -17,8 +17,18 @@ public enum GamePhase
     UpdateMapAfterRound,
     RoundEnd,
     SuddenDeath,
-    GameEnd
+    GameEnd,
+
+    //’Ω∂∑œ‡πÿ
+    BattlePrewarm,
+    BattleStart,
+    BattleFighting,
+    BattlePause,
+    BattleWin,
+    BattleLose,
+    BattleEnd,
 }
+
 
 public enum RoomDirection
 {

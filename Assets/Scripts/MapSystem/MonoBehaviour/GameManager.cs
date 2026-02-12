@@ -17,6 +17,9 @@ public class GameManager : SingletonMono<GameManager>
 
     public List<Tile> tilesToShrink = new List<Tile>();    //缩圈要移除的地块
 
+    public Canvas mapSceneCanvas;
+    public GameObject mapSceneMap;
+
 
     /// <summary>
     /// GenerateSchedule阶段，玩家和对手出生
@@ -163,15 +166,19 @@ public class GameManager : SingletonMono<GameManager>
     /// <param name="room">与哪个房间的敌人战斗</param>
     public void PlayerBattle(Room room)
     {
-        // 1. 防呆检查
+        // 防呆检查
         if (room == null || room.currentAttack == null)
         {
             Debug.LogError("房间或敌人数据为空！请检查配置！");
             return;
         }
 
-        // 2. 更新玩家状态
+        // 更新玩家状态
         player.battleNum--;
+
+        // 隐藏地图场景元素
+        if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(false);
+        if (mapSceneMap != null)  mapSceneMap.SetActive(false);
 
         //-----------------------------------------------------------------------
         // 3. 锁定玩家操作 (防止在加载时玩家乱点别的房间)
@@ -198,11 +205,11 @@ public class GameManager : SingletonMono<GameManager>
             // B. 处理胜负逻辑
             if (isWin)
             {
-                Debug.Log("战斗胜利！");
                 //玩家获得奖励
                 //情况一：击败的是野怪。获得区块内的一个奖励
                 if (!room.currentAttack.isOpponent)
                 {
+                    Debug.Log("和野怪的战斗胜利！");
                     int num = room.parentTile.tileData.rewardList.Count;
                     RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
                     player.ChangePower(reward.powerValue);
@@ -210,6 +217,7 @@ public class GameManager : SingletonMono<GameManager>
                 //情况二：击败的是对手。获得他身上的一个道具、对手死亡
                 else
                 {
+                    Debug.Log("和对手的战斗胜利！");
                     player.ChangePower(15f);
 
                     OpponentDie(room.currentOpponentIndex);
@@ -231,6 +239,11 @@ public class GameManager : SingletonMono<GameManager>
 
             // D. 清理回调防止内存泄漏
             BattleContext.OnBattleResult = null;
+
+            // 恢复地图场景元素的显示
+            // 隐藏地图场景元素
+            if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(true);
+            if (mapSceneMap != null) mapSceneMap.SetActive(true);
 
             // E. 更新地图视野
             UpdatePlayerSight();

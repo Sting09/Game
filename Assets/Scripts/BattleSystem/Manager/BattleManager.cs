@@ -12,6 +12,11 @@ public class BattleManager : SingletonMono<BattleManager>
         return player != null ? player.transform.position : Vector3.zero;
     }
 
+    public void SetPlayerActive(bool state)
+    {
+        player.SetActive(state);
+    }
+
     public float CalculateAngle(Vector3 startPoint, Vector3 endPoint)
     {
         // 1. 计算方向向量 (终点 - 起点)
@@ -35,11 +40,20 @@ public class BattleManager : SingletonMono<BattleManager>
     }
 
 
+    public void StartBattle()
+    {
+
+    }
+
     // 当战斗结束时调用此函数
     public void EndBattle(bool isPlayerWin)
     {
+        // 清空子弹池、敌人池、玩家子弹池
+
+        // 隐藏战斗场景元素
+
         StartCoroutine(CloseBattleProcess(isPlayerWin));
-        StartCoroutine(SceneLoader.Instance.LoadMapScene());
+        //StartCoroutine(SceneLoader.Instance.LoadMapScene());
     }
 
     private IEnumerator CloseBattleProcess(bool isWin)

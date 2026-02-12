@@ -9,7 +9,7 @@ public class PhaseSO : ScriptableObject
     public GamePhase phase;             //什么阶段？
     public PhaseEventSO phaseEventSO;   //阶段开始触发的对应事件
     public float autoEndDuration = 1f;               //阶段自动结束
-    public string phaseName;
+    public bool isBattle = false;
     [TextArea(3, 20)]
     public string phaseDescription;
 
@@ -74,6 +74,13 @@ public class PhaseSO : ScriptableObject
     {
         yield return null;
 
-        PhaseController.Instance.StartNextPhase();
+        if(isBattle)
+        {
+            BattleController.Instance.StartNextPhase();
+        }
+        else
+        {
+            PhaseController.Instance.StartNextPhase();
+        }
     }
 }
