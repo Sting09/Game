@@ -8,51 +8,51 @@ public class GameManager : SingletonMono<GameManager>
 {
     public GameObject playerObject;
     public Player player;
-    public Room playerCurrentRoom;      //Íæ¼Òµ±Ç°ËùÔÚµÄ·¿¼ä
+    public Room playerCurrentRoom;      //ç©å®¶å½“å‰æ‰€åœ¨çš„æˆ¿é—´
 
     public List<OpponentInfo> opponentInfo;
     public int currentOpponentNum;
 
     public ObjectEventSO playerNewPositionEvent;
 
-    public List<Tile> tilesToShrink = new List<Tile>();    //ËõÈ¦ÒªÒÆ³ıµÄµØ¿é
+    public List<Tile> tilesToShrink = new List<Tile>();    //ç¼©åœˆè¦ç§»é™¤çš„åœ°å—
 
     public Canvas mapSceneCanvas;
     public GameObject mapSceneMap;
 
 
     /// <summary>
-    /// GenerateSchedule½×¶Î£¬Íæ¼ÒºÍ¶ÔÊÖ³öÉú
+    /// GenerateScheduleé˜¶æ®µï¼Œç©å®¶å’Œå¯¹æ‰‹å‡ºç”Ÿ
     /// </summary>
     public void AllContestantsBorn()
     {
         int n = MapManager.Instance.allItems.Count;
-        // 1. ³õÊ¼»¯ÓĞĞòÊı×é [0, 1, 2, ..., n-1]
+        // 1. åˆå§‹åŒ–æœ‰åºæ•°ç»„ [0, 1, 2, ..., n-1]
         int[] arr = new int[n];
         for (int i = 0; i < n; i++)
         {
             arr[i] = i;
         }
 
-        // 2. Ê¹ÓÃ Fisher-Yates Ëã·¨Ô­µØ´òÂÒ
-        // ´Ó×îºóÒ»¸öÔªËØ¿ªÊ¼£¬ÏòÇ°±éÀú
+        // 2. ä½¿ç”¨ Fisher-Yates ç®—æ³•åŸåœ°æ‰“ä¹±
+        // ä»æœ€åä¸€ä¸ªå…ƒç´ å¼€å§‹ï¼Œå‘å‰éå†
         for (int i = n - 1; i > 0; i--)
         {
-            // Ëæ»úÑ¡È¡Ò»¸öÎ»ÖÃ j (·¶Î§ 0 µ½ i)
-            // ×¢Òâ£ºUnity µÄ Random.Range(min, max) ÕûÊı°æÊÇ²»°üº¬ max µÄ£¬ËùÒÔÕâÀïÓÃ i + 1
+            // éšæœºé€‰å–ä¸€ä¸ªä½ç½® j (èŒƒå›´ 0 åˆ° i)
+            // æ³¨æ„ï¼šUnity çš„ Random.Range(min, max) æ•´æ•°ç‰ˆæ˜¯ä¸åŒ…å« max çš„ï¼Œæ‰€ä»¥è¿™é‡Œç”¨ i + 1
             int j = Random.Range(0, i + 1);
 
-            // ½»»» arr[i] ºÍ arr[j]
+            // äº¤æ¢ arr[i] å’Œ arr[j]
             int temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
         }
-        // 3. Ìî³äÁĞ±í
+        // 3. å¡«å……åˆ—è¡¨
         int num = GlobalSetting.Instance.globalVariable.contestantNum;
         opponentInfo = new List<OpponentInfo>(num - 1);
         currentOpponentNum = num - 1;
 
-        // 4. ¸ù¾İarr£¬Éú³É²ÎÈüÕß³õÊ¼Î»ÖÃ
+        // 4. æ ¹æ®arrï¼Œç”Ÿæˆå‚èµ›è€…åˆå§‹ä½ç½®
         int index = 0;
         for(int i=0; i < num; ++i)
         {
@@ -62,7 +62,7 @@ public class GameManager : SingletonMono<GameManager>
             }
             if(index >= n)
             {
-                Debug.Log("²ÎÈüÕßÊıÁ¿¹ı¶à£¬¶àÓÚ¿ÉÓÃµØ¿éÊıÁ¿");
+                Debug.Log("å‚èµ›è€…æ•°é‡è¿‡å¤šï¼Œå¤šäºå¯ç”¨åœ°å—æ•°é‡");
             }
 
             if (i == num - 1)
@@ -79,7 +79,7 @@ public class GameManager : SingletonMono<GameManager>
         UpdatePlayerSight();
     }
 
-    #region Íæ¼ÒºÍµĞÈË³öÉúÏà¹Øº¯Êı
+    #region ç©å®¶å’Œæ•Œäººå‡ºç”Ÿç›¸å…³å‡½æ•°
     public void PlayerBorn(int tileLine, int tileIndex, RoomDirection direction)
     {
 
@@ -118,7 +118,7 @@ public class GameManager : SingletonMono<GameManager>
 
 
     /// <summary>
-    /// µØÍ¼¸üĞÂÊ±£¬Í¨ÖªËùÓĞ·¿¼ä£¬¸üĞÂÊÓ¾õĞÅÏ¢
+    /// åœ°å›¾æ›´æ–°æ—¶ï¼Œé€šçŸ¥æ‰€æœ‰æˆ¿é—´ï¼Œæ›´æ–°è§†è§‰ä¿¡æ¯
     /// </summary>
     public void UpdatePlayerSight()
     {
@@ -128,24 +128,24 @@ public class GameManager : SingletonMono<GameManager>
 
 
     /// <summary>
-    /// µØÍ¼ÉÏË¢ĞÂÒ°¹Ö£¬Ã¿¸öÇø¿éË¢ĞÂ5¸ö
+    /// åœ°å›¾ä¸Šåˆ·æ–°é‡æ€ªï¼Œæ¯ä¸ªåŒºå—åˆ·æ–°5ä¸ª
     /// </summary>
     public void AllMonstersBorn()
     {
-        //´ÓËæ»ú·¿¼ä¿ªÊ¼±éÀú
+        //ä»éšæœºæˆ¿é—´å¼€å§‹éå†
         int i = Random.Range(0, 6);
 
         foreach(Tile tile in MapManager.Instance.allItems)
         {
-            //±éÀúÁù¸ö·¿¼ä£¬ÖØ¸´Îå´Î
+            //éå†å…­ä¸ªæˆ¿é—´ï¼Œé‡å¤äº”æ¬¡
             for(int roomIndex = i, times = 0; times < 5;  roomIndex = (roomIndex+1) % 6, times++)
             {
-                //Èç¹û·¿¼äÓĞ¶ÔÊÖ£¬ÔòÌø¹ı
+                //å¦‚æœæˆ¿é—´æœ‰å¯¹æ‰‹ï¼Œåˆ™è·³è¿‡
                 if (tile.rooms[roomIndex].roomObj.haveEnemy || tile.rooms[roomIndex].roomObj.havePlayer)
                 {
-                    times--;        //Ñ­»·½áÊøÃ»Éú³É¹ÖÎïÒ²»á¼ÓÒ»£¬µÖÏûµô
+                    times--;        //å¾ªç¯ç»“æŸæ²¡ç”Ÿæˆæ€ªç‰©ä¹Ÿä¼šåŠ ä¸€ï¼ŒæŠµæ¶ˆæ‰
                 }
-                //·ñÔò´Ó¹ÖÎïÁĞ±íÖĞÉú³ÉÒ»¸ö¹ÖÎï
+                //å¦åˆ™ä»æ€ªç‰©åˆ—è¡¨ä¸­ç”Ÿæˆä¸€ä¸ªæ€ªç‰©
                 else
                 {
                     tile.GenerateOneMonster(roomIndex);
@@ -154,102 +154,104 @@ public class GameManager : SingletonMono<GameManager>
             }
         }
 
-        //¸üĞÂÍæ¼ÒÊÓÒ°
-        UpdatePlayerSight();
-    }
 
 
 
     /// <summary>
-    /// Íæ¼Ò½øĞĞÕ½¶·
+    /// ç©å®¶è¿›è¡Œæˆ˜æ–—
     /// </summary>
-    /// <param name="room">ÓëÄÄ¸ö·¿¼äµÄµĞÈËÕ½¶·</param>
+    /// <param name="room">ä¸å“ªä¸ªæˆ¿é—´çš„æ•Œäººæˆ˜æ–—</param>
     public void PlayerBattle(Room room)
     {
-        // ·À´ô¼ì²é
+        // é˜²å‘†æ£€æŸ¥
         if (room == null || room.currentAttack == null)
         {
-            Debug.LogError("·¿¼ä»òµĞÈËÊı¾İÎª¿Õ£¡Çë¼ì²éÅäÖÃ£¡");
+            Debug.LogError("æˆ¿é—´æˆ–æ•Œäººæ•°æ®ä¸ºç©ºï¼è¯·æ£€æŸ¥é…ç½®ï¼");
             return;
         }
 
-        // ¸üĞÂÍæ¼Ò×´Ì¬
+        // æ›´æ–°ç©å®¶çŠ¶æ€
         player.battleNum--;
 
-        // Òş²ØµØÍ¼³¡¾°ÔªËØ
+        // éšè—åœ°å›¾åœºæ™¯å…ƒç´ 
         if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(false);
         if (mapSceneMap != null)  mapSceneMap.SetActive(false);
 
         //-----------------------------------------------------------------------
-        // 3. Ëø¶¨Íæ¼Ò²Ù×÷ (·ÀÖ¹ÔÚ¼ÓÔØÊ±Íæ¼ÒÂÒµã±ğµÄ·¿¼ä)
+        // 3. é”å®šç©å®¶æ“ä½œ (é˜²æ­¢åœ¨åŠ è½½æ—¶ç©å®¶ä¹±ç‚¹åˆ«çš„æˆ¿é—´)
         // PlayerInput.Instance.DisableInput(); 
 
-        // ÖØÖÃÉãÏñ»ú
+        // é‡ç½®æ‘„åƒæœº
         //
         //-----------------------------------------------------------------------
 
 
-        // 4. ÅäÖÃÕ½¶·ÉÏÏÂÎÄ (Ìî³ä¹«¸æ°å)
+        // 4. é…ç½®æˆ˜æ–—ä¸Šä¸‹æ–‡ (å¡«å……å…¬å‘Šæ¿)
         BattleContext.roomData = room;
         BattleContext.currentAttack = room.currentAttack;
 
-        // 5. ¶¨Òå¡°Õ½¶·½áÊøºóÒª×öÊ²Ã´¡± (Õâ¾ÍÊÇÄãµÄ bool ·µ»ØÂß¼­)
+        // 5. å®šä¹‰â€œæˆ˜æ–—ç»“æŸåè¦åšä»€ä¹ˆâ€ (è¿™å°±æ˜¯ä½ çš„ bool è¿”å›é€»è¾‘)
         BattleContext.OnBattleResult = (isWin) =>
         {
-            // --- ÕâÀïÊÇÕ½¶·½áÊø¹éÀ´ºóÖ´ĞĞµÄ´úÂë ---
+            // --- è¿™é‡Œæ˜¯æˆ˜æ–—ç»“æŸå½’æ¥åæ‰§è¡Œçš„ä»£ç  ---
 
             // =================================================
-            // »Ö¸´ÉãÏñ»ú
+            // æ¢å¤æ‘„åƒæœº
             // ====================================================
 
-            // B. ´¦ÀíÊ¤¸ºÂß¼­
+            // B. å¤„ç†èƒœè´Ÿé€»è¾‘
             if (isWin)
             {
-                //Íæ¼Ò»ñµÃ½±Àø
-                //Çé¿öÒ»£º»÷°ÜµÄÊÇÒ°¹Ö¡£»ñµÃÇø¿éÄÚµÄÒ»¸ö½±Àø
+                //ç©å®¶è·å¾—å¥–åŠ±
+                //æƒ…å†µä¸€ï¼šå‡»è´¥çš„æ˜¯é‡æ€ªã€‚è·å¾—åŒºå—å†…çš„ä¸€ä¸ªå¥–åŠ±
                 if (!room.currentAttack.isOpponent)
                 {
-                    Debug.Log("ºÍÒ°¹ÖµÄÕ½¶·Ê¤Àû£¡");
+                    Debug.Log("å’Œé‡æ€ªçš„æˆ˜æ–—èƒœåˆ©ï¼");
                     int num = room.parentTile.tileData.rewardList.Count;
                     RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
                     player.ChangePower(reward.powerValue);
                 }
-                //Çé¿ö¶ş£º»÷°ÜµÄÊÇ¶ÔÊÖ¡£»ñµÃËûÉíÉÏµÄÒ»¸öµÀ¾ß¡¢¶ÔÊÖËÀÍö
+                //æƒ…å†µäºŒï¼šå‡»è´¥çš„æ˜¯å¯¹æ‰‹ã€‚è·å¾—ä»–èº«ä¸Šçš„ä¸€ä¸ªé“å…·ã€å¯¹æ‰‹æ­»äº¡
                 else
                 {
-                    Debug.Log("ºÍ¶ÔÊÖµÄÕ½¶·Ê¤Àû£¡");
+                    Debug.Log("å’Œå¯¹æ‰‹çš„æˆ˜æ–—èƒœåˆ©ï¼");
                     player.ChangePower(15f);
 
                     OpponentDie(room.currentOpponentIndex);
                 }
-                // µ÷ÓÃ Room ½Å±¾µÄº¯Êı£¬±ê¼ÇÎªÒÑÍ¨¹Ø
+                // è°ƒç”¨ Room è„šæœ¬çš„å‡½æ•°ï¼Œæ ‡è®°ä¸ºå·²é€šå…³
                 room.SetCleared(true);
-                // ¿ÉÒÔÔÚÕâÀï·¢·Å½±Àø...
+                // å¯ä»¥åœ¨è¿™é‡Œå‘æ”¾å¥–åŠ±...
             }
             else
             {
-                Debug.Log("Õ½¶·Ê§°Ü...");
-                // Ö´ĞĞËÀÍö³Í·££¬»òÕßÖØĞÂÌôÕ½
+        StartCoroutine(SceneLoader.Instance.LoadBattleScene(() =>
+        {
+            // È«Ê±ØµÍ¼Ôª
+            if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(false);
+            if (mapSceneMap != null) mapSceneMap.SetActive(false);
+        }));
+                // æ‰§è¡Œæ­»äº¡æƒ©ç½šï¼Œæˆ–è€…é‡æ–°æŒ‘æˆ˜
                 // Player.Instance.Die();
             }
 
-            // ======================C. ½âËøÍæ¼Ò²Ù×÷=======================
+            // ======================C. è§£é”ç©å®¶æ“ä½œ=======================
             // PlayerInput.Instance.EnableInput();
             //============================================================
 
-            // D. ÇåÀí»Øµ÷·ÀÖ¹ÄÚ´æĞ¹Â©
+            // D. æ¸…ç†å›è°ƒé˜²æ­¢å†…å­˜æ³„æ¼
             BattleContext.OnBattleResult = null;
 
-            // »Ö¸´µØÍ¼³¡¾°ÔªËØµÄÏÔÊ¾
-            // Òş²ØµØÍ¼³¡¾°ÔªËØ
+            // æ¢å¤åœ°å›¾åœºæ™¯å…ƒç´ çš„æ˜¾ç¤º
+            // éšè—åœ°å›¾åœºæ™¯å…ƒç´ 
             if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(true);
             if (mapSceneMap != null) mapSceneMap.SetActive(true);
 
-            // E. ¸üĞÂµØÍ¼ÊÓÒ°
+            // E. æ›´æ–°åœ°å›¾è§†é‡
             UpdatePlayerSight();
         };
 
-        // 5. Æô¶¯¼ÓÔØÁ÷³Ì
+        // 5. å¯åŠ¨åŠ è½½æµç¨‹
         StartCoroutine(SceneLoader.Instance.LoadBattleScene());
     }
 
@@ -260,39 +262,39 @@ public class GameManager : SingletonMono<GameManager>
 
 
     /// <summary>
-    /// Íæ¼ÒÌ½Ë÷·¿¼ä
+    /// ç©å®¶æ¢ç´¢æˆ¿é—´
     /// </summary>
-    /// <param name="room">ÒªÌ½Ë÷ÄÄ¸ö·¿¼ä</param>
+    /// <param name="room">è¦æ¢ç´¢å“ªä¸ªæˆ¿é—´</param>
     public void PlayerSearch(Room room)
     {
-        //¸üĞÂÍæ¼Ò×´Ì¬
+        //æ›´æ–°ç©å®¶çŠ¶æ€
         player.searchNum--;
 
-        //Éú³ÉËæ»úÊı¼ì¶¨ÊÇ·ñµÃµ½½±Àø
+        //ç”Ÿæˆéšæœºæ•°æ£€å®šæ˜¯å¦å¾—åˆ°å¥–åŠ±
         int randomResult = Random.Range(0,6);
 
-        if (randomResult < room.remainRewardNum + room.alreadyRewardFailTimes)        //³É¹¦
+        if (randomResult < room.remainRewardNum + room.alreadyRewardFailTimes)        //æˆåŠŸ
         {
-            //´ÓËùÔÚÇø¿é»ñµÃÒ»¸ö½±Àø
+            //ä»æ‰€åœ¨åŒºå—è·å¾—ä¸€ä¸ªå¥–åŠ±
             int num = room.parentTile.tileData.rewardList.Count;
             RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
-            //¸üĞÂÍæ¼ÒÕ½Á¦
+            //æ›´æ–°ç©å®¶æˆ˜åŠ›
             player.ChangePower(reward.powerValue);
 
-            //¸üĞÂ·¿¼ä×´Ì¬
+            //æ›´æ–°æˆ¿é—´çŠ¶æ€
             room.remainRewardNum--;
             room.alreadyRewardFailTimes = 0;
         }
-        else       //Ê§°Ü
+        else       //å¤±è´¥
         {
-            //Ê§°Ü¶¯»­/ÌáÊ¾
-            Debug.Log("Ò»ÎŞËù»ñ£¡");
+            //å¤±è´¥åŠ¨ç”»/æç¤º
+            Debug.Log("ä¸€æ— æ‰€è·ï¼");
 
-            //¸üĞÂ·¿¼ä×´Ì¬
+            //æ›´æ–°æˆ¿é—´çŠ¶æ€
             room.alreadyRewardFailTimes ++;
         }
 
-        //¸üĞÂµØÍ¼ÊÓÒ°
+        //æ›´æ–°åœ°å›¾è§†é‡
         UpdatePlayerSight();
     }
 
@@ -301,18 +303,18 @@ public class GameManager : SingletonMono<GameManager>
 
 
     /// <summary>
-    /// ÂÖ´Î¿ªÊ¼Ê±£¬Ñ¡ÔñÈô¸ÉµØ¿é£¬ÂÖ´Î½áÊøÊ±ÏûÊ§
+    /// è½®æ¬¡å¼€å§‹æ—¶ï¼Œé€‰æ‹©è‹¥å¹²åœ°å—ï¼Œè½®æ¬¡ç»“æŸæ—¶æ¶ˆå¤±
     /// </summary>
     public void SelectTileToShrink()
     {
-        //ÒÑ¾­½øÈësuddenDeathÁË£¬¾Í²»ÔÙËõÈ¦ÁË
+        //å·²ç»è¿›å…¥suddenDeathäº†ï¼Œå°±ä¸å†ç¼©åœˆäº†
         if (PhaseController.Instance.suddenDeath) { return; }
 
-        //Ñ¡ÔñÒªÏûÊ§µÄµØ¿é
+        //é€‰æ‹©è¦æ¶ˆå¤±çš„åœ°å—
         int num = PhaseController.Instance.shrinkNum[PhaseController.Instance.currentRound];
         MapManager.Instance.GetRandomConnectedTilesNonAlloc(num, tilesToShrink);
 
-        //±»Ñ¡ÖĞµÄµØ¿é·¢ºì¹â
+        //è¢«é€‰ä¸­çš„åœ°å—å‘çº¢å…‰
         foreach(Tile tile in tilesToShrink)
         {
             tile.DangerousLight();
@@ -321,7 +323,7 @@ public class GameManager : SingletonMono<GameManager>
     }
 
     /// <summary>
-    /// ÂÖ´Î½áÊøÊ±£¬µØÍ¼ËõÈ¦£¬ÒÆ³ıÂÖ´Î¿ªÊ¼Ê±Ö¸¶¨µÄµØ¿é
+    /// è½®æ¬¡ç»“æŸæ—¶ï¼Œåœ°å›¾ç¼©åœˆï¼Œç§»é™¤è½®æ¬¡å¼€å§‹æ—¶æŒ‡å®šçš„åœ°å—
     /// </summary>
     public void MapShrink()
     {
@@ -338,27 +340,27 @@ public class GameManager : SingletonMono<GameManager>
 
 
     /// <summary>
-    /// ÈÃopponentInfoÖĞµÄµÚindex¸ö¶ÔÊÖËÀµô
+    /// è®©opponentInfoä¸­çš„ç¬¬indexä¸ªå¯¹æ‰‹æ­»æ‰
     /// </summary>
-    /// <param name="index">¶ÔÊÖË÷Òı</param>
+    /// <param name="index">å¯¹æ‰‹ç´¢å¼•</param>
     public void OpponentDie(int index)
     {
         OpponentInfo currentOpponent = opponentInfo[index];
 
-        //ĞŞ¸Äµ±Ç°·¿¼äĞÅÏ¢
+        //ä¿®æ”¹å½“å‰æˆ¿é—´ä¿¡æ¯
         currentOpponent.currentRoom.haveEnemy = false;
         currentOpponent.currentRoom.currentAttack = null;
         currentOpponent.currentRoom.currentOpponentIndex = -1;
         currentOpponent.currentRoom.currentOpponent = null;
 
-        //ĞŞ¸ÄopponentInfoÖĞµÄÊı¾İ
+        //ä¿®æ”¹opponentInfoä¸­çš„æ•°æ®
         currentOpponent.currentRoom = null;
         currentOpponent.opponentState = ContestantState.Dead;
         opponentInfo[index] = currentOpponent;
 
-        //¸üĞÂµ±Ç°¶ÔÊÖÊı
+        //æ›´æ–°å½“å‰å¯¹æ‰‹æ•°
         currentOpponentNum--;
-        //¶ÔÊÖËÀ¹âÁË£¬ÔòÓÎÏ·½áÊø
+        //å¯¹æ‰‹æ­»å…‰äº†ï¼Œåˆ™æ¸¸æˆç»“æŸ
         if(currentOpponentNum <= 0)
         {
             PhaseController.Instance.StartCertainPhase(GamePhase.GameEnd);
@@ -369,17 +371,17 @@ public class GameManager : SingletonMono<GameManager>
     {
         OpponentInfo currentOpponent = opponentInfo[index];
 
-        //ĞŞ¸Äµ±Ç°·¿¼äĞÅÏ¢
+        //ä¿®æ”¹å½“å‰æˆ¿é—´ä¿¡æ¯
         currentOpponent.currentRoom.haveEnemy = false;
         currentOpponent.currentRoom.currentAttack = null;
         currentOpponent.currentRoom.currentOpponentIndex = -1;
         currentOpponent.currentRoom.currentOpponent = null;
 
-        //ĞŞ¸ÄopponentInfoÖĞµÄÊı¾İ
+        //ä¿®æ”¹opponentInfoä¸­çš„æ•°æ®
         currentOpponent.currentRoom = targetRoom;
         opponentInfo[index] = currentOpponent;
 
-        //ĞŞ¸ÄĞÂ·¿¼äĞÅÏ¢
+        //ä¿®æ”¹æ–°æˆ¿é—´ä¿¡æ¯
         targetRoom.haveEnemy = true;
         targetRoom.currentAttack = currentOpponent.opponentData.opponentAttack;
         targetRoom.currentOpponentIndex = index;
@@ -387,11 +389,11 @@ public class GameManager : SingletonMono<GameManager>
     }
 
     /// <summary>
-    /// Íæ¼ÒËÀÍö
+    /// ç©å®¶æ­»äº¡
     /// </summary>
     public void PlayerDie()
     {
-        //Ö±½ÓÓÎÏ·½áÊø
+        //ç›´æ¥æ¸¸æˆç»“æŸ
         PhaseController.Instance.StartCertainPhase(GamePhase.GameEnd);
     }
 }
@@ -400,10 +402,10 @@ public class GameManager : SingletonMono<GameManager>
 public struct OpponentInfo
 {
     public OpponentDataSO opponentData;
-    public ContestantState opponentState;    // ¸ÃÃûµĞÈËµÄ×´Ì¬
+    public ContestantState opponentState;    // è¯¥åæ•Œäººçš„çŠ¶æ€
     public Room currentRoom;
     public float power;
 
-    public Tile currentTargetTile;      //µ±Ç°ÅÜÍ¼µÄÄ¿µÄµØTile
-    public Room currentTargetRoom;      //µ±Ç°ÅÜÍ¼µÄÄ¿µÄµØRoom
+    public Tile currentTargetTile;      //å½“å‰è·‘å›¾çš„ç›®çš„åœ°Tile
+    public Room currentTargetRoom;      //å½“å‰è·‘å›¾çš„ç›®çš„åœ°Room
 }

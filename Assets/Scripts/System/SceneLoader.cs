@@ -1,241 +1,294 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 
 public class SceneLoader : SingletonMono<SceneLoader>
 {
-    [Header("UI×é¼ş")]
+    [Header("UIå¼•ç”¨")]
     public CanvasGroup fadeCanvasGroup;
     public Image loadingProgressBar;
     public Text loadingText;
 
-    [Header("²ÎÊıÉèÖÃ")]
-    [Tooltip("ºÚÆÁµ­Èë/µ­³öµÄµ¥´ÎÊ±³¤£¨Ãë£©")]
-    public float fadeDuration = 0.8f;
+    [Header("æ¸å˜åŠ¨ç”»")]
+    [Tooltip("æ¸å…¥é»‘å±çš„æŒç»­æ—¶é—´ï¼ˆç§’ï¼‰")]
+    public float fadeInDuration = 0.8f;
 
-    [Tooltip("¼ÓÔØ½ø¶ÈÌõÌîÂúºó£¬Ç¿ÖÆ¶îÍâµÈ´ıµÄÊ±¼ä£¨Ãë£©£¬·ÀÖ¹»­ÃæÒ»ÉÁ¶ø¹ı")]
+    [Tooltip("æ¸å‡ºé»‘å±çš„æŒç»­æ—¶é—´ï¼ˆç§’ï¼‰")]
+    public float fadeOutDuration = 0.8f;
+
+    [Tooltip("å®Œå…¨é»‘å±åçš„æœ€å°åœç•™æ—¶é—´ï¼ˆç§’ï¼‰")]
+    public float blackoutHoldDuration = 0f;
+
+    [Tooltip("åŠ è½½è¿›åº¦è¾¾åˆ°100%åçš„æœ€å°ç­‰å¾…æ—¶é—´ï¼ˆç§’ï¼‰")]
     public float minWaitTime = 0.5f;
 
-    // --- ĞÂÔö£º¼ÇÂ¼µ±Ç°¼ÓÔØµÄ¡°ÄÚÈİ³¡¾°¡±Ãû×Ö ---
-    private string _currentLoadedScene = "";
-
-    [Header("³¡¾°ÃûÅäÖÃ")]
+    [Header("åœºæ™¯åç§°")]
+    public string titleSceneName = "Title Scene";
     public string battleSceneName = "Battle Scene";
     public string mapSceneName = "Map Scene";
 
-    // ¼ÙÉèÕâÊÇÖ÷ÉãÏñ»ú£¨µØÍ¼µÄ£©
-    public Camera mapCamera;
-    // ¼ÙÉèÕâÊÇµØÍ¼µÄUIÈİÆ÷£¬Õ½¶·Ê±¿ÉÄÜĞèÒªÒş²Ø
-    public Canvas mapCanvas;
+    private string currentLoadedScene = "";
 
-    // ÓÎÏ·Æô¶¯Ê±£¬×Ô¶¯¼ÓÔØ±êÌâ»­Ãæ (ÔÚ Main Scene µÄ Start Àïµ÷ÓÃ)
-    void Start()
+    private void Start()
     {
-        // 1. Èç¹ûµ±Ç°Ö»ÓĞ Main Scene (Õı³£´ò°üÔËĞĞÇé¿ö)
         if (SceneManager.sceneCount == 1)
         {
-            // --- ºËĞÄ¸Ä¶¯£º²»ÔÙ¾²Ä¬¼ÓÔØ£¬¶øÊÇÆô¶¯Ò»¸ö¡°¿ª³¡Á÷³Ì¡± ---
             StartCoroutine(StartGameProcess());
+            return;
         }
-        // 2. Èç¹ûÊÇ±à¼­Æ÷µ÷ÊÔ (±ÈÈçÄãÍ¬Ê±°Ñ Main ºÍ Map ÍÏ½ø Hierarchy ÔËĞĞ)
-        else
+
+        if (fadeCanvasGroup != null)
         {
-            // ±à¼­Æ÷µ÷ÊÔÄ£Ê½£ºÒòÎªÎÒÃÇ°ÑAlphaÉèÎªÁË1£¬Èç¹û²»¸Ä»ØÀ´£¬¿ª·¢Õß¾ÍÏ¹ÁË
-            // ËùÒÔÕâÀïÇ¿ÖÆ°ÑÕÚÕÖ±äÍ¸Ã÷£¬·½±ãµ÷ÊÔ
             fadeCanvasGroup.alpha = 0f;
             fadeCanvasGroup.blocksRaycasts = false;
+        }
 
-            // ×Ô¶¯Ñ°ÕÒÄÇ¸ö²»ÊÇ Main µÄ³¡¾°£¬²¢µÇ¼ÇËü (±£³ÖÔ­Âß¼­)
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene loadedScene = SceneManager.GetSceneAt(i);
+            if (loadedScene.name != "Main Scene" && loadedScene.name != "Bootstrap")
             {
-                Scene s = SceneManager.GetSceneAt(i);
-                if (s.name != "Main Scene" && s.name != "Bootstrap")
-                {
-                    _currentLoadedScene = s.name;
-                    SceneManager.SetActiveScene(s);
-                    break;
-                }
+                currentLoadedScene = loadedScene.name;
+                SceneManager.SetActiveScene(loadedScene);
+                break;
             }
         }
     }
 
-
-
-    public IEnumerator LoadBattleScene()
+    /// <summary>
+    /// å¯åŠ¨æ—¶åŠ è½½æ ‡é¢˜åœºæ™¯ï¼Œå¹¶æ‰§è¡Œä¸€æ¬¡é»‘å±æ¸å‡ºã€‚
+    /// </summary>
+    public IEnumerator StartGameProcess()
     {
-        // Ê¹ÓÃ SceneLoader µÄÕÚÕÖ±äºÚ (¼ÙÉèÄãÓĞ¹«¿ªµÄ FadeIn ·½·¨£¬»òÕßÖ±½ÓÓÃ SceneLoader ¼ÓÔØ)
-        // ÕâÀïÎªÁËÑİÊ¾ÇåÎú£¬ÊÖ¶¯Ğ´µş¼ÓÂß¼­£¬ÅäºÏÄãµÄ SceneLoader ¿ÉÄÜ»á¸üÓÅÑÅ
-
-        // A. Òì²½µş¼Ó¼ÓÔØÕ½¶·³¡¾°
-        AsyncOperation op = SceneManager.LoadSceneAsync(battleSceneName, LoadSceneMode.Additive);
-
-        while (!op.isDone) yield return null;
-
-        // B. ¼ÓÔØÍê³Éºó£¬ÔİÊ±¹Ø±ÕµØÍ¼µÄäÖÈ¾£¨Ê¡ĞÔÄÜ£¬ÇÒ·ÀÖ¹´©°ï£©
-        // ÉèÖÃÉãÏñ»ú
-        //if (mapCamera != null) mapCamera.enabled = false;
-        // ÉèÖÃµØÍ¼äÖÈ¾
-        //if (mapCanvas != null) mapCanvas.gameObject.SetActive(false);
-
-        // C. ¼¤»îÕ½¶·³¡¾° (È·±£¹âÕÕµÈÉúĞ§)
-        Scene battleScene = SceneManager.GetSceneByName(battleSceneName);
-        SceneManager.SetActiveScene(battleScene);
-    }
-
-
-    public IEnumerator LoadMapScene()
-    {
-        string mapSceneName = SceneLoader.Instance.mapSceneName;
-        // Ê¹ÓÃ SceneLoader µÄÕÚÕÖ±äºÚ (¼ÙÉèÄãÓĞ¹«¿ªµÄ FadeIn ·½·¨£¬»òÕßÖ±½ÓÓÃ SceneLoader ¼ÓÔØ)
-        // ÕâÀïÎªÁËÑİÊ¾ÇåÎú£¬ÊÖ¶¯Ğ´µş¼ÓÂß¼­£¬ÅäºÏÄãµÄ SceneLoader ¿ÉÄÜ»á¸üÓÅÑÅ
-
-        // A. Òì²½µş¼Ó¼ÓÔØÕ½¶·³¡¾°
-        AsyncOperation op = SceneManager.LoadSceneAsync(mapSceneName, LoadSceneMode.Additive);
-
-        while (!op.isDone) yield return null;
-
-        // B. ¼ÓÔØÍê³Éºó£¬ÔİÊ±¹Ø±ÕµØÍ¼µÄäÖÈ¾£¨Ê¡ĞÔÄÜ£¬ÇÒ·ÀÖ¹´©°ï£©
-        // ÉèÖÃÉãÏñ»ú
-        //if (mapCamera != null) mapCamera.enabled = false;
-        // ÉèÖÃµØÍ¼äÖÈ¾
-        //if (mapCanvas != null) mapCanvas.gameObject.SetActive(false);
-
-        // C. ¼¤»îÕ½¶·³¡¾° (È·±£¹âÕÕµÈÉúĞ§)
-        Scene mapScene = SceneManager.GetSceneByName(mapSceneName);
-        SceneManager.SetActiveScene(mapScene);
-    }
-
-
-
-
-    // --- ĞÂÔö£º×¨ÃÅ´¦ÀíÓÎÏ·Æô¶¯Ê±µÄ¡°¿ª³¡Á÷³Ì¡± ---
-    private IEnumerator StartGameProcess()
-    {
-        // A. È·±£ÕÚÕÖÊÇºÚµÄ (Ë«ÖØ±£ÏÕ£¬·ÀÖ¹ÄãÔÚ±à¼­Æ÷ÀïÍüÁË¸Ä Alpha)
-        fadeCanvasGroup.alpha = 1f;
-        fadeCanvasGroup.blocksRaycasts = true;
-
-        string titleSceneName = "Title Scene";
-
-        // B. ¿ªÊ¼¼ÓÔØ Title Scene
-        AsyncOperation op = SceneManager.LoadSceneAsync(titleSceneName, LoadSceneMode.Additive);
-        op.allowSceneActivation = false; // ÏÈ¿¨×¡£¬²»ÏÔÊ¾
-
-        // C. µÈ´ı¼ÓÔØµ½ 90%
-        while (op.progress < 0.9f)
+        if (fadeCanvasGroup != null)
         {
-            yield return null;
+            fadeCanvasGroup.alpha = 1f;
+            fadeCanvasGroup.blocksRaycasts = true;
         }
 
-        // D. ÔÊĞíÏÔÊ¾
-        op.allowSceneActivation = true;
-        while (!op.isDone) yield return null;
+        yield return StartCoroutine(LoadAdditiveScene(titleSceneName, true));
 
-        // E. ÉèÖÃ»î¶¯³¡¾°
-        Scene s = SceneManager.GetSceneByName(titleSceneName);
-        if (s.IsValid()) SceneManager.SetActiveScene(s);
-        _currentLoadedScene = titleSceneName;
+        Scene titleScene = SceneManager.GetSceneByName(titleSceneName);
+        if (titleScene.IsValid())
+        {
+            SceneManager.SetActiveScene(titleScene);
+            currentLoadedScene = titleSceneName;
+        }
 
-        // F. ¡¾¹Ø¼ü¡¿£ºÓÅÑÅµØ½Ò¿ªá¡Ä» (´ÓºÚ±äÍ¸Ã÷)
-        // Ê¹ÓÃÄãÌáÈ¡µÄ²ÎÊı fadeDuration
-        yield return StartCoroutine(Fade(0f));
+        yield return StartCoroutine(FadeOut());
 
-        fadeCanvasGroup.blocksRaycasts = false;
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
     }
 
-    // ¸¨ÖúĞ­³Ì£ºµÈ´ı³¡¾°¼ÓÔØÍêÉèÎª Active
-    private IEnumerator SetActiveWhenLoaded(AsyncOperation op, string sceneName)
-    {
-        while (!op.isDone) yield return null;
-        Scene s = SceneManager.GetSceneByName(sceneName);
-        if (s.IsValid()) SceneManager.SetActiveScene(s);
-    }
-
+    /// <summary>
+    /// åˆ‡æ¢åˆ°æŒ‡å®šåœºæ™¯ï¼ˆå¸è½½å½“å‰ä¸šåŠ¡åœºæ™¯åå†ä»¥ Additive åŠ è½½æ–°åœºæ™¯ï¼‰ã€‚
+    /// </summary>
+    /// <param name="sceneName">è¦åŠ è½½çš„åœºæ™¯åã€‚</param>
     public void LoadScene(string sceneName)
     {
         StartCoroutine(LoadProcess(sceneName));
     }
 
+    /// <summary>
+    /// ä»åœ°å›¾è¿›å…¥æˆ˜æ–—åœºæ™¯ã€‚
+    /// </summary>
+    /// <param name="onBlackScreen">è¿›å…¥å…¨é»‘åæ‰§è¡Œçš„é€»è¾‘ï¼ˆå¦‚éšè—åœ°å›¾å¯¹è±¡ï¼‰ã€‚</param>
+    public IEnumerator LoadBattleScene(Action onBlackScreen = null)
+    {
+        yield return StartCoroutine(FadeIn());
+        onBlackScreen?.Invoke();
+        yield return StartCoroutine(HoldBlackScreen());
+
+        if (!IsSceneLoaded(battleSceneName))
+        {
+            yield return StartCoroutine(LoadAdditiveScene(battleSceneName, false));
+        }
+
+        Scene battleScene = SceneManager.GetSceneByName(battleSceneName);
+        if (battleScene.IsValid())
+        {
+            SceneManager.SetActiveScene(battleScene);
+        }
+
+        yield return StartCoroutine(FadeOut());
+
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
+    }
+
+    /// <summary>
+    /// ä»æˆ˜æ–—è¿”å›åœ°å›¾åœºæ™¯ï¼Œå…ˆé»‘å±å†æ‰§è¡Œå›é€€é€»è¾‘ã€‚
+    /// </summary>
+    /// <param name="onBlackScreen">è¿›å…¥å…¨é»‘åæ‰§è¡Œçš„é€»è¾‘ï¼ˆå¦‚ç»“ç®—æˆ˜æ–—å¹¶æ˜¾ç¤ºåœ°å›¾ï¼‰ã€‚</param>
+    public IEnumerator ReturnToMapScene(Action onBlackScreen)
+    {
+        yield return StartCoroutine(FadeIn());
+
+        onBlackScreen?.Invoke();
+        yield return StartCoroutine(HoldBlackScreen());
+
+        if (IsSceneLoaded(battleSceneName))
+        {
+            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(battleSceneName);
+            if (unloadOperation != null)
+            {
+                while (!unloadOperation.isDone)
+                {
+                    yield return null;
+                }
+            }
+        }
+
+        Scene mapScene = SceneManager.GetSceneByName(mapSceneName);
+        if (mapScene.IsValid())
+        {
+            SceneManager.SetActiveScene(mapScene);
+        }
+
+        yield return StartCoroutine(FadeOut());
+
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
+    }
+
     private IEnumerator LoadProcess(string sceneName)
     {
-        // 1. ÕÚÕÖµ­³ö (±äºÚ)
-        fadeCanvasGroup.blocksRaycasts = true;
-        yield return StartCoroutine(Fade(1f));
+        yield return StartCoroutine(FadeIn());
 
-        // 2. --- ºËĞÄĞŞ¸´£ºÖÇÄÜ²éÕÒ²¢Ğ¶ÔØ¾É³¡¾° (²»ÒÀÀµ _currentLoadedScene ±äÁ¿) ---
-        // ÎÒÃÇ±éÀúµ±Ç°ËùÓĞÒÑ¼ÓÔØµÄ³¡¾°£¬ÕÒµ½ÄÇ¸ö¼È²»ÊÇ Main Ò²²»ÊÇ Bootstrap µÄ³¡¾°£¬°ÑËüĞ¶ÔØµô¡£
-        // ÕâÖÖ¡°²é»§¿Ú¡±µÄ·½Ê½±ÈÒÀÀµÒ»¸ö×Ö·û´®±äÁ¿ÒªÎÈ½¡µÃ¶à¡£
-        string sceneToUnload = "";
-
+        string sceneToUnload = string.Empty;
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
-            Scene s = SceneManager.GetSceneAt(i);
-            // ×¢Òâ£ºÇëÈ·±£ÕâÀïµÄ "Main Scene" ºÍ "Bootstrap" ÓëÄãµÄÊµ¼Ê³¡¾°ÃûÒ»ÖÂ
-            if (s.name != "Main Scene" && s.name != "Bootstrap")
+            Scene loadedScene = SceneManager.GetSceneAt(i);
+            if (loadedScene.name != "Main Scene" && loadedScene.name != "Bootstrap")
             {
-                sceneToUnload = s.name;
-                break; // ¼ÙÉèÍ¬Ò»Ê±¼äÖ»ÓĞÒ»¸ö¹Ø¿¨³¡¾°£¬ÕÒµ½Ò»¸ö¾Í¹»ÁË
+                sceneToUnload = loadedScene.name;
+                break;
             }
         }
 
-        // Èç¹ûÕÒµ½ÁËĞèÒªĞ¶ÔØµÄ³¡¾°£¬¾ÍÖ´ĞĞĞ¶ÔØ
         if (!string.IsNullOrEmpty(sceneToUnload))
         {
-            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(sceneToUnload);
-            // ·ÀÖ¹Ğ¶ÔØ¿ÕÒıÓÃ±¨´í£¨ËäÈ»Âß¼­ÉÏ²»Ì«¿ÉÄÜ£©
-            if (unloadOp != null)
+            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(sceneToUnload);
+            if (unloadOperation != null)
             {
-                while (!unloadOp.isDone) yield return null;
+                while (!unloadOperation.isDone)
+                {
+                    yield return null;
+                }
             }
         }
 
-        // 3. --- µş¼Ó¼ÓÔØĞÂ³¡¾° (Additive) ---
-        AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        loadOp.allowSceneActivation = false;
+        yield return StartCoroutine(HoldBlackScreen());
+        yield return StartCoroutine(LoadAdditiveScene(sceneName, true));
 
-        // 4. ½ø¶ÈÌõÂß¼­
-        while (loadOp.progress < 0.9f)
-        {
-            float progress = Mathf.Clamp01(loadOp.progress / 0.9f);
-            if (loadingProgressBar != null) loadingProgressBar.fillAmount = progress;
-            yield return null;
-        }
-
-        if (loadingProgressBar != null) loadingProgressBar.fillAmount = 1f;
-
-        yield return new WaitForSeconds(minWaitTime);
-
-        loadOp.allowSceneActivation = true;
-        while (!loadOp.isDone) yield return null;
-
-        // 5. ¼¤»îĞÂ³¡¾°
         Scene newScene = SceneManager.GetSceneByName(sceneName);
         if (newScene.IsValid())
         {
             SceneManager.SetActiveScene(newScene);
+            currentLoadedScene = sceneName;
         }
 
-        // ËäÈ»Ğ¶ÔØ²»ÔÙÒÀÀµÕâ¸ö±äÁ¿£¬µ«¼ÇÂ¼Ò»ÏÂÊÇ¸öºÃÏ°¹ß£¬·½±ãÒÔºóDebug
-        _currentLoadedScene = sceneName;
+        yield return StartCoroutine(FadeOut());
 
-        // 6. ÕÚÕÖµ­Èë (±äÍ¸Ã÷)
-        yield return StartCoroutine(Fade(0f));
-        fadeCanvasGroup.blocksRaycasts = false;
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
     }
 
-    private IEnumerator Fade(float targetAlpha)
+    private IEnumerator LoadAdditiveScene(string sceneName, bool showLoadingProgress)
     {
-        // ÕâÀïµÄ¼ÆËã¹«Ê½¸ÄÎªÊ¹ÓÃ fadeDuration
-        // Èç¹û fadeDuration ÉèÎª0£¬·ÀÖ¹³ıÒÔ0´íÎó£¬¸øÒ»¸ö¼«Ğ¡Öµ
-        float duration = fadeDuration > 0 ? fadeDuration : 0.01f;
-        float speed = Mathf.Abs(fadeCanvasGroup.alpha - targetAlpha) / duration;
+        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        loadOperation.allowSceneActivation = false;
+
+        while (loadOperation.progress < 0.9f)
+        {
+            if (showLoadingProgress && loadingProgressBar != null)
+            {
+                loadingProgressBar.fillAmount = Mathf.Clamp01(loadOperation.progress / 0.9f);
+            }
+
+            yield return null;
+        }
+
+        if (showLoadingProgress && loadingProgressBar != null)
+        {
+            loadingProgressBar.fillAmount = 1f;
+        }
+
+        if (minWaitTime > 0f)
+        {
+            yield return new WaitForSeconds(minWaitTime);
+        }
+
+        loadOperation.allowSceneActivation = true;
+
+        while (!loadOperation.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    private bool IsSceneLoaded(string sceneName)
+    {
+        Scene scene = SceneManager.GetSceneByName(sceneName);
+        return scene.IsValid() && scene.isLoaded;
+    }
+
+    private IEnumerator HoldBlackScreen()
+    {
+        if (blackoutHoldDuration > 0f)
+        {
+            yield return new WaitForSeconds(blackoutHoldDuration);
+        }
+    }
+
+    private IEnumerator FadeIn()
+    {
+        if (fadeCanvasGroup == null)
+        {
+            yield break;
+        }
+
+        fadeCanvasGroup.blocksRaycasts = true;
+        yield return StartCoroutine(FadeTo(1f, fadeInDuration));
+    }
+
+    private IEnumerator FadeOut()
+    {
+        if (fadeCanvasGroup == null)
+        {
+            yield break;
+        }
+
+        yield return StartCoroutine(FadeTo(0f, fadeOutDuration));
+    }
+
+    private IEnumerator FadeTo(float targetAlpha, float duration)
+    {
+        if (fadeCanvasGroup == null)
+        {
+            yield break;
+        }
+
+        float safeDuration = duration > 0f ? duration : 0.01f;
+        float speed = Mathf.Abs(fadeCanvasGroup.alpha - targetAlpha) / safeDuration;
 
         while (!Mathf.Approximately(fadeCanvasGroup.alpha, targetAlpha))
         {
             fadeCanvasGroup.alpha = Mathf.MoveTowards(fadeCanvasGroup.alpha, targetAlpha, speed * Time.deltaTime);
             yield return null;
         }
+
         fadeCanvasGroup.alpha = targetAlpha;
     }
 }
