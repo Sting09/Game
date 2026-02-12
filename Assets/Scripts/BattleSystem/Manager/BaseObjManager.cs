@@ -129,6 +129,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     {
         // 1. 单例模式基类Awake
         base.Awake();
+
         if (Instance != this)
         {
             return;
@@ -559,6 +560,11 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     #region 对象池方法 和 辅助方法
 
     public int ActiveCount => m_ActiveCount;
+
+    public override void SetDontDestroyOnLoad(GameObject obj)
+    {
+        //ObjManager 在跨场景时会销毁
+    }
 
     public int GetBehaviorID(string name)
     {

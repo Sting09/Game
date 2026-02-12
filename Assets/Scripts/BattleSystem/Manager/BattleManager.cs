@@ -4,11 +4,23 @@ public class BattleManager : SingletonMono<BattleManager>
 {
     public GameObject player;
 
+    public void GetPlayerObject()
+    {
+        if(player== null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+    }
+
     /// <summary>
     /// 获取战斗玩家位置。
     /// </summary>
     public Vector3 GetPlayerPos()
     {
+        if (player == null)
+        {
+            Debug.Log("???");
+        }
         return player != null ? player.transform.position : Vector3.zero;
     }
 

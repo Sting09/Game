@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 
@@ -25,27 +26,50 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
                 {
                     GameObject singletonObject = new GameObject(typeof(T).Name + "_Singleton");
                     instance = singletonObject.AddComponent<T>();
-                    DontDestroyOnLoad(singletonObject); // 保留在场景切换时不被销毁
                 }
             }
             return instance;
         }
     }
 
+
     //使用virtual虚函数，子类继承可能还需要用Awake()
     protected virtual void Awake()
     {
-        // 确保在场景切换时不会销毁该实例
-        DontDestroyOnLoad(gameObject);
-        // 检查是否存在重复的实例
-        if (instance == null)
+        // 1. 先判断是否是重复的
+        if (instance != null && instance != this) // 这里的判断要严谨
         {
-            instance = this as T;
-        }
-        else
-        {
-            Debug.LogWarning("存在重复的单例" + typeof(T).Name + "删除");
+            // 发现重复！
+
+            // 关键点：如果是重复的，不要执行后续的初始化代码！
+            // 仅仅 Destroy 是不够的，因为 Destroy 是延时的。
+            // 如果这里有其他初始化逻辑，必须阻断。
+
+            //Debug.LogWarning($"检测到重复单例 {typeof(T).Name}，正在销毁新创建的实例 (GameObject: {name})");
+
             Destroy(gameObject);
+
+            // 2. 及其重要：阻止后续代码执行（虽然 Awake 返回 void，但如果是协程就有用，这里主要是为了逻辑清晰）
+            return;
         }
+
+        // 3. 只有确认自己是正牌实例，才进行赋值和 DDOL
+        instance = this as T;
+        SetDontDestroyOnLoad(gameObject);
+
+        // 初始化代码写在这里...
+    }
+
+    // 4. 防御性编程：防止幽灵帧执行 Start 或 OnEnable
+    private void OnEnable()
+    {
+        if (instance != null && instance != this) return; // 如果我是个冒牌货，什么都别做
+                                                          // 正常的 OnEnable 逻辑
+    }
+
+
+    public virtual void SetDontDestroyOnLoad(GameObject obj)
+    {
+        DontDestroyOnLoad(obj); // 保留在场景切换时不被销毁
     }
 }

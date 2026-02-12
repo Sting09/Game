@@ -61,7 +61,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     #region 玩家被命中的逻辑
     private void OnPlayerHit()
     {
-        Debug.Log("<color=red>玩家中弹！</color>");
+        //Debug.Log("<color=red>玩家中弹！</color>");
         if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
         {
             playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
@@ -76,7 +76,8 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         {
             playerSpriteRenderer.color = Color.red;
             yield return new WaitForSeconds(0.1f);
-            playerSpriteRenderer.color = Color.white;
+            if (playerSpriteRenderer != null)
+                playerSpriteRenderer.color = Color.white;
         }
     }
     #endregion

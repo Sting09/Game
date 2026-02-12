@@ -135,10 +135,10 @@ public class GameManager : SingletonMono<GameManager>
         //从随机房间开始遍历
         int i = Random.Range(0, 6);
 
-        foreach(Tile tile in MapManager.Instance.allItems)
+        foreach (Tile tile in MapManager.Instance.allItems)
         {
             //遍历六个房间，重复五次
-            for(int roomIndex = i, times = 0; times < 5;  roomIndex = (roomIndex+1) % 6, times++)
+            for (int roomIndex = i, times = 0; times < 5; roomIndex = (roomIndex + 1) % 6, times++)
             {
                 //如果房间有对手，则跳过
                 if (tile.rooms[roomIndex].roomObj.haveEnemy || tile.rooms[roomIndex].roomObj.havePlayer)
@@ -153,7 +153,7 @@ public class GameManager : SingletonMono<GameManager>
 
             }
         }
-
+    }
 
 
 
@@ -225,12 +225,6 @@ public class GameManager : SingletonMono<GameManager>
             }
             else
             {
-        StartCoroutine(SceneLoader.Instance.LoadBattleScene(() =>
-        {
-            // ȫʱصͼԪ
-            if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(false);
-            if (mapSceneMap != null) mapSceneMap.SetActive(false);
-        }));
                 // 执行死亡惩罚，或者重新挑战
                 // Player.Instance.Die();
             }
@@ -246,6 +240,7 @@ public class GameManager : SingletonMono<GameManager>
             // 隐藏地图场景元素
             if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(true);
             if (mapSceneMap != null) mapSceneMap.SetActive(true);
+
 
             // E. 更新地图视野
             UpdatePlayerSight();

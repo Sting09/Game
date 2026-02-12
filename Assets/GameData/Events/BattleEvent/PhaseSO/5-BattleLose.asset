@@ -15,5 +15,5 @@ MonoBehaviour:
   phase: 21
   phaseEventSO: {fileID: 11400000, guid: a4e01ad3e7748404a8fb92801f9f3390, type: 2}
   autoEndDuration: 0
-  isBattle: 0
+  isBattle: 1
   phaseDescription: 

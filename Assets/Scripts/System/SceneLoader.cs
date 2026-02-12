@@ -115,6 +115,8 @@ public class SceneLoader : SingletonMono<SceneLoader>
             SceneManager.SetActiveScene(battleScene);
         }
 
+        BattleController.Instance.BattleStart();
+
         yield return StartCoroutine(FadeOut());
 
         if (fadeCanvasGroup != null)

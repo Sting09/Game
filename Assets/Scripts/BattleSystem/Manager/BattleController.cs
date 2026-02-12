@@ -33,8 +33,24 @@ public class BattleController : SingletonMono<BattleController>
 
     public void StartNextPhase()
     {
-        currentPhaseIndex++;
+        if(currentPhase == GamePhase.BattleWin || currentPhase == GamePhase.BattleLose)
+        {
+            currentPhaseIndex = phaseToIntDict[GamePhase.BattleEnd];
+        }
+        else
+        {
+            currentPhaseIndex++;
+        }
+        
 
+        if (currentPhaseIndex >= phaseList.Count) { return; }
+
+        currentPhase = phaseList[currentPhaseIndex].phase;
+        phaseList[currentPhaseIndex].PhaseStart(this);
+    }
+
+    public void StartPhase()
+    {
         if (currentPhaseIndex >= phaseList.Count) { return; }
 
         currentPhase = phaseList[currentPhaseIndex].phase;

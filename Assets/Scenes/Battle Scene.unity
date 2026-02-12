@@ -382,10 +382,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2003418453}
-        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-        m_MethodName: EndBattle
-        m_Mode: 6
+      - m_Target: {fileID: 770645944}
+        m_TargetAssemblyTypeName: BattleUIController, Assembly-CSharp
+        m_MethodName: TestWinBtn
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -612,7 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: "\u9690\u85CF\u73A9\u5BB6"
+  description: "\u9690\u85CF\u73A9\u5BB6\n\u6E05\u7A7A\u5BF9\u8C61\u6C60"
   eventSO: {fileID: 11400000, guid: 9a763818be728414694adff195090427, type: 2}
   response:
     m_PersistentCalls:
@@ -747,6 +747,7 @@ GameObject:
   - component: {fileID: 770645942}
   - component: {fileID: 770645941}
   - component: {fileID: 770645940}
+  - component: {fileID: 770645944}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -838,6 +839,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &770645944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770645939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba1006d33d078c54b97fdeea1148b898, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &844335884
 GameObject:
   m_ObjectHideFlags: 0
@@ -1197,10 +1210,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2003418453}
-        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-        m_MethodName: EndBattle
-        m_Mode: 6
+      - m_Target: {fileID: 770645944}
+        m_TargetAssemblyTypeName: BattleUIController, Assembly-CSharp
+        m_MethodName: TestLoseBtn
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1276,6 +1289,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1536107788}
   - {fileID: 326113751}
   - {fileID: 614499230}
   m_Father: {fileID: 0}
@@ -1531,6 +1545,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1248121199}
   - component: {fileID: 1248121200}
+  - component: {fileID: 1248121203}
   - component: {fileID: 1248121201}
   - component: {fileID: 1248121202}
   m_Layer: 0
@@ -1656,6 +1671,18 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1248121203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248121198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556ed1d6bca96674a95f37f0858108d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1294927579
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,6 +1843,95 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1536107787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1536107788}
+  - component: {fileID: 1536107789}
+  - component: {fileID: 1536107790}
+  m_Layer: 0
+  m_Name: BattlePrewarm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1536107788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536107787}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1115154754}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1536107789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536107787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: "BattleManager\u83B7\u53D6Player\u7269\u4F53\u5F15\u7528\nObjManager\u83B7\u53D6\u5BF9\u8C61\u6C60\u6839\u8282\u70B9\u5F15\u7528"
+  eventSO: {fileID: 11400000, guid: 4c87f1432d5937b468e01caf0ccd760a, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1248121203}
+        m_TargetAssemblyTypeName: PlayerBattle, Assembly-CSharp
+        m_MethodName: BattleManagerGetThis
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1536107790}
+        m_TargetAssemblyTypeName: BattlePoolTool, Assembly-CSharp
+        m_MethodName: SetPoolRoot
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1536107790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536107787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfa9b7f346c1a954dad5caec2a0945f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPoolRoot: {fileID: 1999661718}
+  enemyPoolRoot: {fileID: 560222900}
+  playerBulletPoolRoot: {fileID: 2092799434}
 --- !u!1 &1573004750
 GameObject:
   m_ObjectHideFlags: 0
