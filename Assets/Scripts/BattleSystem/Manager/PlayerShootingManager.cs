@@ -308,6 +308,24 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         return;
     }
 
+    protected override void OnBeforeCleanupBeforeLeavingBattle()
+    {
+        m_CollisionJobHandle.Complete();
+    }
+
+    protected override void OnAfterCleanupBeforeLeavingBattle()
+    {
+        if (m_HitResults.IsCreated)
+        {
+            while (m_HitResults.TryDequeue(out _)) { }
+        }
+
+        if (m_PendingBullets != null)
+        {
+            m_PendingBullets.Clear();
+        }
+    }
+
     protected override void OnInitialize()
     {
         //初始化查找表
