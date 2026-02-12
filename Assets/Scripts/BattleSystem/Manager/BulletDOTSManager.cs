@@ -11,14 +11,14 @@ using UnityEditor;
 
 public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 {
-    // --- ÅäÖÃ ---
+    // --- é…ç½® ---
     [Header("Bullet Configs (Gameplay)")]
     public List<BulletBasicConfigSO> bulletConfigs;
 
-    // --- ×Óµ¯ÑùÊ½ ID ²éÕÒ±í ---
+    // --- å­å¼¹æ ·å¼ ID æŸ¥æ‰¾è¡¨ ---
     private Dictionary<string, int> m_VisualNameToID = new Dictionary<string, int>();
 
-    // µ±Ç°Ö¡Òª¼ÓÈë³Ø×ÓµÄ×Óµ¯ÁĞ±í
+    // å½“å‰å¸§è¦åŠ å…¥æ± å­çš„å­å¼¹åˆ—è¡¨
     private struct PendingBullet
     {
         public int visualID;
@@ -31,13 +31,13 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
 
     /// <summary>
-    /// Ìí¼Ó×Óµ¯¡£
+    /// æ·»åŠ å­å¼¹ã€‚
     /// </summary>
-    /// <param name="visualID">Íâ¹ÛID</param>
-    /// <param name="behaviorID">ĞĞÎªID</param>
-    /// <param name="startPos">³õÊ¼Î»ÖÃ</param>
-    /// <param name="info">ÔËĞĞ²ÎÊı</param>
-    /// <param name="emitter">·¢ÉäÕßTransform£¨Èç¹ûÊÇÏà¶ÔÒÆ¶¯×Óµ¯£¬´Ë²ÎÊı±ØĞë²»Îª¿Õ£©</param>
+    /// <param name="visualID">å¤–è§‚ID</param>
+    /// <param name="behaviorID">è¡Œä¸ºID</param>
+    /// <param name="startPos">åˆå§‹ä½ç½®</param>
+    /// <param name="info">è¿è¡Œå‚æ•°</param>
+    /// <param name="emitter">å‘å°„è€…Transformï¼ˆå¦‚æœæ˜¯ç›¸å¯¹ç§»åŠ¨å­å¼¹ï¼Œæ­¤å‚æ•°å¿…é¡»ä¸ä¸ºç©ºï¼‰</param>
     public void AddBullet(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
         if (m_PendingBullets == null) m_PendingBullets = new List<PendingBullet>();
@@ -58,10 +58,10 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         });
     }
 
-    #region Íæ¼Ò±»ÃüÖĞµÄÂß¼­
+    #region ç©å®¶è¢«å‘½ä¸­çš„é€»è¾‘
     private void OnPlayerHit()
     {
-        Debug.Log("<color=red>Íæ¼ÒÖĞµ¯£¡</color>");
+        Debug.Log("<color=red>ç©å®¶ä¸­å¼¹ï¼</color>");
         if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
         {
             playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
@@ -82,7 +82,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     #endregion
 
 
-    #region ÒªÅÉ·¢µÄJob
+    #region è¦æ´¾å‘çš„Job
     private void ScheduleEventJob()
     {
         ObjectEventJob eventJob = new ObjectEventJob
@@ -100,7 +100,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             nextEventIndex = m_NextEventIndex,
             randoms = m_Randoms,
 
-            // ·¢ÉäĞÅÏ¢²ÎÊı
+            // å‘å°„ä¿¡æ¯å‚æ•°
             shootPointIndices = m_ShootPointIndices,
         };
         m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
@@ -120,7 +120,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             accelAngles = m_AccelAngles,
             angularVelocities = m_AngularVelocities,
 
-            // Ïà¶ÔÒÆ¶¯²ÎÊı
+            // ç›¸å¯¹ç§»åŠ¨å‚æ•°
             isRelative = m_IsRelative,
             emitterIDs = m_EmitterIDs,
             emitterDeltas = m_EmitterDeltas
@@ -167,7 +167,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
 
 
-    #region ÊµÏÖ³éÏóÀà
+    #region å®ç°æŠ½è±¡ç±»
     protected override void FlushPending()
     {
         if (m_PendingBullets == null || m_PendingBullets.Count == 0) return;
@@ -205,7 +205,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             m_Speeds[index] = info.speed;
             m_Angles[index] = info.direction;
             m_Lifetimes[index] = 0f;
-            // ÉèÖÃ×î´ó´æ»îÊ±¼ä£¬Èç¹ûÎ´ÉèÖÃ(<=0)ÔòÄ¬ÈÏÎª15Ãë
+            // è®¾ç½®æœ€å¤§å­˜æ´»æ—¶é—´ï¼Œå¦‚æœæœªè®¾ç½®(<=0)åˆ™é»˜è®¤ä¸º15ç§’
             m_MaxLifetimes[index] = info.totalLifetime > 0 ? info.totalLifetime : 15f;
             m_LastAngles[index] = info.direction;
             m_IsDead[index] = false;
@@ -219,7 +219,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             m_ActiveVisualIDs[index] = visualID;
             m_EntityBehaviorIDs[index] = behaviorID;
 
-            // --- Ïà¶ÔÒÆ¶¯Âß¼­ ---
+            // --- ç›¸å¯¹ç§»åŠ¨é€»è¾‘ ---
             bool isRel = false;
             int eID = 0;
 
@@ -230,17 +230,17 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
                 m_CircleRadii[index] = cfg.circleRadius;
                 m_BoxSizes[index] = cfg.boxSize;
 
-                // ¼ì²éÅäÖÃÊÇ·ñ¿ªÆôÏà¶ÔÒÆ¶¯£¬ÇÒ·¢ÉäÕßÊÇ·ñ´æÔÚ
+                // æ£€æŸ¥é…ç½®æ˜¯å¦å¼€å¯ç›¸å¯¹ç§»åŠ¨ï¼Œä¸”å‘å°„è€…æ˜¯å¦å­˜åœ¨
                 if (pb.info.isRelative && emitter != null)
                 {
                     isRel = true;
                     eID = emitter.GetInstanceID();
 
-                    // ×¢²áµ½»îÔ¾·¢ÉäÕßÁĞ±í£¬ÒÔ±ã Update ¼ÆËãÎ»ÒÆ
+                    // æ³¨å†Œåˆ°æ´»è·ƒå‘å°„è€…åˆ—è¡¨ï¼Œä»¥ä¾¿ Update è®¡ç®—ä½ç§»
                     if (!m_ActiveEmitters.ContainsKey(eID))
                     {
                         m_ActiveEmitters.Add(eID, emitter);
-                        // ³õÊ¼»¯ÉÏÒ»Ö¡Î»ÖÃÎªµ±Ç°Î»ÖÃ£¨·ÀÖ¹µÚÒ»Ö¡Ìø±ä£©
+                        // åˆå§‹åŒ–ä¸Šä¸€å¸§ä½ç½®ä¸ºå½“å‰ä½ç½®ï¼ˆé˜²æ­¢ç¬¬ä¸€å¸§è·³å˜ï¼‰
                         if (!m_LastEmitterPos.ContainsKey(eID))
                         {
                             m_LastEmitterPos.Add(eID, emitter.position);
@@ -277,7 +277,15 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
     protected override void HandleCollisions()
     {
-        //Èç¹û±¾Ö¡ÓĞ×Óµ¯ÃüÖĞÍæ¼Ò£¬Ôò´¥·¢OnPlayerHit
+    protected override void OnAfterCleanupBeforeLeavingBattle()
+    {
+        if (m_PendingBullets != null)
+        {
+            m_PendingBullets.Clear();
+        }
+    }
+
+        //å¦‚æœæœ¬å¸§æœ‰å­å¼¹å‘½ä¸­ç©å®¶ï¼Œåˆ™è§¦å‘OnPlayerHit
         bool hasHit = false;
         while (m_CollisionQueue.TryDequeue(out int bulletIndex))
         {
@@ -317,7 +325,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         }
         else
         {
-            Debug.Log("ÔÚBulletManagerÖĞÎ´ÅäÖÃ×Óµ¯ÀàĞÍÁĞ±í!");
+            Debug.Log("åœ¨BulletManagerä¸­æœªé…ç½®å­å¼¹ç±»å‹åˆ—è¡¨!");
         }
     }
 
@@ -331,7 +339,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
 
     protected override void OnSwapData(int index, int lastIndex)
     {
-        // Ö»ĞèÒª´¦Àí×ÓÀàÌØÓĞµÄÊı×é½»»»
+        // åªéœ€è¦å¤„ç†å­ç±»ç‰¹æœ‰çš„æ•°ç»„äº¤æ¢
     }
 
     #endregion
