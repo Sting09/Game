@@ -14,14 +14,14 @@ using UnityEditor;
 
 public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 {
-    // --- æ‰€æœ‰æ•Œäººçš„é…ç½®åˆ—è¡¨ ---
+    // --- ËùÓĞµĞÈËµÄÅäÖÃÁĞ±í ---
     [Header("Enemy Configs (Gameplay)")]
     public List<EnemyBasicConfigSO> enemyConfigs;
 
-    // --- æ•Œäººåç§° åˆ° ID æŸ¥æ‰¾è¡¨ ---
+    // --- µĞÈËÃû³Æ µ½ ID ²éÕÒ±í ---
     private Dictionary<string, int> m_VisualNameToID = new Dictionary<string, int>();
 
-    // å½“å‰å¸§è¦åŠ å…¥æ± å­çš„æ•Œäººåˆ—è¡¨
+    // µ±Ç°Ö¡Òª¼ÓÈë³Ø×ÓµÄµĞÈËÁĞ±í
     private struct PendingEnemy
     {
         public int visualID;
@@ -31,23 +31,23 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     }
     private List<PendingEnemy> m_PendingEnemy;
 
-    //é€šçŸ¥å…¶ä»–Managerï¼Œå¯ä»¥è®¡ç®—ç©å®¶å­å¼¹å’Œæ•Œäººç¢°æ’çš„æ—¶é—´ç‚¹
+    //Í¨ÖªÆäËûManager£¬¿ÉÒÔ¼ÆËãÍæ¼Ò×Óµ¯ºÍµĞÈËÅö×²µÄÊ±¼äµã
     public event System.Action OnSafeToApplyDamage;
 
 
-    // æ•Œäººç‹¬æœ‰çš„å±æ€§
-    // è®°å¾—ä¿®æ”¹ï¼šFlushPending()ã€OnSwapData()ã€OnDispose()ã€OnInitialize()
+    // µĞÈË¶ÀÓĞµÄÊôĞÔ
+    // ¼ÇµÃĞŞ¸Ä£ºFlushPending()¡¢OnSwapData()¡¢OnDispose()¡¢OnInitialize()
     public NativeArray<float> m_HP;
 
 
     /// <summary>
-    /// æ·»åŠ æ•Œäººã€‚
+    /// Ìí¼ÓµĞÈË¡£
     /// </summary>
-    /// <param name="visualID">å¤–è§‚ID</param>
-    /// <param name="behaviorID">è¡Œä¸ºID</param>
-    /// <param name="startPos">åˆå§‹ä½ç½®</param>
-    /// <param name="info">è¿è¡Œä¿¡æ¯</param>
-    /// <param name="emitter">å‘å°„è€…Transformï¼ˆå¦‚æœæ˜¯ç›¸å¯¹ç§»åŠ¨å­å¼¹ï¼Œæ­¤å‚æ•°å¿…é¡»ä¸ä¸ºç©ºï¼‰</param>
+    /// <param name="visualID">Íâ¹ÛID</param>
+    /// <param name="behaviorID">ĞĞÎªID</param>
+    /// <param name="startPos">³õÊ¼Î»ÖÃ</param>
+    /// <param name="info">ÔËĞĞĞÅÏ¢</param>
+    /// <param name="emitter">·¢ÉäÕßTransform£¨Èç¹ûÊÇÏà¶ÔÒÆ¶¯×Óµ¯£¬´Ë²ÎÊı±ØĞë²»Îª¿Õ£©</param>
     public void AddEnemy(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
         if (m_PendingEnemy == null) m_PendingEnemy = new List<PendingEnemy>();
@@ -68,13 +68,13 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         });
     }
 
-    #region ç©å®¶è¢«å‘½ä¸­çš„é€»è¾‘
+    #region Íæ¼Ò±»ÃüÖĞµÄÂß¼­
     /// <summary>
-    /// è§¦å‘ç©å®¶ä¸æ•Œäººç¢°æ’çš„é€»è¾‘
+    /// ´¥·¢Íæ¼ÒÓëµĞÈËÅö×²µÄÂß¼­
     /// </summary>
     private void OnPlayerHit()
     {
-        Debug.Log("<color=red>ç©å®¶ä¸­å¼¹ï¼</color>");
+        Debug.Log("<color=red>Íæ¼ÒÖĞµ¯£¡</color>");
         if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
         {
             playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
@@ -84,7 +84,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     }
 
     /// <summary>
-    /// ç©å®¶è´´å›¾é—ªçƒçº¢å…‰
+    /// Íæ¼ÒÌùÍ¼ÉÁË¸ºì¹â
     /// </summary>
     /// <returns></returns>
     private IEnumerator HitFlashRoutine()
@@ -100,7 +100,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
 
 
-    #region è¦æ´¾å‘çš„Jobï¼ˆäº‹ä»¶ã€ç§»åŠ¨ã€ç¢°æ’ã€ç§»é™¤ï¼‰
+    #region ÒªÅÉ·¢µÄJob£¨ÊÂ¼ş¡¢ÒÆ¶¯¡¢Åö×²¡¢ÒÆ³ı£©
     private void ScheduleEventJob()
     {
         ObjectEventJob eventJob = new ObjectEventJob
@@ -118,7 +118,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             nextEventIndex = m_NextEventIndex,
             randoms = m_Randoms,
 
-            // å‘å°„ä¿¡æ¯å‚æ•°
+            // ·¢ÉäĞÅÏ¢²ÎÊı
             shootPointIndices = m_ShootPointIndices,
         };
         m_JobHandle = eventJob.Schedule(m_ActiveCount, 64, m_JobHandle);
@@ -138,12 +138,12 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             accelAngles = m_AccelAngles,
             angularVelocities = m_AngularVelocities,
 
-            // ç›¸å¯¹ç§»åŠ¨å‚æ•°
+            // Ïà¶ÔÒÆ¶¯²ÎÊı
             isRelative = m_IsRelative,
             emitterIDs = m_EmitterIDs,
             emitterDeltas = m_EmitterDeltas
         };
-        // è¿™é‡Œçš„ä¾èµ–å…³ç³»ï¼šJob ä¾èµ–äº m_JobHandle (EventJob)ï¼Œå¹¶ä¸”ä¼šè¯»å– m_EmitterDeltas
+        // ÕâÀïµÄÒÀÀµ¹ØÏµ£ºJob ÒÀÀµÓÚ m_JobHandle (EventJob)£¬²¢ÇÒ»á¶ÁÈ¡ m_EmitterDeltas
         m_JobHandle = moveJob.Schedule(m_Transforms, m_JobHandle);
     }
 
@@ -184,9 +184,9 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
 
 
-    #region å®ç°æŠ½è±¡ç±»
+    #region ÊµÏÖ³éÏóÀà
     /// <summary>
-    /// æ·»åŠ æœ¬å¸§çš„obj
+    /// Ìí¼Ó±¾Ö¡µÄobj
     /// </summary>
     protected override void FlushPending()
     {
@@ -225,7 +225,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             m_Speeds[index] = info.speed;
             m_Angles[index] = info.direction;
             m_Lifetimes[index] = 0f;
-            // è®¾ç½®æœ€å¤§å­˜æ´»æ—¶é—´ï¼Œå¦‚æœæœªè®¾ç½®(<=0)åˆ™é»˜è®¤ä¸º15ç§’
+            // ÉèÖÃ×î´ó´æ»îÊ±¼ä£¬Èç¹ûÎ´ÉèÖÃ(<=0)ÔòÄ¬ÈÏÎª15Ãë
             m_MaxLifetimes[index] = info.totalLifetime > 0 ? info.totalLifetime : 15f;
             m_LastAngles[index] = info.direction;
             m_IsDead[index] = false;
@@ -239,7 +239,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
             m_HP[index] = 30f;
 
-            // --- ç›¸å¯¹ç§»åŠ¨é€»è¾‘ ---
+            // --- Ïà¶ÔÒÆ¶¯Âß¼­ ---
             bool isRel = false;
             int eID = 0;
 
@@ -250,17 +250,17 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
                 m_CircleRadii[index] = cfg.circleRadius;
                 m_BoxSizes[index] = cfg.boxSize;
 
-                // æ£€æŸ¥é…ç½®æ˜¯å¦å¼€å¯ç›¸å¯¹ç§»åŠ¨ï¼Œä¸”å‘å°„è€…æ˜¯å¦å­˜åœ¨
+                // ¼ì²éÅäÖÃÊÇ·ñ¿ªÆôÏà¶ÔÒÆ¶¯£¬ÇÒ·¢ÉäÕßÊÇ·ñ´æÔÚ
                 if (pb.info.isRelative && emitter != null)
                 {
                     isRel = true;
                     eID = emitter.GetInstanceID();
 
-                    // æ³¨å†Œåˆ°æ´»è·ƒå‘å°„è€…åˆ—è¡¨ï¼Œä»¥ä¾¿ Update è®¡ç®—ä½ç§»
+                    // ×¢²áµ½»îÔ¾·¢ÉäÕßÁĞ±í£¬ÒÔ±ã Update ¼ÆËãÎ»ÒÆ
                     if (!m_ActiveEmitters.ContainsKey(eID))
                     {
                         m_ActiveEmitters.Add(eID, emitter);
-                        // åˆå§‹åŒ–ä¸Šä¸€å¸§ä½ç½®ä¸ºå½“å‰ä½ç½®ï¼ˆé˜²æ­¢ç¬¬ä¸€å¸§è·³å˜ï¼‰
+                        // ³õÊ¼»¯ÉÏÒ»Ö¡Î»ÖÃÎªµ±Ç°Î»ÖÃ£¨·ÀÖ¹µÚÒ»Ö¡Ìø±ä£©
                         if (!m_LastEmitterPos.ContainsKey(eID))
                         {
                             m_LastEmitterPos.Add(eID, emitter.position);
@@ -299,19 +299,11 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     {
 
 
-    protected override void OnAfterCleanupBeforeLeavingBattle()
-    {
-        if (m_PendingEnemy != null)
-        {
-            m_PendingEnemy.Clear();
-        }
-    }
-
-        // é€šçŸ¥å…¶ä»–ç±»ï¼Œæ•Œäººå’Œç©å®¶çš„ç¢°æ’æ£€æµ‹å·²å®Œæ¯•ï¼Œå¯ä»¥æ£€æµ‹ç©å®¶å­å¼¹å’Œæ•Œäººçš„ç¢°æ’äº†
+        // Í¨ÖªÆäËûÀà£¬µĞÈËºÍÍæ¼ÒµÄÅö×²¼ì²âÒÑÍê±Ï£¬¿ÉÒÔ¼ì²âÍæ¼Ò×Óµ¯ºÍµĞÈËµÄÅö×²ÁË
         OnSafeToApplyDamage?.Invoke();
 
 
-        //å¦‚æœæœ¬å¸§æœ‰å­å¼¹å‘½ä¸­ç©å®¶ï¼Œåˆ™è§¦å‘OnPlayerHit
+        //Èç¹û±¾Ö¡ÓĞ×Óµ¯ÃüÖĞÍæ¼Ò£¬Ôò´¥·¢OnPlayerHit
         bool hasHit = false;
         while (m_CollisionQueue.TryDequeue(out int bulletIndex))
         {
@@ -320,7 +312,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
         if (hasHit)
         {
-            Debug.Log("<color=red>ç©å®¶è¢«æ•Œäººä½“æœ¯ï¼</color>");
+            Debug.Log("<color=red>Íæ¼Ò±»µĞÈËÌåÊõ£¡</color>");
             OnPlayerHit();
         }
     }
@@ -332,7 +324,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     protected override void OnInitialize()
     {
-        //åˆå§‹åŒ–æŸ¥æ‰¾è¡¨
+        //³õÊ¼»¯²éÕÒ±í
         m_VisualNameToID.Clear();
 
         if (enemyConfigs != null)
@@ -353,11 +345,11 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         }
         else
         {
-            Debug.Log("åœ¨EnemyManagerä¸­æœªé…ç½®å­å¼¹ç±»å‹åˆ—è¡¨!");
+            Debug.Log("ÔÚEnemyManagerÖĞÎ´ÅäÖÃ×Óµ¯ÀàĞÍÁĞ±í!");
         }
 
 
-        //åˆå§‹åŒ–æ–°å±æ€§
+        //³õÊ¼»¯ĞÂÊôĞÔ
         m_HP = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
     }
 
@@ -371,7 +363,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     protected override void OnSwapData(int index, int lastIndex)
     {
-        // åªéœ€è¦å¤„ç†å­ç±»ç‰¹æœ‰çš„æ•°ç»„äº¤æ¢
+        // Ö»ĞèÒª´¦Àí×ÓÀàÌØÓĞµÄÊı×é½»»»
         m_HP[index] = m_HP[lastIndex];
     }
 
@@ -379,7 +371,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
     
 
-    #region å¯¹è±¡æ± ç®¡ç†æ–¹æ³•  å’Œ  è¾…åŠ©æ–¹æ³•
+    #region ¶ÔÏó³Ø¹ÜÀí·½·¨  ºÍ  ¸¨Öú·½·¨
     private GameObject GetBulletFromPool(int visualID)
     {
         if (visualID < 0 || visualID >= m_VisualPools.Length) return null;
@@ -434,7 +426,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     }
     #endregion
 
-    #region è°ƒè¯•æ–¹æ³•ï¼šç”»æ•Œäººåˆ¤å®š
+    #region µ÷ÊÔ·½·¨£º»­µĞÈËÅĞ¶¨
     private void OnDrawGizmos()
     {
         if (!showDebugGizmos || !m_IsInitialized) return;

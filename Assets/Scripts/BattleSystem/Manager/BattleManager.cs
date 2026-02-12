@@ -47,34 +47,11 @@ public class BattleManager : SingletonMono<BattleManager>
 
     private IEnumerator CloseBattleProcess(bool isWin)
     {
-        CleanupBattleManagersBeforeSceneSwitch();
-
         if (BattleContext.OnBattleResult != null)
         {
             BattleContext.OnBattleResult.Invoke(isWin);
         }
 
         yield return StartCoroutine(SceneLoader.Instance.LoadMapScene());
-    }
-
-    /// <summary>
-    /// Completes battle jobs and recycles all managed battle objects before scene switch.
-    /// </summary>
-    private void CleanupBattleManagersBeforeSceneSwitch()
-    {
-        if (PlayerShootingManager.Instance != null)
-        {
-            PlayerShootingManager.Instance.CleanupBeforeLeavingBattle();
-        }
-
-        if (BulletDOTSManager.Instance != null)
-        {
-            BulletDOTSManager.Instance.CleanupBeforeLeavingBattle();
-        }
-
-        if (EnemyDOTSManager.Instance != null)
-        {
-            EnemyDOTSManager.Instance.CleanupBeforeLeavingBattle();
-        }
     }
 }
