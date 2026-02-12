@@ -1,74 +1,58 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class BattleManager : SingletonMono<BattleManager> 
+public class BattleManager : SingletonMono<BattleManager>
 {
     public GameObject player;
 
+    /// <summary>
+    /// è·å–æˆ˜æ–—ç©å®¶ä½ç½®ã€‚
+    /// </summary>
     public Vector3 GetPlayerPos()
     {
         return player != null ? player.transform.position : Vector3.zero;
     }
 
+    /// <summary>
+    /// è®¾ç½®æˆ˜æ–—ç©å®¶æ˜¾ç¤ºçŠ¶æ€ã€‚
+    /// </summary>
     public void SetPlayerActive(bool state)
     {
         player.SetActive(state);
     }
 
+    /// <summary>
+    /// è®¡ç®—æœå‘è§’åº¦ï¼ˆ2Dï¼‰ã€‚
+    /// </summary>
     public float CalculateAngle(Vector3 startPoint, Vector3 endPoint)
     {
-        // 1. ¼ÆËã·½ÏòÏòÁ¿ (ÖÕµã - Æğµã)
-        // ÒòÎªÊÇ 2D Æ½Ãæ£¬ÎÒÃÇÖ»ĞèÒª x ºÍ y
         float dx = endPoint.x - startPoint.x;
         float dy = endPoint.y - startPoint.y;
 
-        // 2. Ê¹ÓÃ Atan2 ¼ÆËã»¡¶È
-        // Mathf.Atan2(y, x) ·µ»ØµÄÊÇ»¡¶ÈÖµ
-        // ±ê×¼½á¹û£ºÓÒ(0), ÉÏ(+), ×ó(+-PI), ÏÂ(-)
         float radians = Mathf.Atan2(dy, dx);
-
-        // 3. ×ª»»Îª½Ç¶È (Multiply by 180/PI)
         float degrees = radians * Mathf.Rad2Deg;
 
-        // 4. µ÷Õû·½Ïò·ûºÏÄãµÄĞèÇó
-        // ÄãµÄĞèÇó£ºË³Ê±ÕëĞı×ªÎªÕı (ÕıÏÂÎª90)
-        // UnityÄ¬ÈÏ£ºÄæÊ±ÕëĞı×ªÎªÕı (ÕıÉÏÎª90£¬ÕıÏÂÎª-90)
-        // ½â¾ö·½·¨£ºÖ±½ÓÈ¡¸ººÅ
         return -degrees;
     }
 
-
+    /// <summary>
+    /// å¼€å§‹æˆ˜æ–—ï¼ˆé¢„ç•™æ‰©å±•ï¼‰ã€‚
+    /// </summary>
     public void StartBattle()
     {
-
     }
 
-    // µ±Õ½¶·½áÊøÊ±µ÷ÓÃ´Ëº¯Êı
+    /// <summary>
+    /// ç»“æŸæˆ˜æ–—å¹¶å›åˆ°åœ°å›¾åœºæ™¯ã€‚
+    /// </summary>
+    /// <param name="isPlayerWin">æˆ˜æ–—æ˜¯å¦èƒœåˆ©ã€‚</param>
     public void EndBattle(bool isPlayerWin)
     {
-        // Çå¿Õ×Óµ¯³Ø¡¢µĞÈË³Ø¡¢Íæ¼Ò×Óµ¯³Ø
-
-        // Òş²ØÕ½¶·³¡¾°ÔªËØ
-
-        StartCoroutine(CloseBattleProcess(isPlayerWin));
-        //StartCoroutine(SceneLoader.Instance.LoadMapScene());
-    }
-
-    private IEnumerator CloseBattleProcess(bool isWin)
-    {
-        // (¿ÉÑ¡) ²¥·Å¸öÊ¤Àû¶¯»­/Ê§°Ü¶¯»­
-        // yield return new WaitForSeconds(2f);
-
-        // 1. ´¥·¢»Øµ÷£¬°Ñ½á¹û´«»Ø Map Scene
-        if (BattleContext.OnBattleResult != null)
+        StartCoroutine(SceneLoader.Instance.ReturnToMapScene(() =>
         {
-            BattleContext.OnBattleResult.Invoke(isWin);
-        }
-
-        // 2. Ğ¶ÔØ×Ô¼º (Õ½¶·³¡¾°)
-        // ×¢Òâ£ºÒòÎªÊÇ Additive ¼ÓÔØµÄ£¬ËùÒÔÒª Unload
-        yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
+            if (BattleContext.OnBattleResult != null)
+            {
+                BattleContext.OnBattleResult.Invoke(isPlayerWin);
+            }
+        }));
     }
 }
