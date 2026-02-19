@@ -1,26 +1,30 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleUIController : MonoBehaviour
 {
+    public Button testWinBtn;
+    public Button testLoseBtn;
+
+    private void OnEnable()
+    {
+        testWinBtn.onClick.AddListener(TestWinBtn);
+        testLoseBtn.onClick.AddListener(TestLoseBtn);
+    }
+
     public void TestWinBtn()
     {
         if(BattleController.Instance.currentPhase == GamePhase.BattleFighting)
         {
-            BattleController.Instance.currentPhase = GamePhase.BattleWin;
-            BattleController.Instance.currentPhaseIndex = BattleController.Instance.phaseToIntDict[GamePhase.BattleWin];
-            BattleController.Instance.StartPhase();
+            BattleController.Instance.StartCertainPhase(GamePhase.BattleWin);
         }
-        BattleManager.Instance.EndBattle(true);
     }
 
     public void TestLoseBtn()
     {
         if (BattleController.Instance.currentPhase == GamePhase.BattleFighting)
         {
-            BattleController.Instance.currentPhase = GamePhase.BattleLose;
-            BattleController.Instance.currentPhaseIndex = BattleController.Instance.phaseToIntDict[GamePhase.BattleLose];
-            BattleController.Instance.StartPhase();
+            BattleController.Instance.StartCertainPhase(GamePhase.BattleLose);
         }
-        BattleManager.Instance.EndBattle(false);
     }
 }

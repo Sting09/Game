@@ -43,7 +43,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   startBulletSpeed:
-    baseValue: 9
+    baseValue: 7
     offsetValue: 0
     randomRange: 0
   endBulletSpeed:

@@ -21,20 +21,22 @@ public abstract class ShootPattern
         {
             case ShootObjType.Bullet:
                 bulletTypeID = BulletDOTSManager.Instance.GetVisualID(bulletName);
+                bulletBehaviourID = config.bulletBehavior != "None" ? BulletDOTSManager.Instance.GetBehaviorID(config.bulletBehavior) : -1;
                 break;
             case ShootObjType.BulletGroup:
                 break;
             case ShootObjType.PlayerBullet:
                 bulletTypeID = PlayerShootingManager.Instance.GetVisualID(bulletName);
+                bulletBehaviourID = config.bulletBehavior != "None" ? PlayerShootingManager.Instance.GetBehaviorID(config.bulletBehavior) : -1;
                 break;
             case ShootObjType.Enemy:
                 bulletTypeID = EnemyDOTSManager.Instance.GetVisualID(bulletName);
+                bulletBehaviourID = config.bulletBehavior != "None" ? EnemyDOTSManager.Instance.GetBehaviorID(config.bulletBehavior) : -1;
                 break;
             default:
                 bulletTypeID = -1;
                 break;
         }
-        bulletBehaviourID = config.bulletBehavior != "None" ? BulletDOTSManager.Instance.GetBehaviorID(config.bulletBehavior) : -1;
         bulletDuration = config.bulletDuration;
         isRelative = config.isRelative;
     }

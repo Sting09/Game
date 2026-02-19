@@ -115,7 +115,8 @@ public class SceneLoader : SingletonMono<SceneLoader>
             SceneManager.SetActiveScene(battleScene);
         }
 
-        BattleController.Instance.BattleStart();
+        //在BattleController的OnEnable方法中调用BattleStart，不要在这里调用
+        //BattleController.Instance.BattleStart();
 
         yield return StartCoroutine(FadeOut());
 
@@ -123,6 +124,8 @@ public class SceneLoader : SingletonMono<SceneLoader>
         {
             fadeCanvasGroup.blocksRaycasts = false;
         }
+
+        BattleController.Instance.BattleStart();
     }
 
     /// <summary>

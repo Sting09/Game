@@ -3,14 +3,8 @@ using UnityEngine;
 public class BattleManager : SingletonMono<BattleManager>
 {
     public GameObject player;
-
-    public void GetPlayerObject()
-    {
-        if(player== null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player");
-        }
-    }
+    public StageDirector stageDirector;
+    public bool isWin;
 
     /// <summary>
     /// 获取战斗玩家位置。
@@ -32,6 +26,12 @@ public class BattleManager : SingletonMono<BattleManager>
         player.SetActive(state);
     }
 
+
+    public void SetStageDirectorActive(bool state)
+    {
+        stageDirector.gameObject.SetActive(state);
+    }
+
     /// <summary>
     /// 计算朝向角度（2D）。
     /// </summary>
@@ -51,19 +51,27 @@ public class BattleManager : SingletonMono<BattleManager>
     /// </summary>
     public void StartBattle()
     {
+
+        
+    }
+
+
+    public void SaveBattleResult(bool isWin)
+    {
+        this.isWin = isWin;
     }
 
     /// <summary>
     /// 结束战斗并回到地图场景。
     /// </summary>
     /// <param name="isPlayerWin">战斗是否胜利。</param>
-    public void EndBattle(bool isPlayerWin)
+    public void EndBattle()
     {
         StartCoroutine(SceneLoader.Instance.ReturnToMapScene(() =>
         {
             if (BattleContext.OnBattleResult != null)
             {
-                BattleContext.OnBattleResult.Invoke(isPlayerWin);
+                BattleContext.OnBattleResult.Invoke(isWin);
             }
         }));
     }

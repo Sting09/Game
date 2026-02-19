@@ -1,8 +1,8 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class GameManager : SingletonMono<GameManager>
 {
@@ -20,9 +20,11 @@ public class GameManager : SingletonMono<GameManager>
     public Canvas mapSceneCanvas;
     public GameObject mapSceneMap;
 
+    private int monstersPerTile = 3;    //每个地块刷新几个野怪
+
 
     /// <summary>
-    /// GenerateSchedule阶段，玩家和对手出生
+    /// 【已弃用，现在没有对手的概念了，自动触发Boss战】GenerateSchedule阶段，玩家和对手出生
     /// </summary>
     public void AllContestantsBorn()
     {
@@ -40,7 +42,7 @@ public class GameManager : SingletonMono<GameManager>
         {
             // 随机选取一个位置 j (范围 0 到 i)
             // 注意：Unity 的 Random.Range(min, max) 整数版是不包含 max 的，所以这里用 i + 1
-            int j = Random.Range(0, i + 1);
+            int j = UnityEngine.Random.Range(0, i + 1);
 
             // 交换 arr[i] 和 arr[j]
             int temp = arr[i];
@@ -93,6 +95,16 @@ public class GameManager : SingletonMono<GameManager>
         playerObject.transform.position = playerCurrentRoom.gameObject.transform.position;
     }
 
+    /// <summary>
+    /// 随机选择一个地块，玩家出生
+    /// </summary>
+    public void PlayerBorn()
+    {
+        int i = UnityEngine.Random.Range(0, MapManager.Instance.allItems.Count); ;
+        Tile randomTile = MapManager.Instance.allItems[i];
+        PlayerBorn(randomTile);
+    }
+
     public void OpponentBorn(int tileLine, int tileIndex, RoomDirection direction, int index)
     {
 
@@ -132,27 +144,32 @@ public class GameManager : SingletonMono<GameManager>
     /// </summary>
     public void AllMonstersBorn()
     {
-        //从随机房间开始遍历
-        int i = Random.Range(0, 6);
+        // 1. 定义原始数据
+        int[] numbers = { 0, 1, 2, 3, 4, 5 };
 
         foreach (Tile tile in MapManager.Instance.allItems)
         {
-            //遍历六个房间，重复五次
-            for (int roomIndex = i, times = 0; times < 5; roomIndex = (roomIndex + 1) % 6, times++)
+            // 2. 核心逻辑：随机排序并取前3个
+            int[] result = numbers.OrderBy(x => Guid.NewGuid()).Take(monstersPerTile + 1).ToArray();
+
+            //遍历六个房间，重复三次
+            for (int index = 0, times = 0; times < monstersPerTile; index++, times++)
             {
-                //如果房间有对手，则跳过
-                if (tile.rooms[roomIndex].roomObj.haveEnemy || tile.rooms[roomIndex].roomObj.havePlayer)
+                int i = result[index];
+                //如果房间没有玩家
+                if (tile.rooms[i].roomObj != playerCurrentRoom)
                 {
-                    times--;        //循环结束没生成怪物也会加一，抵消掉
+                    tile.GenerateOneMonster(i);
                 }
-                //否则从怪物列表中生成一个怪物
                 else
                 {
-                    tile.GenerateOneMonster(roomIndex);
+                    //有玩家则计数-1
+                    times--;
                 }
-
             }
         }
+
+        UpdatePlayerSight();
     }
 
 
@@ -170,8 +187,8 @@ public class GameManager : SingletonMono<GameManager>
             return;
         }
 
-        // 更新玩家状态
-        player.battleNum--;
+        // 更新玩家状态，如果不是无限战斗，则可战斗次数-1
+        player.battleNum = player.battleNum > 0 ? player.battleNum - 1 : player.battleNum;
 
         // 隐藏地图场景元素
         if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(false);
@@ -208,7 +225,7 @@ public class GameManager : SingletonMono<GameManager>
                 {
                     Debug.Log("和野怪的战斗胜利！");
                     int num = room.parentTile.tileData.rewardList.Count;
-                    RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
+                    RewardSO reward = room.parentTile.tileData.rewardList[UnityEngine.Random.Range(0, num)];
                     player.ChangePower(reward.powerValue);
                 }
                 //情况二：击败的是对手。获得他身上的一个道具、对手死亡
@@ -221,6 +238,8 @@ public class GameManager : SingletonMono<GameManager>
                 }
                 // 调用 Room 脚本的函数，标记为已通关
                 room.SetCleared(true);
+                // 玩家暴露度增加
+                player.ChangeImpression(GlobalSetting.Instance.globalVariable.battleImpression);
                 // 可以在这里发放奖励...
             }
             else
@@ -244,6 +263,8 @@ public class GameManager : SingletonMono<GameManager>
 
             // E. 更新地图视野
             UpdatePlayerSight();
+
+            player.ChangeImpression(0);
         };
 
         // 5. 启动加载流程
@@ -262,17 +283,18 @@ public class GameManager : SingletonMono<GameManager>
     /// <param name="room">要探索哪个房间</param>
     public void PlayerSearch(Room room)
     {
-        //更新玩家状态
-        player.searchNum--;
+        //更新玩家状态，如果不是无限探索，则探索次数-1
+        player.searchNum = player.searchNum > 0 ? player.searchNum - 1 : player.searchNum;
+        player.currentSearchCost++;
 
         //生成随机数检定是否得到奖励
-        int randomResult = Random.Range(0,6);
+        int randomResult = UnityEngine.Random.Range(0,6);
 
         if (randomResult < room.remainRewardNum + room.alreadyRewardFailTimes)        //成功
         {
             //从所在区块获得一个奖励
             int num = room.parentTile.tileData.rewardList.Count;
-            RewardSO reward = room.parentTile.tileData.rewardList[Random.Range(0, num)];
+            RewardSO reward = room.parentTile.tileData.rewardList[UnityEngine.Random.Range(0, num)];
             //更新玩家战力
             player.ChangePower(reward.powerValue);
 
@@ -289,6 +311,8 @@ public class GameManager : SingletonMono<GameManager>
             room.alreadyRewardFailTimes ++;
         }
 
+        // 玩家暴露度增加
+        player.ChangeImpression(player.currentSearchCost);
         //更新地图视野
         UpdatePlayerSight();
     }

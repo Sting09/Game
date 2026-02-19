@@ -31,4 +31,8 @@ public class GlobalVariableSO : ScriptableObject
     public float slowModeRate = 0.5f;
 
     public float playerHitboxRadius = 2.5f;
+
+
+    [Header("Impression System")]
+    public float battleImpression = 10f;
 }

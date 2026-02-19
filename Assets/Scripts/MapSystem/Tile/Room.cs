@@ -40,6 +40,11 @@ public class Room : MonoBehaviour
         bool isPlayerPhase = PhaseController.Instance.currentPhase == GamePhase.PlayerPhase;
         if(! isPlayerPhase ) { return; }
 
+        if(GameManager.Instance.player == null)
+        {
+            Debug.Log("玩家丢失！请检查游戏逻辑是否正确");
+            return;
+        }
         bool playerCanMove = GameManager.Instance.player.CheckPlayerMove(this);
         bool playerCanBattle = GameManager.Instance.player.CheckPlayerBattle(this);
         bool playerCanSearch = GameManager.Instance.player.CheckPlayerSearch(this);
@@ -79,16 +84,17 @@ public class Room : MonoBehaviour
     // 执行移动逻辑
     private void MovePlayerToHere()
     {
-        //如果跨地块，更新玩家状态，本回合不能再跨越地块
         Room currentRoom = GameManager.Instance.playerCurrentRoom;
         Tile currentTile = currentRoom.parentTile;
 
-        if(this.parentTile != currentTile)
+        //如果跨地块，更新玩家状态，本回合不能再跨越地块
+        if (this.parentTile != currentTile)
         {
-            if (!MapManager.Instance.test_unlimitedCrossBound)
+            // 游戏性测试，现在可以无限移动了
+            /*if (!MapManager.Instance.test_unlimitedCrossBound)
             {
                 GameManager.Instance.player.canMoveOverTile = false;
-            }
+            }*/
         }
 
         //修改GameManager存储的玩家位置
@@ -99,6 +105,9 @@ public class Room : MonoBehaviour
         //修改玩家obj坐标
         GameObject player = GameManager.Instance.playerObject;
         player.transform.position = this.gameObject.transform.position;
+
+        //增加玩家暴露值，跨地块+10，不跨+0
+        GameManager.Instance.player.ChangeImpression(parentTile != currentTile ? 10 : 0);
 
         //更新玩家视野
         GameManager.Instance.UpdatePlayerSight();
@@ -159,6 +168,8 @@ public class Room : MonoBehaviour
     private bool CheckMoveCondition()
     {
         Room currentRoom = GameManager.Instance.playerCurrentRoom;
+        if(currentRoom == null) {  return false; }
+
         Tile currentTile = currentRoom.parentTile;
 
         bool sameTile = (this.parentTile == currentTile);

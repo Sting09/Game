@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4a7669851b6f934e8e119cc342e0b67, type: 3}
-  m_Name: 1-GenerateMapPhaseEvent 1
+  m_Script: {fileID: 11500000, guid: 5457fe1b0f97f7e4c85b197db6ddda28, type: 3}
+  m_Name: "\u6CE2\u7C92\u5927\u8774\u8776\u654C\u4EBA\u4E8B\u4EF6"
   m_EditorClassIdentifier: 
-  description: 
-  lastSender: 
+  startDelay: 0
+  interval: -1
+  loopCount: 0
+  conditions: []
+  actions: []

@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
+  m_Name: "\u6CE2\u7C92\u5927\u8774\u8776Emitter"
+  m_EditorClassIdentifier: 
+  description: "\u4E00\u4E2A\u6CE2\u7C92\u5927\u8774\u8776\uFF0C\u5C4F\u5E55\u6B63\u4E2D\u4E0B\u53BB\uFF0C30s\u540E\u505C\u6B62\u53D1\u5C04\u518D\u56DE\u53BB"
+  bulletEvents: []
+  shootDelay: 1
+  emitterDuration: 5
+  emitterPosTypeX: 3
+  emitterPosX:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  emitterPosTypeY: 3
+  emitterPosY:
+    baseValue: 6.1
+    offsetValue: 0
+    randomRange: 0
+  emitterDirectionType: 2
+  emitterDirection:
+    baseValue: 90
+    offsetValue: 0
+    randomRange: 0
+  bulletPattern: {fileID: 11400000, guid: 11ea39a4c4d79d648815a7cb28779aab, type: 2}
+  emitterEvents:
+  - {fileID: 11400000, guid: b0e9f2dd45f41374a8afa6afb4a727fa, type: 2}
+  shootTimesPerWave: 1
+  shootInterval: 999
+  waveInterval: 999
+  angleType: 4
+  increment:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  fixedValue:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  angle:
+    baseValue: 90
+    offsetValue: 0
+    randomRange: 0
+  posOffsetX:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  posOffsetY:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0

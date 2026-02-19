@@ -476,12 +476,13 @@ MonoBehaviour:
   fadeCanvasGroup: {fileID: 1409081646}
   loadingProgressBar: {fileID: 0}
   loadingText: {fileID: 0}
-  fadeDuration: 0.8
+  fadeInDuration: 0.8
+  fadeOutDuration: 0.8
+  blackoutHoldDuration: 0
   minWaitTime: 0.5
+  titleSceneName: Title Scene
   battleSceneName: Battle Scene
   mapSceneName: Map Scene
-  mapCamera: {fileID: 0}
-  mapCanvas: {fileID: 0}
 --- !u!114 &782177151
 MonoBehaviour:
   m_ObjectHideFlags: 0

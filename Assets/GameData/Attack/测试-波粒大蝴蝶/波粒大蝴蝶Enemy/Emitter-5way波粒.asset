@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: 
   bulletEvents: []
-  shootDelay: 1
+  shootDelay: 0.5
   emitterDuration: -1
   emitterPosTypeX: 0
   emitterPosX:

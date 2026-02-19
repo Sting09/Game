@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
-  m_Name: Needle-Pattern
+  m_Name: "\u6CE2\u7C92\u5927\u8774\u8776Pattern"
   m_EditorClassIdentifier: 
-  bulletName: Needle
-  bulletDuration: 10
+  bulletName: "\u6CE2\u7C92\u5927\u8774\u8776"
+  bulletDuration: 30
   isRelative: 0
-  objType: 2
-  bulletBehavior: 
+  objType: 3
+  bulletBehavior: "\u6CE2\u7C92\u5927\u8774\u8776Behavior"
   description: 
   shootWays:
     baseValue: 1
@@ -27,7 +27,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   shootRange:
-    baseValue: 5
+    baseValue: 120
     offsetValue: 0
     randomRange: 0
   radius:
@@ -43,10 +43,10 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   startBulletSpeed:
-    baseValue: 15
+    baseValue: 10
     offsetValue: 0
     randomRange: 0
   endBulletSpeed:
-    baseValue: 15
+    baseValue: 5
     offsetValue: 0
     randomRange: 0
