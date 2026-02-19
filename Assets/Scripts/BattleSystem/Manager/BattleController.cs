@@ -61,4 +61,13 @@ public class BattleController : SingletonMono<BattleController>
         currentPhase = targetPhase;
         phaseList[currentPhaseIndex].PhaseStart(this);
     }
+
+
+    public void OnPlayerDied()
+    {
+        if(currentPhase == GamePhase.BattleFighting)
+        {
+            StartCertainPhase(GamePhase.BattlePause);
+        }
+    }
 }

@@ -21,6 +21,9 @@ public struct BulletRuntimeInfo
     //子弹生命信息
     public float lifetime;          //已经生成了多少秒？
     public float totalLifetime;     //最大持续多少秒
+
+    //子弹伤害信息
+    public float damageValue;       //基础伤害值
     
 }
 

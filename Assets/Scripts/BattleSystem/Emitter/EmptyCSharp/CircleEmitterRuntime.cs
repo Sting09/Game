@@ -55,6 +55,8 @@ public class CircleEmitterRuntime : EmitterRuntime
             info.lifetime = 0;      //刚发射的子弹，已经存活的时间就是0
             info.totalLifetime = pattern.bulletDuration;
 
+            info.damageValue = pattern.damage;
+
             pattern.ShootBullet(info, posBuffer[i], dirBuffer[i]);  //Single发射器只有一个发弹点，不用遍历数组
         }
 

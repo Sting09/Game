@@ -33,6 +33,11 @@ public class BaseEventListener<T> : MonoBehaviour
     //监听的事件触发时，执行所有注册的函数
     private void OnEventRaisedFunc(T value)
     {
+        if (response == null)
+        {
+            Debug.Log(this.gameObject.name);
+            return;
+        }
         response.Invoke(value);
     }
 }

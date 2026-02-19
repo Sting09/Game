@@ -6,4 +6,10 @@ public class PlayerBattle : MonoBehaviour
     {
         BattleManager.Instance.player = this.gameObject;
     }
+
+
+    public void SetPlayerActive(bool state)
+    {
+        gameObject.SetActive(state);
+    }
 }

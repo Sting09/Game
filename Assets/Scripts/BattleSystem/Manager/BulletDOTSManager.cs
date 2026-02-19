@@ -40,7 +40,8 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     /// <param name="emitter">发射者Transform（如果是相对移动子弹，此参数必须不为空）</param>
     public void AddBullet(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
-        if (m_PendingBullets == null) m_PendingBullets = new List<PendingBullet>();
+        if (isPaused) { return; }
+        if (m_PendingBullets == null) { m_PendingBullets = new List<PendingBullet>(); }
 
         int pendingCount = m_PendingBullets.Count;
         if (m_ActiveCount + pendingCount >= maxEntityCapacity)
@@ -59,15 +60,21 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     }
 
     #region 玩家被命中的逻辑
-    private void OnPlayerHit()
+    private void OnPlayerHit(float totalDamage)
     {
-        //Debug.Log("<color=red>玩家中弹！</color>");
+        //表现效果：玩家贴图变红
         if (playerSpriteRenderer == null && BattleManager.Instance != null && BattleManager.Instance.player != null)
         {
             playerSpriteRenderer = BattleManager.Instance.player.GetComponent<SpriteRenderer>();
         }
         if (hitPlayerCoroutine != null) StopCoroutine(hitPlayerCoroutine);
         hitPlayerCoroutine = StartCoroutine(HitFlashRoutine());
+
+        //数据上，修改玩家currentHP
+        if(GameManager.Instance.player != null)
+        {
+            GameManager.Instance.player.PlayerTakeDamage(totalDamage);
+        }
     }
 
     private IEnumerator HitFlashRoutine()
@@ -210,6 +217,7 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
             m_MaxLifetimes[index] = info.totalLifetime > 0 ? info.totalLifetime : 15f;
             m_LastAngles[index] = info.direction;
             m_IsDead[index] = false;
+            m_Damage[index] = info.damageValue;
 
             m_ShootPointIndices[index] = info.shootPointIndex;
 
@@ -280,14 +288,16 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     {
         //如果本帧有子弹命中玩家，则触发OnPlayerHit
         bool hasHit = false;
+        float totalDamage = 0f;
         while (m_CollisionQueue.TryDequeue(out int bulletIndex))
         {
             hasHit = true;
+            totalDamage += m_Damage[bulletIndex];
         }
 
         if (hasHit)
         {
-            OnPlayerHit();
+            OnPlayerHit(totalDamage);
         }
     }
 
@@ -391,6 +401,15 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
     {
         if (m_VisualNameToID.TryGetValue(name, out int id)) return id;
         return -1;
+    }
+
+
+    public override void OnClearAllObjects(bool destroy)
+    {
+        if(m_PendingBullets != null)
+        {
+            m_PendingBullets.Clear();
+        }
     }
 
 

@@ -8,9 +8,11 @@ public abstract class ShootPatternSO : ScriptableObject
     public string bulletName = "RedBullet";
     [Tooltip("子弹的存活时长。超时将被移除")]
     public float bulletDuration = 10f;
+    [Tooltip("子弹伤害")]
+    public float bulletDamage = 5f;
     [Tooltip("子弹是否跟随发弹源移动")]
     public bool isRelative = false;
-    [Tooltip("子弹是否跟随发弹源移动")]
+    [Tooltip("Obj类型")]
     public ShootObjType objType = ShootObjType.Bullet;
 
 

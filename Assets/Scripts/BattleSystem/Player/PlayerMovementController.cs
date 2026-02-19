@@ -31,6 +31,7 @@ public class PlayerMovementController : MonoBehaviour
     private float focusSpeedMultiplier;
     private float boundsX;
     private float boundsY;
+    public bool isPaused;       //是否暂停，禁止移动
 
     // --- 内部变量 ---
     private Vector2 moveInput;
@@ -68,8 +69,23 @@ public class PlayerMovementController : MonoBehaviour
     // 为了降低输入延迟，移动逻辑不能在 FixedUpdate ，而要在 Update
     private void Update()
     {
+        if (isPaused) { return; }
         HandleMovement();
     }
+
+
+    public void SetPausedState(bool paused)
+    {
+        isPaused = paused;
+    }
+
+
+    public void ResetPlayerPosition()
+    {
+        //先硬编码，以后写在GlobalSetting里。如果做成技能，则写在PlayerState里
+        gameObject.transform.position = new Vector3(0, -3.55f, 0);
+    }
+
 
     private void HandleMovement()
     {

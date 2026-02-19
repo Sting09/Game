@@ -11,10 +11,14 @@ public class BaseShooter : MonoBehaviour
     private List<ShooterTimer> timers;           //每个Emitter的计时器
 
     public bool needPrewarm = false;        //是否需要根据弹幕列表，预热对象池
+    public bool isStageDirector = false;    //是否是StageDirector，弹幕发完就
 
     private void Awake()
     {
-        timers = new List<ShooterTimer>();
+        if (timers == null)
+        {
+            timers = new List<ShooterTimer>();
+        }
     }
 
     private void Start()
@@ -61,6 +65,7 @@ public class BaseShooter : MonoBehaviour
 
     void Update()
     {
+        if(BattleController.Instance.currentPhase != GamePhase.BattleFighting) { return; }
 
         danmakuTimer += Time.deltaTime;
         //danmakuDuration为负数时发射永不停止 
@@ -86,6 +91,7 @@ public class BaseShooter : MonoBehaviour
     {
         //清空上一个弹幕的信息
         danmakuTimer = 0;
+        if (timers == null) { timers = new List<ShooterTimer>(); }
         timers.Clear();
 
         if (currentDanmakuIndex >= danmakuToShoot.Count)
@@ -118,10 +124,21 @@ public class BaseShooter : MonoBehaviour
         if (currentDanmakuIndex >= danmakuToShoot.Count)    //配置的弹幕都发射完了
         {
             gameObject.SetActive(false);    //敌人失活，或者以后改成敌人死亡动画等
+
+            //是StageDirector，弹幕都用完了，则认为关卡通过了，战斗胜利
+            if(isStageDirector)
+            {
+                if (BattleController.Instance.currentPhase == GamePhase.BattleFighting)
+                {
+                    BattleController.Instance.StartCertainPhase(GamePhase.BattleWin);
+                }
+            }
         }
         else
         {
             LoadDanmaku();      //还有符卡要发射，就加载配置
         }
     }
+
+
 }

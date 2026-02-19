@@ -10,6 +10,7 @@ public abstract class ShootPattern
     public float bulletDuration;
     public bool isRelative;          //是否跟随发弹源移动
     public ShootObjType type;
+    public float damage;
 
     public ShootPattern(ShootPatternSO config, EmitterRuntime runtime)
     {
@@ -39,6 +40,7 @@ public abstract class ShootPattern
         }
         bulletDuration = config.bulletDuration;
         isRelative = config.isRelative;
+        damage = config.bulletDamage;
     }
 
     /// <summary>

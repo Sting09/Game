@@ -50,7 +50,8 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     /// <param name="emitter">发射者Transform（如果是相对移动子弹，此参数必须不为空）</param>
     public void AddEnemy(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
-        if (m_PendingEnemy == null) m_PendingEnemy = new List<PendingEnemy>();
+        if (isPaused) { return; }
+        if (m_PendingEnemy == null) { m_PendingEnemy = new List<PendingEnemy>(); }
 
         int pendingCount = m_PendingEnemy.Count;
         if (m_ActiveCount + pendingCount >= maxEntityCapacity)
@@ -423,6 +424,15 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     {
         if (m_VisualNameToID.TryGetValue(name, out int id)) return id;
         return -1;
+    }
+
+
+    public override void OnClearAllObjects(bool destroy) 
+    {
+        if (m_PendingEnemy != null)
+        {
+            m_PendingEnemy.Clear();
+        }
     }
     #endregion
 

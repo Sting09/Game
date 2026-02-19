@@ -25,6 +25,9 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     protected SpriteRenderer playerSpriteRenderer;
     protected Coroutine hitPlayerCoroutine;         //obj击中玩家时启动的协程
 
+    // --- 全局信息 ---
+    public bool isPaused;       //是否暂停，不处理逻辑
+
     // --- 调试信息 ---
     [Header("Debug Settings")]
     [Tooltip("是否使用Gizmo画出判定大小")]
@@ -78,6 +81,9 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     protected NativeArray<float> m_Lifetimes;
     protected NativeArray<float> m_MaxLifetimes;
     protected NativeArray<bool> m_IsDead;
+
+    // 伤害信息
+    protected NativeArray<float> m_Damage;
 
     // 高级运动信息
     protected NativeArray<float> m_Accelerations;
@@ -239,6 +245,8 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         m_LastAngles = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
         m_IsDead = new NativeArray<bool>(maxEntityCapacity, Allocator.Persistent);
 
+        m_Damage = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
+
         m_ShootPointIndices = new NativeArray<int>(maxEntityCapacity, Allocator.Persistent);
 
         m_Accelerations = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
@@ -284,6 +292,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         if (m_MaxLifetimes.IsCreated) m_MaxLifetimes.Dispose();
         if (m_LastAngles.IsCreated) m_LastAngles.Dispose();
         if (m_IsDead.IsCreated) m_IsDead.Dispose();
+        if (m_Damage.IsCreated) m_Damage.Dispose();
         if (m_ShootPointIndices.IsCreated) m_ShootPointIndices.Dispose();
         if (m_Accelerations.IsCreated) m_Accelerations.Dispose();
         if (m_AccelAngles.IsCreated) m_AccelAngles.Dispose();
@@ -327,6 +336,8 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     {
         // 1. 确保上一帧的Job已经完成
         m_JobHandle.Complete();
+
+        if(isPaused) return;
 
         // 2. 重置用于缓存的数据结构
         m_EmitterDeltas.Clear();
@@ -461,6 +472,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
             m_MaxLifetimes[index] = m_MaxLifetimes[lastIndex];
             m_LastAngles[index] = m_LastAngles[lastIndex];
             m_IsDead[index] = m_IsDead[lastIndex];
+            m_Damage[index] = m_Damage[lastIndex];
             m_ShootPointIndices[index] = m_ShootPointIndices[lastIndex];
             m_Accelerations[index] = m_Accelerations[lastIndex];
             m_AccelAngles[index] = m_AccelAngles[lastIndex];
@@ -587,6 +599,76 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     {
         return m_JobHandle;
     }
+
+
+    /// <summary>
+    /// 清理所有当前管理的对象并释放内存
+    /// </summary>
+    /// <param name="destroy">如果为 true，则 Destroy 游戏物体；如果为 false，则设为 inactive 放回对象池</param>
+    public virtual void ClearAllObjects(bool destroy = false)
+    {
+        // 1. 强制等待子线程 Job 彻底完成，防止多线程资源冲突
+        // 必须在你调度 Job 的 JobHandle 上调用 Complete()
+        m_JobHandle.Complete(); 
+
+        // 2. 遍历所有处于激活状态的物体
+        for (int i = 0; i < m_ActiveGOs.Count; i++)
+        {
+            GameObject obj = m_ActiveGOs[i];
+            if (obj != null)
+            {
+                if (destroy)
+                {
+                    Destroy(obj);
+                }
+                else
+                {
+                    obj.SetActive(false);
+                    // 如果你有对象池管理器，可以在这里调用对象池的回收方法
+                    // BattlePoolTool.Instance.ReturnToPool(obj);
+                }
+            }
+        }
+
+        // 3. 重置活跃数量
+        m_ActiveCount = 0;
+        currentZ = 0;
+
+        // 4. 【修复碰撞不消失的关键】清空所有用于主线程映射的 C# 列表和字典
+        // 如果不清空，下一次Add时，m_ActiveGOs 的索引就会从旧的Count开始，导致 DOTS 和 主线程 索引严重错位！
+        if (m_ActiveGOs != null) m_ActiveGOs.Clear();
+        if (m_ActiveEmitters != null) m_ActiveEmitters.Clear();
+        if (m_LastEmitterPos != null) m_LastEmitterPos.Clear();
+        if (m_EmittersToRemoveCache != null) m_EmittersToRemoveCache.Clear();
+        if (m_DeadEmittersThisFrame != null) m_DeadEmittersThisFrame.Clear();
+
+        // 5. 清空 Native 容器中残留的临时数据（保留内存不Dispose，只清空内容）
+        if (m_CollisionQueue.IsCreated) m_CollisionQueue.Clear();
+        if (m_EmitterDeltas.IsCreated) m_EmitterDeltas.Clear();
+
+        // 6. 【修复 ObjectDisposedException 的关键】重新分配 TransformAccessArray
+        if (m_Transforms.isCreated)
+        {
+            // 记录下原本的容量，方便重新创建时保持一致的性能预期
+            int oldCapacity = m_Transforms.capacity;
+
+            // 释放旧的内存
+            m_Transforms.Dispose();
+
+            // 【关键修复】：立刻重新分配一个干净的 TransformAccessArray 给它！
+            // 否则下次 Add 时就会报 ObjectDisposedException
+            m_Transforms = new TransformAccessArray(oldCapacity);
+
+            //不需要释放其他内存，再用时直接覆盖，记录管理的活跃数即可
+        }
+
+        // 5. 调用子类特有的清理逻辑（如有必要）
+        OnClearAllObjects(destroy);
+    }
+
+
+    // 留给子类实现特定数据清理的虚方法
+    public virtual void OnClearAllObjects(bool destroy) { }
 
     #endregion
 }

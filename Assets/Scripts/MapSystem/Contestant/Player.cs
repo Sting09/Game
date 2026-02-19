@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
     [Header("Related Events")]
     public FloatEventSO playerPowerChangeEvent;       //玩家战力变化事件
     public FloatEventSO playerImpressionChangeEvent;       //玩家战力变化事件
+    public FloatEventSO playerHPChangeEvent;            //玩家HP变化事件
     public FloatEventSO gameLoseEvent;
     public FloatEventSO playerDeathEvent;
 
@@ -46,6 +48,7 @@ public class Player : MonoBehaviour
     public void ResetBattleData()
     {
         currentHP = maxHP;
+        playerHPChangeEvent.RaiseEvent(currentHP, this);
     }
 
     /// <summary>
@@ -135,9 +138,12 @@ public class Player : MonoBehaviour
         currentHP -= value;
         currentHP = Mathf.Max(currentHP, 0);
 
-        // 玩家HP降至0，触发玩家死亡事件
+        playerHPChangeEvent.RaiseEvent(currentHP, this);
+
+        // 玩家HP降至0，减少重试次数，触发玩家死亡事件
         if (currentHP <= 0)
         {
+            ReduceRetryTimes(1);
             playerDeathEvent.RaiseEvent(currentHP, this);
         }
 

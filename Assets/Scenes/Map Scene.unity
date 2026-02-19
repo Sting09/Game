@@ -8062,6 +8062,67 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &609341512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 609341513}
+  - component: {fileID: 609341514}
+  m_Layer: 0
+  m_Name: BattleEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &609341513
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609341512}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2031514223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &609341514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609341512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: "\u6062\u590D\u73A9\u5BB6HP\u5230HP\u4E0A\u9650"
+  eventSO: {fileID: 11400000, guid: 9a763818be728414694adff195090427, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1777349703}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: ResetBattleData
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &617891098
 GameObject:
   m_ObjectHideFlags: 0
@@ -22241,6 +22302,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15dac92196b616048ad078d9e8f46232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  retryTimesRemain: 30
+  currentHP: 100
+  maxHP: 100
+  bossDefeatedNum: 0
   canMoveOverTile: 1
   canMove: 1
   maxBattleNum: -1
@@ -22252,6 +22317,9 @@ MonoBehaviour:
   currentImpression: 0
   playerPowerChangeEvent: {fileID: 11400000, guid: d24fbabf8ab9cae4fbb9ea8a7fdfabbb, type: 2}
   playerImpressionChangeEvent: {fileID: 11400000, guid: 9a25c05de1ca0cd4a9305925d76e0bf2, type: 2}
+  playerHPChangeEvent: {fileID: 11400000, guid: ee4336f268401a64da052199676b177e, type: 2}
+  gameLoseEvent: {fileID: 11400000, guid: 8446ed662956cf64b83eba9ae3ed8a36, type: 2}
+  playerDeathEvent: {fileID: 11400000, guid: 791e212fd216e5a419e6aa52d83c08c6, type: 2}
 --- !u!212 &1777349704
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -25829,6 +25897,7 @@ Transform:
   - {fileID: 477289825}
   - {fileID: 914632727}
   - {fileID: 2072295586}
+  - {fileID: 609341513}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2038541782

@@ -49,7 +49,8 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
     /// <param name="info">子弹信息</param>
     public void AddBullet(int visualID, int behaviorID, Vector3 startPos, BulletRuntimeInfo info)
     {
-        if (m_PendingBullets == null) m_PendingBullets = new List<PendingBullet>();
+        if (isPaused) { return; }
+        if (m_PendingBullets == null) { m_PendingBullets = new List<PendingBullet>(); }
 
         int pendingCount = m_PendingBullets.Count;
         if (m_ActiveCount + pendingCount >= maxEntityCapacity)
@@ -445,6 +446,18 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         if (m_VisualNameToID.TryGetValue(name, out int id)) return id;
         return -1;
     }
+
+
+
+    public override void OnClearAllObjects(bool destroy)
+    {
+        if(m_PendingBullets != null)
+        {
+            m_PendingBullets.Clear();
+        }
+    }
+
+
     #endregion
 
     #region Debug Gizmos
