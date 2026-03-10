@@ -5,8 +5,15 @@ public class Player : MonoBehaviour
 {
     [Header("Player Data")]
     public int retryTimesRemain;          //剩余重开次数
+
     public float currentHP;                 //当前HP值
+    public float lossHP;                    //损失的HP上限
     public float maxHP;                     //最大HP值
+
+    public float currentMP;                 //当前MP值
+    public float lossMP;                    //损失的MP上限
+    public float maxMP;                     //最大MP值
+
     public int bossDefeatedNum;             //已击败阎罗数
 
     [Header("Player State")]

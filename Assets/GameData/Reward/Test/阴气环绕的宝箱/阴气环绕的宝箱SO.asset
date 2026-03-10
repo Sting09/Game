@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6d34a8dff699d640aeec5e612b439df, type: 3}
   m_Name: "\u9634\u6C14\u73AF\u7ED5\u7684\u5B9D\u7BB1SO"
   m_EditorClassIdentifier: 
-  rewardName: "\u9634\u6C14\u5B9D\u7BB1"
+  rewardName: "\u9634\u6C14\u73AF\u7ED5\u7684\u5B9D\u7BB1"
   weight: 100
   defaultState: 0
   mustAppearConditions: []
@@ -21,29 +21,34 @@ MonoBehaviour:
   openedText: "\u4F60\u5F00\u542F\u4E86\u5B9D\u7BB1\u3002"
   closedText: "\u8FD9\u91CC\u4EC0\u4E48\u90FD\u6CA1\u6709\u4E86\u3002"
   unknownOptions:
-  - optionID: "\u9634\u6C14\u5B9D\u7BB101"
+  - optionID: "\u9634\u6C14\u73AF\u7ED5\u7684\u5B9D\u7BB101"
     rawText: "\u3010\u6253\u5F00\u5B9D\u7BB1\u3011\u9633\u6C14-10\uFF0C\u83B7\u5F97\u968F\u673A\u57FA\u7840\u6389\u843D\u3002"
     visibilityConditions: []
     interactableConditions: []
     actions:
+    - {fileID: 11400000, guid: e55c191f13caa7a41bbd6bd1d9301ebf, type: 2}
+    - {fileID: 11400000, guid: 8fc4f3a94bd605e48a6e738ccaf728a8, type: 2}
     - {fileID: 11400000, guid: 5779c31c11066e242bf0df8ad5cdec92, type: 2}
   openedOptions: []
   otherOptions:
-  - optionID: "\u9634\u6C14\u5B9D\u7BB102"
+  - optionID: "\u9634\u6C14\u73AF\u7ED5\u7684\u5B9D\u7BB102"
     rawText: "\u3010\u6361\u8D77\u7B26\u7EB8\u3011\u91CD\u8BD5\u6B21\u6570+1"
     visibilityConditions: []
     interactableConditions: []
     actions:
+    - {fileID: 11400000, guid: 96701eddb5c522c4f8485654589dd4c6, type: 2}
     - {fileID: 11400000, guid: 27f28db95f51c264b86b0c7f14176cf2, type: 2}
-  - optionID: "\u9634\u6C14\u5B9D\u7BB103"
+  - optionID: "\u9634\u6C14\u73AF\u7ED5\u7684\u5B9D\u7BB103"
     rawText: "\u3010\u6361\u8D77\u7B26\u7EB8\u3011\u91CD\u8BD5\u6B21\u6570+5"
     visibilityConditions: []
     interactableConditions: []
     actions:
+    - {fileID: 11400000, guid: 16b0d6d0aebe78d42aea1cf11b0d8ba8, type: 2}
     - {fileID: 11400000, guid: 27f28db95f51c264b86b0c7f14176cf2, type: 2}
-  - optionID: "\u9634\u6C14\u5B9D\u7BB104"
+  - optionID: "\u9634\u6C14\u73AF\u7ED5\u7684\u5B9D\u7BB104"
     rawText: "\u3010\u6361\u8D77\u7B26\u7EB8\u3011\u91CD\u8BD5\u6B21\u6570+10"
     visibilityConditions: []
     interactableConditions: []
     actions:
+    - {fileID: 11400000, guid: 4c89082b7fc2d144d95ef08c24413ad3, type: 2}
     - {fileID: 11400000, guid: 27f28db95f51c264b86b0c7f14176cf2, type: 2}
