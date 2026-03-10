@@ -7,6 +7,8 @@ public class RA_HPtoChest : RewardAction
     {
         GameManager.Instance.player.PlayerTakeDamage(10f);
 
-        reward.ChangeState(RewardState.Opened);
+        reward.ChangeState(RewardState.Opened);     //切换状态后，unknown的选项全清空了，添加所有opened的选项，但是为空
+
+        reward.currentOptions.Add(reward.Data.otherOptions[Random.Range(0,3)]); //接下来添加一个other中随机的选项
     }
 }

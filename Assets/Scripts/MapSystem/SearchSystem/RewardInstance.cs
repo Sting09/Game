@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public enum RewardState { Unknown, Opened, Closed }
 
@@ -11,6 +12,7 @@ public class RewardInstance
     public RewardState CurrentState { get; private set; }
 
     // 当前的选项
+    public List<RewardOptionDef> currentOptions = new List<RewardOptionDef>();
 
     // 记录已经选择过的选项ID，便于条件判断 "选择某选项后才出现"
     public HashSet<string> SelectedOptionIDs { get; private set; } = new HashSet<string>();
@@ -23,11 +25,37 @@ public class RewardInstance
         Data = data;
         Room = room;
         CurrentState = data.defaultState;
+
+        switch (CurrentState)
+        {
+            case RewardState.Unknown:
+                foreach(var option in data.unknownOptions) { currentOptions.Add(option);}
+                break;
+            case RewardState.Opened:
+                foreach (var option in data.openedOptions) { currentOptions.Add(option); }
+                break;
+            case RewardState.Closed:
+                currentOptions.Clear();
+                break;
+        }
     }
 
     public void ChangeState(RewardState newState)
     {
+        currentOptions.Clear();
         CurrentState = newState;
+        switch (CurrentState)
+        {
+            case RewardState.Unknown:
+                foreach (var option in Data.unknownOptions) { currentOptions.Add(option); }
+                break;
+            case RewardState.Opened:
+                foreach (var option in Data.openedOptions) { currentOptions.Add(option); }
+                break;
+            case RewardState.Closed:
+                currentOptions.Clear();
+                break;
+        }
         // 状态改变时，通知UI刷新
         RoomUIPanel.Instance.Refresh();
     }

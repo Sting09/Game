@@ -19,6 +19,7 @@ public class RewardSO : ScriptableObject
     public List<RewardOptionDef> unknownOptions;
     public List<RewardOptionDef> openedOptions;
     // Closed状态按需求没有任何选项，无需配置
+    public List<RewardOptionDef> otherOptions;
 }
 
 // 选项配置定义

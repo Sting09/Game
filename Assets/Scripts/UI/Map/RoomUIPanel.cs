@@ -55,26 +55,21 @@ public class RoomUIPanel : MonoBehaviour
             return;
         }
 
-        // 有奖励时，根据状态获取配置
-        List<RewardOptionDef> availableOptions = new List<RewardOptionDef>();
         switch (reward.CurrentState)
         {
             case RewardState.Unknown:
                 descriptionText.text = reward.Data.unknownText;
-                availableOptions = reward.Data.unknownOptions;
                 break;
             case RewardState.Opened:
                 descriptionText.text = reward.Data.openedText;
-                availableOptions = reward.Data.openedOptions;
                 break;
             case RewardState.Closed:
                 descriptionText.text = reward.Data.closedText;
-                availableOptions = new List<RewardOptionDef>(); // 需求5: Closed没有任何选项
                 break;
         }
 
         // 生成选项并处理生命周期
-        foreach (var optDef in availableOptions)
+        foreach (var optDef in reward.currentOptions)
         {
             // 检查可见性
             if (reward.ForceHiddenOptionIDs.Contains(optDef.optionID)) continue;

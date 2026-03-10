@@ -22,9 +22,11 @@ MonoBehaviour:
   closedText: "\u6B64\u5904\u7A7A\u65E0\u4E00\u7269\u3002"
   unknownOptions: []
   openedOptions:
-  - optionID: "\u7B26\u7EB801"
+  - optionID: 
     rawText: "\u3010\u6361\u8D77\u3011\u91CD\u8BD5\u6B21\u6570+1"
     visibilityConditions: []
     interactableConditions: []
     actions:
     - {fileID: 11400000, guid: 598ed7d4916ef784abbb047b14167d99, type: 2}
+    - {fileID: 11400000, guid: 27f28db95f51c264b86b0c7f14176cf2, type: 2}
+  otherOptions: []
