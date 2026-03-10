@@ -35,4 +35,5 @@ public class GlobalVariableSO : ScriptableObject
 
     [Header("Impression System")]
     public float battleImpression = 10f;
+    public float maxImpression = 100f;
 }

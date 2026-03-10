@@ -22,6 +22,9 @@ public class GameManager : SingletonMono<GameManager>
 
     private int monstersPerTile = 3;    //每个地块刷新几个野怪
 
+    // 本回合的Boss信息
+    public AttackSO currentBossAttack;
+
 
     /// <summary>
     /// 【已弃用，现在没有对手的概念了，自动触发Boss战】GenerateSchedule阶段，玩家和对手出生
@@ -180,6 +183,9 @@ public class GameManager : SingletonMono<GameManager>
     /// <param name="room">与哪个房间的敌人战斗</param>
     public void PlayerBattle(Room room)
     {
+        // 暴露值达到上限，不能再战斗
+        if(player.currentImpression >= GlobalSetting.Instance.globalVariable.maxImpression) { return; }
+
         // 防呆检查
         if (room == null || room.currentAttack == null)
         {
@@ -204,6 +210,7 @@ public class GameManager : SingletonMono<GameManager>
 
 
         // 4. 配置战斗上下文 (填充公告板)
+        BattleContext.isBossBattle = false;
         BattleContext.roomData = room;
         BattleContext.currentAttack = room.currentAttack;
 
@@ -226,7 +233,6 @@ public class GameManager : SingletonMono<GameManager>
                     Debug.Log("和野怪的战斗胜利！");
                     int num = room.parentTile.tileData.rewardList.Count;
                     RewardSO reward = room.parentTile.tileData.rewardList[UnityEngine.Random.Range(0, num)];
-                    player.ChangePower(reward.powerValue);
                 }
                 //情况二：击败的是对手。获得他身上的一个道具、对手死亡
                 else
@@ -264,6 +270,7 @@ public class GameManager : SingletonMono<GameManager>
             // E. 更新地图视野
             UpdatePlayerSight();
 
+            // 刷新UI
             player.ChangeImpression(0);
         };
 
@@ -272,7 +279,82 @@ public class GameManager : SingletonMono<GameManager>
     }
 
 
-    
+
+    /// <summary>
+    /// 玩家回合结束，进行Boss战战斗
+    /// </summary>
+    public void PlayerBossBattle()
+    {
+        // 防呆检查
+        /*if (null != null)
+        {
+            Debug.LogError("错误信息");
+            return;
+        }*/
+
+
+        // 隐藏地图场景元素
+        if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(false);
+        if (mapSceneMap != null) mapSceneMap.SetActive(false);
+
+        //-----------------------------------------------------------------------
+        // 重置摄像机
+        //
+        //-----------------------------------------------------------------------
+
+
+        // 4. 配置战斗上下文 (填充公告板)
+        BattleContext.isBossBattle = true;
+        BattleContext.roomData = null;
+        BattleContext.currentAttack = currentBossAttack;
+
+        // 5. 定义“战斗结束后要做什么” (这就是你的 bool 返回逻辑)
+        BattleContext.OnBattleResult = (isWin) =>
+        {
+            // --- 这里是战斗结束归来后执行的代码 ---
+
+            // =================================================
+            // 恢复摄像机
+            // ====================================================
+
+            // B. 处理胜负逻辑
+            if (isWin)
+            {
+                Debug.Log("Boss战胜利！");
+
+                // 可以在这里写回合结束后的逻辑...
+                PhaseController.Instance.StartCertainPhase(GamePhase.RoundStart);
+
+                // 可以在这里发放奖励...
+            }
+            else
+            {
+                // 游戏失败
+            }
+
+            // ======================C. 解锁玩家操作=======================
+            // PlayerInput.Instance.EnableInput();
+            //============================================================
+
+            // D. 清理回调防止内存泄漏
+            BattleContext.OnBattleResult = null;
+
+            // 恢复地图场景元素的显示
+            // 隐藏地图场景元素
+            if (mapSceneCanvas != null) mapSceneCanvas.gameObject.SetActive(true);
+            if (mapSceneMap != null) mapSceneMap.SetActive(true);
+
+
+            // E. 更新地图视野
+            UpdatePlayerSight();
+
+            // 刷新UI
+            player.ChangeImpression(0);
+        };
+
+        // 5. 启动加载流程
+        StartCoroutine(SceneLoader.Instance.LoadBattleScene());
+    }
 
 
 
@@ -281,41 +363,107 @@ public class GameManager : SingletonMono<GameManager>
     /// 玩家探索房间
     /// </summary>
     /// <param name="room">要探索哪个房间</param>
-    public void PlayerSearch(Room room)
+    public void PlayerSearch(Room room, int index = -1)
     {
+        // 暴露值达到上限，不能再搜索
+        if (player.currentImpression >= GlobalSetting.Instance.globalVariable.maxImpression) { return; }
+
         //更新玩家状态，如果不是无限探索，则探索次数-1
         player.searchNum = player.searchNum > 0 ? player.searchNum - 1 : player.searchNum;
         player.currentSearchCost++;
 
-        //生成随机数检定是否得到奖励
-        int randomResult = UnityEngine.Random.Range(0,6);
-
-        if (randomResult < room.remainRewardNum + room.alreadyRewardFailTimes)        //成功
-        {
-            //从所在区块获得一个奖励
-            int num = room.parentTile.tileData.rewardList.Count;
-            RewardSO reward = room.parentTile.tileData.rewardList[UnityEngine.Random.Range(0, num)];
-            //更新玩家战力
-            player.ChangePower(reward.powerValue);
-
-            //更新房间状态
-            room.remainRewardNum--;
-            room.alreadyRewardFailTimes = 0;
-        }
-        else       //失败
-        {
-            //失败动画/提示
-            Debug.Log("一无所获！");
-
-            //更新房间状态
-            room.alreadyRewardFailTimes ++;
-        }
+        //随机获得探索奖励
+        GetSearchReward(room, index);
 
         // 玩家暴露度增加
         player.ChangeImpression(player.currentSearchCost);
         //更新地图视野
         UpdatePlayerSight();
     }
+
+    private void GetSearchReward(Room currentRoom, int index)
+    {
+        List<RewardSO> pool = currentRoom.parentTile.tileData.rewardList;
+        RewardSO chosenSO = null;
+
+        // 需求2: 索引合法直接获取
+        if (index >= 0 && index < pool.Count)
+        {
+            chosenSO = pool[index];
+        }
+        else
+        {
+            // 筛选池子
+            List<RewardSO> mustAppearPool = new List<RewardSO>();
+            List<RewardSO> standardPool = new List<RewardSO>();
+
+            foreach (var reward in pool)
+            {
+                if (CheckConditions(reward.mustAppearConditions, null))
+                {
+                    mustAppearPool.Add(reward);
+                }
+                else if (!CheckAnyCondition(reward.mustNotAppearConditions, null))
+                {
+                    standardPool.Add(reward);
+                }
+            }
+
+            // 必须出现优先 -> 否则从不满足必定不出现的池子中选
+            if (mustAppearPool.Count > 0)
+                chosenSO = GetRandomWeighted(mustAppearPool);
+            else if (standardPool.Count > 0)
+                chosenSO = GetRandomWeighted(standardPool);
+        }
+
+        // 需求3: 覆盖旧奖励
+        if (chosenSO != null)
+        {
+            currentRoom.ActiveReward = new RewardInstance(chosenSO, currentRoom);
+        }
+        else
+        {
+            currentRoom.ActiveReward = null; // 没有生成奖励
+        }
+
+        // 刷新面板显示当前最新状态
+        RoomUIPanel.Instance.Refresh();
+    }
+
+    #region 玩家探索Search工具方法
+    // 工具方法：全部满足返回true (空列表返回false，避免所有道具都是必须出现)
+    private bool CheckConditions(List<RewardCondition> conditions, RewardInstance context)
+    {
+        if (conditions == null || conditions.Count == 0) return false;
+        foreach (var cond in conditions)
+            if (!cond.IsMet(context)) return false;
+        return true;
+    }
+
+    // 工具方法：满足任意一个返回true
+    private bool CheckAnyCondition(List<RewardCondition> conditions, RewardInstance context)
+    {
+        if (conditions == null || conditions.Count == 0) return false;
+        foreach (var cond in conditions)
+            if (cond.IsMet(context)) return true;
+        return false;
+    }
+
+    // 工具方法：权重随机
+    private RewardSO GetRandomWeighted(List<RewardSO> list)
+    {
+        int totalWeight = 0;
+        foreach (var item in list) totalWeight += item.weight;
+
+        int randomVal = UnityEngine.Random.Range(0, totalWeight);
+        foreach (var item in list)
+        {
+            randomVal -= item.weight;
+            if (randomVal < 0) return item;
+        }
+        return list[list.Count - 1];
+    }
+    #endregion
 
 
 

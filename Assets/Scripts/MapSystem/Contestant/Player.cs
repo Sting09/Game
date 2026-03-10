@@ -41,6 +41,9 @@ public class Player : MonoBehaviour
         searchNum = maxSearchNum;
 
         currentSearchCost = 0;
+
+        currentImpression = 0;
+        playerImpressionChangeEvent.RaiseEvent(currentImpression, this);
     }
 
 
@@ -58,6 +61,9 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     public bool CheckPlayerMove(Room targetRoom)
     {
+        // 暴露值达到上限，不能再移动
+        if (currentImpression >= GlobalSetting.Instance.globalVariable.maxImpression) { return false; }
+
         Room currentRoom = GameManager.Instance.playerCurrentRoom;
         if(currentRoom == null || targetRoom == null) { return false; }
 
@@ -167,6 +173,13 @@ public class Player : MonoBehaviour
         {
             gameLoseEvent.RaiseEvent(retryTimesRemain, this);
         }
+
+        return retryTimesRemain;
+    }
+
+    public int AddRetryTimes(int num)
+    {
+        retryTimesRemain += num;
 
         return retryTimesRemain;
     }

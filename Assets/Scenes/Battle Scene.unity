@@ -221,7 +221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &122476793
 Transform:
   m_ObjectHideFlags: 0
@@ -3141,6 +3141,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e9d11142ca9f9d24a86930fc6e9ea508, type: 2}
   - {fileID: 11400000, guid: 4580ed242d44d0e4283bc3a741390bba, type: 2}
   - {fileID: 11400000, guid: e6ce1710021dd39488706d65e128bbc2, type: 2}
+  danmakuTestMode: 1
 --- !u!4 &1294927581
 Transform:
   m_ObjectHideFlags: 0
@@ -4219,6 +4220,7 @@ MonoBehaviour:
   enemyConfigs:
   - {fileID: 11400000, guid: fc66a0f75304ab6429b9f148a786711e, type: 2}
   - {fileID: 11400000, guid: ec902ca89f1f8454da6a7a9740bca3ae, type: 2}
+  - {fileID: 11400000, guid: 91fc2425ae388114c85aaa6481d1566d, type: 2}
 --- !u!114 &1832075040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4301,7 +4303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   danmakuToShoot:
-  - {fileID: 11400000, guid: 6976011370933044d81b57b1816cc070, type: 2}
+  - {fileID: 11400000, guid: ccc9973d9b7e12c4cb7530c8172e926f, type: 2}
   currentDanmakuIndex: 0
   danmakuTimer: 0
   currentDanmakuDuration: 0

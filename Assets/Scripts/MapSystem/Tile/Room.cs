@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    [Header("Base Info")]
     public RoomDirection direction;
     public bool isVisible = false;          //是否对玩家可见
     public Tile parentTile;                 //属于哪个地块
@@ -16,8 +17,11 @@ public class Room : MonoBehaviour
     public AttackSO currentAttack;     //当前的AttackSO
     public int currentOpponentIndex = -1;    //当前的敌人index。具体信息在GameManager的opponentInfo
     public OpponentDataSO currentOpponent;      //当前敌人的SO
-    //被玩家探索发现的设施
 
+    [Header("Search Info")]
+    public RewardInstance ActiveReward { get; set; }
+
+    // 房间的默认Icon、敌人Icon
     private int minMediumLevel;
     private int minHighLevel;
     private Sprite lowMonsterIcon, mediumMonsterIcon, highMonsterIcon;
@@ -64,7 +68,7 @@ public class Room : MonoBehaviour
         //尝试探索一个房间。检查：房间没有敌人、是玩家所在房间、玩家状态、房间状态、有奖励
         else if (isVisible && havePlayer && playerCanSearch && (!haveEnemy) && remainRewardNum > 0)
         {
-            GameManager.Instance.PlayerSearch(this);
+            RoomUIPanel.Instance.Open(this);
         }
     }
 

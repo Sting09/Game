@@ -9,6 +9,7 @@ public class BattleController : SingletonMono<BattleController>
     public List<PhaseSO> phaseList;     //所有战斗阶段的列表
     public Dictionary<GamePhase, int> phaseToIntDict;
 
+    public bool danmakuTestMode = false;
 
     private void OnEnable()
     {
@@ -17,6 +18,11 @@ public class BattleController : SingletonMono<BattleController>
         for (int i = 0; i < phaseList.Count; i++)
         {
             phaseToIntDict.Add(phaseList[i].phase, i);
+        }
+
+        if(danmakuTestMode)
+        {
+            BattleStart();
         }
     }
 

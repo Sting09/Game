@@ -5,6 +5,7 @@ using UnityEngine;
 public static class BattleContext
 {
     // 1. 传进去的数据：房间信息、敌人信息
+    public static bool isBossBattle;
     public static Room roomData;
     public static AttackSO currentAttack;
 

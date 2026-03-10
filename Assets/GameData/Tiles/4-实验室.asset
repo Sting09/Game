@@ -32,5 +32,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2c4c778961eff6a4ebce3bc4b1248325, type: 2}
   rewardList:
   - {fileID: 11400000, guid: a7b24c38023fa4246963cc0e081f2afd, type: 2}
-  - {fileID: 11400000, guid: 3891631226298a344b9aa510bfc61e78, type: 2}
-  - {fileID: 11400000, guid: 3ec318fcc7a1440428aa32ad9879191f, type: 2}
+  - {fileID: 11400000, guid: 50ed817deda98184e960ca3c18f2e5b6, type: 2}
+  - {fileID: 11400000, guid: bec05ec469ee70740999566883f0ab2f, type: 2}

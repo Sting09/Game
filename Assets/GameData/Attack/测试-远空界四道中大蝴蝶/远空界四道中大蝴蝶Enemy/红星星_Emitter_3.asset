@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e70c1a926fc6fec449c21a052a61355f, type: 3}
+  m_Name: "\u7EA2\u661F\u661F_Emitter_3"
+  m_EditorClassIdentifier: 
+  description: 
+  bulletEvents: []
+  shootDelay: 1
+  emitterDuration: -1
+  emitterPosTypeX: 0
+  emitterPosX:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  emitterPosTypeY: 0
+  emitterPosY:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  emitterDirectionType: 2
+  emitterDirection:
+    baseValue: 90
+    offsetValue: 0
+    randomRange: 0
+  bulletPattern: {fileID: 11400000, guid: db4a9c94061ef9a4ab65687f45ab88be, type: 2}
+  emitterEvents:
+  - {fileID: 11400000, guid: 8e811e59164748347a520223b226040e, type: 2}
+  shootTimesPerWave: 1
+  shootInterval: 0.15
+  waveInterval: 0.15
+  shootPointNum: 8
+  shootPointRange:
+    baseValue: 360
+    offsetValue: 0
+    randomRange: 0
+  radius:
+    baseValue: 2.4
+    offsetValue: 0
+    randomRange: 0
+  radiusDirection:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  angleType: 5
+  angle:
+    baseValue: 90
+    offsetValue: 0
+    randomRange: 0
+  posOffsetX:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  posOffsetY:
+    baseValue: 0
+    offsetValue: 0
+    randomRange: 0
+  sameRandomness: 1
