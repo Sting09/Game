@@ -37,12 +37,6 @@ public class PhaseController : SingletonMono<PhaseController>
         currentImpression = 0f;
     }
 
-    private void Start()
-    {
-        //游戏开始，执行第一个阶段
-        phaseList[currentPhaseIndex].PhaseStart(this);
-    }
-
 
     /// <summary>
     /// 开始下一阶段。特殊值特殊处理，否则直接执行序号+1的阶段
@@ -92,5 +86,30 @@ public class PhaseController : SingletonMono<PhaseController>
             //如果是，执行PlayerPhase的PhaseEndFunction()协程
             StartCoroutine(phaseList[currentPhaseIndex].PhaseEndFunction());
         }
+    }
+
+    public void GameWinPhase()
+    {
+        StartCertainPhase(GamePhase.GameEnd);
+    }
+
+    public void GameLosePhase()
+    {
+        StartCertainPhase(GamePhase.GameEnd);
+    }
+
+
+    public void StartGame()
+    {
+        //进入第一个阶段
+        currentPhaseIndex = 0;
+        currentPhase = phaseList[currentPhaseIndex].phase;
+
+        //计数器归零
+        currentRound = 0;
+        currentImpression = 0f;
+
+        //游戏开始，执行第一个阶段
+        phaseList[currentPhaseIndex].PhaseStart(this);
     }
 }

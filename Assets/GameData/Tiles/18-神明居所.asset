@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: "18-\u795E\u660E\u5C45\u6240"
   m_EditorClassIdentifier: 
   tileName: 
+  isDestination: 1
   bgSprite: {fileID: -8877749732894731642, guid: 8a355b1150565794fba686f802f83127, type: 3}
   attackList:
   - {fileID: 11400000, guid: c68cfe5fe4432de4784f87d804517e10, type: 2}

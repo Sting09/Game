@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : SingletonMono<GameManager>
 {
@@ -18,6 +19,7 @@ public class GameManager : SingletonMono<GameManager>
     public List<Tile> tilesToShrink = new List<Tile>();    //缩圈要移除的地块
 
     public Canvas mapSceneCanvas;
+    public Button winBtn;               //游戏胜利按钮
     public GameObject mapSceneMap;
 
     private int monstersPerTile = 3;    //每个地块刷新几个野怪

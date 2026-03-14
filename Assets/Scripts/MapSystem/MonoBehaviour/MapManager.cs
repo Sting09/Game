@@ -127,10 +127,11 @@ public class MapManager : SingletonMono<MapManager>
     [ContextMenu("Remove Map Grid")]
     private void RemoveMapGrid()
     {
-        while (tilesRoot.transform.childCount > 0)
+        while (tilesRoot.transform.childCount > 1)
         {
+            int index = tilesRoot.transform.childCount - 1;
             // 编辑器模式必须用 DestroyImmediate
-            DestroyImmediate(tilesRoot.transform.GetChild(0).gameObject);
+            DestroyImmediate(tilesRoot.transform.GetChild(index).gameObject);
         }
     }
 
@@ -274,6 +275,13 @@ public class MapManager : SingletonMono<MapManager>
             list[k] = list[n];
             list[n] = value;
         }
+    }
+
+    public void RegenerateMap()
+    {
+        UpdateMapGrid();
+        RandomizeTileData();
+        UpdateMapGrid();
     }
 
 

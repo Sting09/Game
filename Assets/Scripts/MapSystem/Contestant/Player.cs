@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public float maxMP;                     //最大MP值
 
     public int bossDefeatedNum;             //已击败阎罗数
+    public int targetBossNum;               //游戏胜利需要击败的阎罗数
 
     [Header("Player State")]
     public bool canMoveOverTile = true;     //玩家在当前回合是否能跨地块移动
@@ -157,7 +158,17 @@ public class Player : MonoBehaviour
         if (currentHP <= 0)
         {
             ReduceRetryTimes(1);
-            playerDeathEvent.RaiseEvent(currentHP, this);
+
+            //还有重试次数，进入游戏暂停阶段
+            if(retryTimesRemain >= 0)
+            {
+                playerDeathEvent.RaiseEvent(currentHP, this);
+            }
+            //没有重试次数，游戏结束
+            else
+            {
+                gameLoseEvent.RaiseEvent(currentHP, this);
+            }
         }
 
         return currentHP;
@@ -174,12 +185,6 @@ public class Player : MonoBehaviour
     public int ReduceRetryTimes(int num)
     {
         retryTimesRemain -= num;
-
-        //玩家重试次数降为负数，触发游戏失败事件
-        if(retryTimesRemain < 0)
-        {
-            gameLoseEvent.RaiseEvent(retryTimesRemain, this);
-        }
 
         return retryTimesRemain;
     }

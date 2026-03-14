@@ -115,6 +115,12 @@ public class Room : MonoBehaviour
 
         //更新玩家视野
         GameManager.Instance.UpdatePlayerSight();
+
+        //胜利条件检测：当前身处轮回台 + 击败足够数量的boss
+        bool atDestination = parentTile.tileData.isDestination;
+        bool enoughBossNum = GameManager.Instance.player.bossDefeatedNum >= GameManager.Instance.player.targetBossNum;
+        //满足条件给一个结束游戏的按钮
+        GameManager.Instance.winBtn.gameObject.SetActive(atDestination && enoughBossNum);
     }
 
 

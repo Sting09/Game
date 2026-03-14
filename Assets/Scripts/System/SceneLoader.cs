@@ -165,6 +165,79 @@ public class SceneLoader : SingletonMono<SceneLoader>
         }
     }
 
+
+    public void RestartGame()
+    {
+        // 启动重新加载标题场景的协程
+        StartCoroutine(RelodTitleScene());
+    }
+
+    public IEnumerator RelodTitleScene()
+    {
+        // 1. 屏幕渐黑（淡入），阻挡玩家操作
+        yield return StartCoroutine(FadeIn());
+
+        // 2. 检查并卸载地图场景 (Map Scene)
+        if (IsSceneLoaded(mapSceneName))
+        {
+            AsyncOperation unloadMap = SceneManager.UnloadSceneAsync(mapSceneName);
+            if (unloadMap != null)
+            {
+                while (!unloadMap.isDone)
+                {
+                    yield return null;
+                }
+            }
+        }
+
+        // 3. 检查并卸载战斗场景 (Battle Scene)
+        if (IsSceneLoaded(battleSceneName))
+        {
+            AsyncOperation unloadBattle = SceneManager.UnloadSceneAsync(battleSceneName);
+            if (unloadBattle != null)
+            {
+                while (!unloadBattle.isDone)
+                {
+                    yield return null;
+                }
+            }
+        }
+
+        // 4. 黑屏过渡停留（平滑视觉体验）
+        yield return StartCoroutine(HoldBlackScreen());
+
+        // 5. 确保以 Additive 模式加载标题场景 (Title Scene)
+        if (!IsSceneLoaded(titleSceneName))
+        {
+            // true 表示在加载时更新进度条 UI
+            yield return StartCoroutine(LoadAdditiveScene(titleSceneName, true));
+        }
+
+        // 6. 将标题场景设为活动场景，并更新当前场景记录
+        Scene titleScene = SceneManager.GetSceneByName(titleSceneName);
+        if (titleScene.IsValid())
+        {
+            SceneManager.SetActiveScene(titleScene);
+            currentLoadedScene = titleSceneName;
+        }
+
+        // 7. 屏幕渐显（淡出）
+        yield return StartCoroutine(FadeOut());
+
+        // 8. 恢复 CanvasGroup 状态，允许玩家在标题界面进行点击交互
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
+    }
+
+
+
+
+
+
+
+
     private IEnumerator LoadProcess(string sceneName)
     {
         yield return StartCoroutine(FadeIn());

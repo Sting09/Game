@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class CircleShootPattern : ShootPattern
 {

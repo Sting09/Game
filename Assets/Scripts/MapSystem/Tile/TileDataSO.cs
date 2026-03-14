@@ -5,6 +5,7 @@ using UnityEngine;
 public class TileDataSO : ScriptableObject
 {
     public string tileName;                 //地块名称
+    public bool isDestination = false;
     public Sprite bgSprite;                 //在地图上的背景图
     public List<AttackSO> attackList;     //这个区块全部的野怪样式
     public List<RewardSO> rewardList;     //这个区块全部的奖励
