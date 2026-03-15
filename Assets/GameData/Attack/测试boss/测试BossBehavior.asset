@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ce3696a4f243be4c8a2afec09664558, type: 3}
+  m_Name: "\u6D4B\u8BD5BossBehavior"
+  m_EditorClassIdentifier: 
+  profileName: "\u6D4B\u8BD5BossBehavior"
+  eventList:
+  - type: 3
+    triggerTime: 0
+    baseValue: -18
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
+    useRelative: 0
+    useRandom: 0
+  - type: 3
+    triggerTime: 0.5
+    baseValue: 0
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
+    useRelative: 0
+    useRandom: 0
+  - type: 1
+    triggerTime: 0.5
+    baseValue: 0
+    dynamicType1: 0
+    dynamicFactor1: 0
+    dynamicType2: 0
+    dynamicFactor2: 0
+    extraParam1: 0
+    extraParam2: 0
+    randomRange: 0
+    useRelative: 0
+    useRandom: 0

@@ -4580,6 +4580,7 @@ MonoBehaviour:
   debugGizmoColor: {r: 0, g: 1, b: 0, a: 1}
   behaviorProfiles:
   - {fileID: 11400000, guid: 7dd7a9808e0fce843be4fa597a7dabd6, type: 2}
+  - {fileID: 11400000, guid: c49adfc6878294b4cb677775d6a45c78, type: 2}
   poolRoot: {fileID: 560222900}
   maxEntityCapacity: 200
   m_ActiveCount: 0
@@ -4589,6 +4590,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fc66a0f75304ab6429b9f148a786711e, type: 2}
   - {fileID: 11400000, guid: ec902ca89f1f8454da6a7a9740bca3ae, type: 2}
   - {fileID: 11400000, guid: 91fc2425ae388114c85aaa6481d1566d, type: 2}
+  - {fileID: 11400000, guid: c679b6b9bc986c34fb5f2b154a343368, type: 2}
 --- !u!114 &1832075040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4609,6 +4611,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 584af02f5e9051e4d98bbf4edac3d2ac, type: 2}
   - {fileID: 11400000, guid: 8833b4249da74e74ab1351ebbba5c360, type: 2}
   - {fileID: 11400000, guid: 7dd7a9808e0fce843be4fa597a7dabd6, type: 2}
+  - {fileID: 11400000, guid: c49adfc6878294b4cb677775d6a45c78, type: 2}
   poolRoot: {fileID: 1999661718}
   maxEntityCapacity: 10000
   m_ActiveCount: 0
@@ -4742,7 +4745,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1878277450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4756,7 +4759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   danmakuToShoot:
-  - {fileID: 11400000, guid: ccc9973d9b7e12c4cb7530c8172e926f, type: 2}
+  - {fileID: 11400000, guid: 6976011370933044d81b57b1816cc070, type: 2}
   currentDanmakuIndex: 0
   danmakuTimer: 0
   currentDanmakuDuration: 0

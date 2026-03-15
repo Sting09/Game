@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
-  m_Name: "\u6CE2\u7C92\u5927\u8774\u8776Pattern"
+  m_Name: "05\u4E09\u975E-\u6D4B\u8BD5Boss_Pattern"
   m_EditorClassIdentifier: 
-  bulletName: "\u6CE2\u7C92\u5927\u8774\u8776"
-  bulletDuration: -1
+  bulletName: RedBullet
+  bulletDuration: 10
   bulletDamage: 5
   isRelative: 0
-  objType: 3
-  bulletBehavior: "\u6D4B\u8BD5BossBehavior"
+  objType: 0
+  bulletBehavior: None
   description: 
   shootWays:
-    baseValue: 1
+    baseValue: 5
     offsetValue: 0
     randomRange: 0
   bulletsPerWay:
@@ -44,7 +44,7 @@ MonoBehaviour:
     offsetValue: 0
     randomRange: 0
   startBulletSpeed:
-    baseValue: 10
+    baseValue: 3
     offsetValue: 0
     randomRange: 0
   endBulletSpeed:

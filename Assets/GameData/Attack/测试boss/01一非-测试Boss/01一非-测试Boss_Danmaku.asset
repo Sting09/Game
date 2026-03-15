@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5457fe1b0f97f7e4c85b197db6ddda28, type: 3}
-  m_Name: "Event-\u6CE2\u7C92\u65CB\u8F6C"
+  m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
+  m_Name: "01\u4E00\u975E-\u6D4B\u8BD5Boss_Danmaku"
   m_EditorClassIdentifier: 
-  startDelay: 0
-  interval: 0.04
-  loopCount: 0
-  conditions: []
-  actions: []
+  duration: 30
+  emitterList:
+  - {fileID: 11400000, guid: de473e2723b001b468d38daae5695533, type: 2}
+  requiredEntities: []

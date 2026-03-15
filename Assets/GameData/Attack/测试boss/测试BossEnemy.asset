@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7e152148044a544286db327046bd519, type: 3}
+  m_Name: "\u6D4B\u8BD5BossEnemy"
+  m_EditorClassIdentifier: 
+  enemyName: "\u6D4B\u8BD5Boss"
+  prefab: {fileID: 5875919090608444173, guid: 7159e1d2791788f4f92824dafa6b6029, type: 3}
+  zPriority: 2
+  collisionType: 0
+  circleRadius: 0.7
+  boxSize: {x: 0, y: 0}

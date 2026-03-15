@@ -226,8 +226,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             m_Speeds[index] = info.speed;
             m_Angles[index] = info.direction;
             m_Lifetimes[index] = 0f;
-            // 设置最大存活时间，如果未设置(<=0)则默认为15秒
-            m_MaxLifetimes[index] = info.totalLifetime > 0 ? info.totalLifetime : 15f;
+            m_MaxLifetimes[index] = info.totalLifetime;     //负数表示永不过期，只能通过生命值归零消失
             m_LastAngles[index] = info.direction;
             m_IsDead[index] = false;
 

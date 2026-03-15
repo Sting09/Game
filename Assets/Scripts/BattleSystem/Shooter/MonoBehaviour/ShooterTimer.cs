@@ -14,6 +14,9 @@ public class ShooterTimer
     public AbstractEmitterConfigSO config;
     public EmitterRuntime runtime;
 
+    public bool lastFrameStart = false;     //上一帧是否发射
+    public float bias = 0f;
+
     /// <summary>
     /// 使用emitterSO构造计时器
     /// </summary>
@@ -43,8 +46,19 @@ public class ShooterTimer
 
         if (isStart && notEnd)
         {
+            if(isStart && (!lastFrameStart))
+            {
+                //这是发射的第一帧，则更新误差
+                lastFrameStart = true;
+                bias = deltaTime - (danmakuTimer - config.shootDelay);
+            }
+            else
+            {
+                bias = 0f;
+            }
+
             //先更新发射器事件，再发射子弹
-            runtime.UpdateEventRunners(deltaTime);
+            runtime.UpdateEventRunners(deltaTime - bias) ;
 
             // 核心修复：使用循环处理同一帧内可能发生的多次状态切换
             // (例如：发射结束 -> 瞬间完成等待 -> 再次发射)
@@ -52,7 +66,7 @@ public class ShooterTimer
             bool stateRunning = true;
 
             // 只有在第一次进入循环时才消耗 deltaTime，后续的循环使用的是余量
-            float currentDelta = deltaTime;
+            float currentDelta = deltaTime - bias;
 
             while (stateRunning)
             {

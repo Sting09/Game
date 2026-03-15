@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
-  m_Name: "Emitter-5way\u6CE2\u7C92"
+  m_Name: "05\u4E09\u975E-\u6D4B\u8BD5Boss_Emitter"
   m_EditorClassIdentifier: 
   description: 
   bulletEvents: []
-  shootDelay: 0.5
+  shootDelay: 1
   emitterDuration: -1
   emitterPosTypeX: 0
   emitterPosX:
@@ -26,17 +26,17 @@ MonoBehaviour:
     baseValue: 0
     offsetValue: 0
     randomRange: 0
-  emitterDirectionType: 2
+  emitterDirectionType: 0
   emitterDirection:
     baseValue: 90
     offsetValue: 0
     randomRange: 0
-  bulletPattern: {fileID: 11400000, guid: 488878fd6ff575a42a0adf6e6ef06356, type: 2}
+  bulletPattern: {fileID: 11400000, guid: f08ccced3077ccf41b9324e6d702f612, type: 2}
   emitterEvents:
-  - {fileID: 11400000, guid: f3ecb32708f7c8b429803302a98da14d, type: 2}
-  shootTimesPerWave: 9999
-  shootInterval: 0.04
-  waveInterval: 0.04
+  - {fileID: 11400000, guid: 796be838d26101d4bbf73fa2c92e4525, type: 2}
+  shootTimesPerWave: 29
+  shootInterval: 0.05
+  waveInterval: 2
   angleType: 4
   increment:
     baseValue: 0

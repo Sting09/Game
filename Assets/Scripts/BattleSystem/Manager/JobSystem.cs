@@ -434,7 +434,7 @@ public struct EnemyCullJob : IJobParallelFor
         if (isDeadResults[index]) return;
 
         // 修改：使用每个子弹的最大生命周期进行判断
-        bool lifeDead = lifetimes[index] > maxLifetimes[index];
+        bool lifeDead = (lifetimes[index] > maxLifetimes[index]) && maxLifetimes[index] >= 0;
         bool hpDead = hp[index] <= 0;
         isDeadResults[index] = lifeDead || hpDead;
     }
