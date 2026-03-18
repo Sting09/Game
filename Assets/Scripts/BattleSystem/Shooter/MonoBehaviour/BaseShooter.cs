@@ -11,7 +11,8 @@ public class BaseShooter : MonoBehaviour
     private List<ShooterTimer> timers;           //每个Emitter的计时器
 
     public bool needPrewarm = false;        //是否需要根据弹幕列表，预热对象池
-    public bool isStageDirector = false;    //是否是StageDirector，弹幕发完就
+    public bool isStageDirector = false;    //是否是StageDirector，弹幕结束就胜利
+    public bool isBoss = false;             //是否是Boss
 
     private void Awake()
     {
@@ -125,8 +126,8 @@ public class BaseShooter : MonoBehaviour
         {
             gameObject.SetActive(false);    //敌人失活，或者以后改成敌人死亡动画等
 
-            //是StageDirector，弹幕都用完了，则认为关卡通过了，战斗胜利
-            if(isStageDirector)
+            //是StageDirector或Boss，弹幕都用完了，则认为关卡通过了，战斗胜利
+            if(isStageDirector || isBoss)
             {
                 if (BattleController.Instance.currentPhase == GamePhase.BattleFighting)
                 {
