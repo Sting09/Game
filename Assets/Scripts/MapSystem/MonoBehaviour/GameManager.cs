@@ -25,7 +25,7 @@ public class GameManager : SingletonMono<GameManager>
     private int monstersPerTile = 3;    //每个地块刷新几个野怪
 
     // 本回合的Boss信息
-    public AttackSO currentBossAttack;
+    public List<OpponentDataSO> currentBossAttack;
 
 
     /// <summary>
@@ -177,6 +177,20 @@ public class GameManager : SingletonMono<GameManager>
         UpdatePlayerSight();
     }
 
+    //从Boss列表中随机选择7个，作为本局游戏回合结束时玩家要挑战的Boss
+    public void GetRandomBoss()
+    {
+        int num = GlobalSetting.Instance.globalVariable.neededBossNum + 1;
+        if(currentBossAttack == null || currentBossAttack.Count!=num)
+        {
+            currentBossAttack = new List<OpponentDataSO>(num);
+        }
+        currentBossAttack.Clear();
+        currentBossAttack = GlobalSetting.Instance.gameDataConfig.opponentDataList.
+                            OrderBy(item => UnityEngine.Random.value).Take(num).ToList();
+
+    }
+
 
 
     /// <summary>
@@ -308,7 +322,8 @@ public class GameManager : SingletonMono<GameManager>
         // 4. 配置战斗上下文 (填充公告板)
         BattleContext.isBossBattle = true;
         BattleContext.roomData = null;
-        BattleContext.currentAttack = currentBossAttack;
+        int num = GlobalSetting.Instance.globalVariable.neededBossNum;
+        BattleContext.currentAttack = currentBossAttack[Mathf.Min(player.bossDefeatedNum, num)].opponentAttack;
 
         // 5. 定义“战斗结束后要做什么” (这就是你的 bool 返回逻辑)
         BattleContext.OnBattleResult = (isWin) =>

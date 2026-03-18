@@ -10,29 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8562f0ac2cbadd41befcfdacafc370e, type: 3}
-  m_Name: "Pattern - \u72D9"
+  m_Name: "Pattern - \u53F3\u4FA7\u654C\u4EBA"
   m_EditorClassIdentifier: 
-  bulletName: RedBullet
-  bulletDuration: 10
+  bulletName: Test01
+  bulletDuration: 5
   bulletDamage: 5
   isRelative: 0
-  objType: 0
-  bulletBehavior: None
+  objType: 3
+  bulletBehavior: 
   description: 
   shootWays:
-    baseValue: 5
+    baseValue: 1
     offsetValue: 0
     randomRange: 0
   bulletsPerWay:
-    baseValue: 7
+    baseValue: 1
     offsetValue: 0
     randomRange: 0
   shootRange:
-    baseValue: 45
+    baseValue: 120
     offsetValue: 0
     randomRange: 0
   radius:
-    baseValue: 0
+    baseValue: 0.5
     offsetValue: 0
     randomRange: 0
   radiusDirection:
@@ -42,12 +42,12 @@ MonoBehaviour:
   shootDirection:
     baseValue: 0
     offsetValue: 0
-    randomRange: 0
+    randomRange: 2
   startBulletSpeed:
     baseValue: 5
     offsetValue: 0
-    randomRange: 0
+    randomRange: 0.5
   endBulletSpeed:
-    baseValue: 7
+    baseValue: 10
     offsetValue: 0
     randomRange: 0

@@ -3706,7 +3706,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &216945188
 Transform:
   m_ObjectHideFlags: 0
@@ -3734,14 +3734,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: "\u8F6E\u6B21\u5F00\u59CB\uFF0C\u786E\u5B9A\u8981\u6D88\u5931\u7684\u5730\u5757"
+  description: "\u8F6E\u6B21\u5F00\u59CB\uFF0C\u786E\u5B9A\u8F6E\u6B21\u7ED3\u675F\u540E\u65F6\u8981\u6311\u6218\u7684boss"
   eventSO: {fileID: 11400000, guid: b80a4ec79024b0d4cbe95ffb181f702a, type: 2}
   response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 778009820}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: SelectTileToShrink
+        m_MethodName: GetRandomBoss
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10510,7 +10510,8 @@ MonoBehaviour:
   mapSceneCanvas: {fileID: 108175595}
   winBtn: {fileID: 0}
   mapSceneMap: {fileID: 286609886}
-  currentBossAttack: {fileID: 0}
+  currentBossAttack:
+  - {fileID: 0}
 --- !u!1 &779599900
 GameObject:
   m_ObjectHideFlags: 0
@@ -24401,8 +24402,8 @@ MonoBehaviour:
   currentMP: 0
   lossMP: 0
   maxMP: 0
-  bossDefeatedNum: 6
-  targetBossNum: 6
+  bossDefeatedNum: 0
+  targetBossNum: 3
   canMoveOverTile: 1
   canMove: 1
   maxBattleNum: -1

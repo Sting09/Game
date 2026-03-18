@@ -221,7 +221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &122476793
 Transform:
   m_ObjectHideFlags: 0
@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: "Player\u628A\u81EA\u5DF1\u8D4B\u503C\u7ED9BattleManager\u7684\u5F15\u7528\n\n\u91CD\u7F6EPlayer\u4F4D\u7F6E\n\n\u663E\u793A\u73A9\u5BB6\n\nStageDirector\u628A\u81EA\u5DF1\u8D4B\u503C\u7ED9BattleManager\u7684\u5F15\u7528\n\nObjManager\u83B7\u53D6\u5BF9\u8C61\u6C60\u6839\u8282\u70B9\u5F15\u7528\n\n\u6240\u6709ObjManager\u7684isPaused\u8BBE\u4E3Afalse\n\n\u73A9\u5BB6\u8F93\u5165\u7684isPaused\u8BBE\u4E3Afalse\n\n\u5173\u95EDpausePanel\n\n\u6E05\u7A7A\u7BA1\u7406\u5BF9\u8C61\u6C60\u7684\u5185\u5B58\uFF08\u4F46\u4E0D\u9500\u6BC1\u6C60\u4E2D\u7684GameObjects\uFF09\n\n\u91CD\u7F6EstageDirector\u7684BaseShooter\u7684\u8BA1\u65F6"
+  description: "Player\u628A\u81EA\u5DF1\u8D4B\u503C\u7ED9BattleManager\u7684\u5F15\u7528\n\n\u91CD\u7F6EPlayer\u4F4D\u7F6E\n\n\u663E\u793A\u73A9\u5BB6\n\nStageDirector\u628A\u81EA\u5DF1\u8D4B\u503C\u7ED9BattleManager\u7684\u5F15\u7528\n\nObjManager\u83B7\u53D6\u5BF9\u8C61\u6C60\u6839\u8282\u70B9\u5F15\u7528\n\n\u6240\u6709ObjManager\u7684isPaused\u8BBE\u4E3Afalse\n\n\u73A9\u5BB6\u8F93\u5165\u7684isPaused\u8BBE\u4E3Afalse\n\n\u5173\u95EDpausePanel\n\n\u6E05\u7A7A\u7BA1\u7406\u5BF9\u8C61\u6C60\u7684\u5185\u5B58\uFF08\u4F46\u4E0D\u9500\u6BC1\u6C60\u4E2D\u7684GameObjects\uFF09\n\nStageDirector\u52A0\u8F7D\u5F39\u5E55\n\n\u91CD\u7F6EstageDirector\u7684BaseShooter\u7684\u8BA1\u65F6"
   eventSO: {fileID: 11400000, guid: 4c87f1432d5937b468e01caf0ccd760a, type: 2}
   response:
     m_PersistentCalls:
@@ -452,6 +452,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: BattlePoolTool, Assembly-CSharp
         m_MethodName: ClearAllPool
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1878277452}
+        m_TargetAssemblyTypeName: StageDirector, Assembly-CSharp
+        m_MethodName: LoadCurrentDanmaku
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4745,7 +4757,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1878277450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4759,7 +4771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   danmakuToShoot:
-  - {fileID: 11400000, guid: 6976011370933044d81b57b1816cc070, type: 2}
+  - {fileID: 11400000, guid: b9250028041f21047b08a7d84d261a40, type: 2}
   currentDanmakuIndex: 0
   danmakuTimer: 0
   currentDanmakuDuration: 0
@@ -4792,6 +4804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a5cd4eeab26c5439a7a8fc553a29d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageDirectorShooter: {fileID: 1878277450}
 --- !u!1 &1899578512
 GameObject:
   m_ObjectHideFlags: 0

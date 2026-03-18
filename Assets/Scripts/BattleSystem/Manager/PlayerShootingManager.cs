@@ -371,6 +371,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         m_CollisionJobHandle.Complete();
 
         // 2. 处理命中队列（结算伤害）
+        // 伤害暂时为5
         const float damagePerHit = 5f;
         while (m_HitResults.TryDequeue(out int2 hit))
         {
@@ -381,7 +382,27 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             if (bulletIdx < m_IsDead.Length && !m_IsDead[bulletIdx] &&
                 enemyIdx < enemyMgr.m_HP.Length && enemyMgr.m_HP[enemyIdx] > 0f)
             {
-                enemyMgr.m_HP[enemyIdx] -= damagePerHit; // 现在这里是安全的！
+                // 计算玩家造成的伤害
+                float actualDamage = damagePerHit;
+
+                // 计算敌人的减伤
+                float finalDR = enemyMgr.m_BaseDR[enemyIdx]; // 取出底层时间轴计算出的减伤
+
+                // 1. 判断单体覆盖（例如某敌人吃了护盾buff）
+                if (enemyMgr.m_HasLocalDROverride[enemyIdx])
+                {
+                    finalDR = enemyMgr.m_LocalDROverride[enemyIdx];
+                }
+
+                // 2. 判断全局覆盖（例如玩家放了全屏炸弹）
+                if (enemyMgr.hasGlobalDROverride)
+                {
+                    finalDR = enemyMgr.globalDROverrideValue;
+                }
+
+                actualDamage *= (1f - finalDR);
+                actualDamage = math.max(0f, actualDamage);
+                enemyMgr.m_HP[enemyIdx] -= actualDamage; // 现在这里是安全的！
                 m_IsDead[bulletIdx] = true;
             }
         }

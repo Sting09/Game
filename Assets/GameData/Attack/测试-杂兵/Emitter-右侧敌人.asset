@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
-  m_Name: "Emitter-\u53D1\u5C04\u654C\u4EBA"
+  m_Name: "Emitter-\u53F3\u4FA7\u654C\u4EBA"
   m_EditorClassIdentifier: 
   description: 
-  parentDanmaku: {fileID: 11400000, guid: 0be6a9d5f5be85a40ae8cc94cb0b99af, type: 2}
   bulletEvents: []
-  shootDelay: 1
-  emitterDuration: -1
-  emitterPosTypeX: 0
+  shootDelay: 2.5
+  emitterDuration: 30
+  emitterPosTypeX: 3
   emitterPosX:
-    baseValue: 0
+    baseValue: 12
     offsetValue: 0
     randomRange: 0
   emitterPosTypeY: 0
@@ -29,14 +28,14 @@ MonoBehaviour:
     randomRange: 0.5
   emitterDirectionType: 2
   emitterDirection:
-    baseValue: 0
+    baseValue: 180
     offsetValue: 0
     randomRange: 3
   bulletPattern: {fileID: 11400000, guid: ae92b3f3c01308c42ab984445f6ffee8, type: 2}
   emitterEvents: []
   shootTimesPerWave: 5
-  shootInterval: 0.5
-  waveInterval: 2
+  shootInterval: 3
+  waveInterval: 999
   angleType: 4
   increment:
     baseValue: 0

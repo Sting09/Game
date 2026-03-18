@@ -39,6 +39,23 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     // 记得修改：FlushPending()、OnSwapData()、OnDispose()、OnInitialize()
     public NativeArray<float> m_HP;
 
+    // --- 全局减伤配置缓存（所有敌人共享） ---
+    protected NativeArray<int2> m_DRRanges; // x = startIndex, y = count
+    protected NativeArray<DamageReductionStage> m_GlobalDRStages;
+
+    // --- 敌人个体减伤内存 (记得在 Initialize, Dispose, SwapData 中处理) ---
+    public NativeArray<int> m_DRCurrentStageIndex; // 当前处于时间轴的第几个阶段
+    public NativeArray<float> m_DRTimer;           // 当前阶段的计时器
+    public NativeArray<float> m_BaseDR;            // 仅由时间轴计算出的基础减伤率
+
+    // --- 状态覆盖内存 ---
+    public NativeArray<bool> m_HasLocalDROverride; // 是否有单体减伤覆盖
+    public NativeArray<float> m_LocalDROverride;   // 单体减伤覆盖的数值
+
+    // --- 全局状态覆盖（用于玩家全屏炸弹等场景，极致性能） ---
+    public bool hasGlobalDROverride = false;
+    public float globalDROverrideValue = 1.0f;     // 比如放炸弹时设为 1.0f (100%)
+
 
     /// <summary>
     /// 添加敌人。
@@ -148,6 +165,22 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
         m_JobHandle = moveJob.Schedule(m_Transforms, m_JobHandle);
     }
 
+    private void ScheduleDamageReductionJob()
+    {
+        EnemyDamageReductionJob drJob = new EnemyDamageReductionJob
+        {
+            dt = dt,
+            isDead = m_IsDead,
+            visualIDs = m_ActiveVisualIDs,
+            drRanges = m_DRRanges,
+            globalDRStages = m_GlobalDRStages,
+            drCurrentStageIndex = m_DRCurrentStageIndex,
+            drTimer = m_DRTimer,
+            baseDR = m_BaseDR
+        };
+        m_JobHandle = drJob.Schedule(m_ActiveCount, 64, m_JobHandle);
+    }
+
     private void ScheduleCollisionJob()
     {
         var policy = new EnemyCollisionPolicy
@@ -237,7 +270,7 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
             m_ActiveVisualIDs[index] = visualID;
             m_EntityBehaviorIDs[index] = behaviorID;
 
-            m_HP[index] = 30f;
+            m_HP[index] = (visualID >= 0 && visualID < enemyConfigs.Count) ? math.max(enemyConfigs[visualID].maxHP, 1f) : 1f;
 
             // --- 相对移动逻辑 ---
             bool isRel = false;
@@ -288,6 +321,22 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
                 m_NextEventIndex[index] = -1;
             }
 
+            //减伤逻辑
+            m_DRCurrentStageIndex[index] = 0;
+            m_DRTimer[index] = 0f;
+            m_HasLocalDROverride[index] = false;
+            m_LocalDROverride[index] = 0f;
+
+            // 初始化第一阶段的减伤率
+            if (visualID >= 0 && visualID < m_DRRanges.Length && m_DRRanges[visualID].y > 0)
+            {
+                m_BaseDR[index] = m_GlobalDRStages[m_DRRanges[visualID].x].reductionRate;
+            }
+            else
+            {
+                m_BaseDR[index] = 0f; // 默认没有减伤
+            }
+
             m_Transforms.Add(obj.transform);
             m_ActiveGOs.Add(obj);
             m_ActiveCount++;
@@ -320,6 +369,15 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     protected override void OnDispose()
     {
         if (m_HP.IsCreated) m_HP.Dispose();
+
+        if (m_DRCurrentStageIndex.IsCreated) m_DRCurrentStageIndex.Dispose();
+        if (m_DRTimer.IsCreated) m_DRTimer.Dispose();
+        if (m_BaseDR.IsCreated) m_BaseDR.Dispose();
+        if (m_HasLocalDROverride.IsCreated) m_HasLocalDROverride.Dispose();
+        if (m_LocalDROverride.IsCreated) m_LocalDROverride.Dispose();
+
+        if (m_DRRanges.IsCreated) m_DRRanges.Dispose();
+        if (m_GlobalDRStages.IsCreated) m_GlobalDRStages.Dispose();
     }
 
     protected override void OnInitialize()
@@ -351,12 +409,42 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
 
         //初始化新属性
         m_HP = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
+
+        // 1. 初始化个体减伤内存
+        m_DRCurrentStageIndex = new NativeArray<int>(maxEntityCapacity, Allocator.Persistent);
+        m_DRTimer = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
+        m_BaseDR = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
+        m_HasLocalDROverride = new NativeArray<bool>(maxEntityCapacity, Allocator.Persistent);
+        m_LocalDROverride = new NativeArray<float>(maxEntityCapacity, Allocator.Persistent);
+
+        // 2. 展平策划的减伤时间轴配置
+        if (enemyConfigs != null)
+        {
+            List<DamageReductionStage> tempAllStages = new List<DamageReductionStage>();
+            m_DRRanges = new NativeArray<int2>(enemyConfigs.Count, Allocator.Persistent);
+
+            for (int i = 0; i < enemyConfigs.Count; i++)
+            {
+                var config = enemyConfigs[i];
+                int startIndex = tempAllStages.Count;
+                int count = 0;
+
+                if (config != null && config.drTimeline != null && config.drTimeline.Count > 0)
+                {
+                    count = config.drTimeline.Count;
+                    tempAllStages.AddRange(config.drTimeline);
+                }
+                m_DRRanges[i] = new int2(startIndex, count);
+            }
+            m_GlobalDRStages = new NativeArray<DamageReductionStage>(tempAllStages.ToArray(), Allocator.Persistent);
+        }
     }
 
     protected override void ScheduleSpecificJobs()
     {
         ScheduleEventJob();
         ScheduleMoveJob();
+        ScheduleDamageReductionJob();
         ScheduleCollisionJob();
         ScheduleCullJob();
     }
@@ -365,6 +453,12 @@ public class EnemyDOTSManager : BaseObjManager<EnemyDOTSManager>
     {
         // 只需要处理子类特有的数组交换
         m_HP[index] = m_HP[lastIndex];
+
+        m_DRCurrentStageIndex[index] = m_DRCurrentStageIndex[lastIndex];
+        m_DRTimer[index] = m_DRTimer[lastIndex];
+        m_BaseDR[index] = m_BaseDR[lastIndex];
+        m_HasLocalDROverride[index] = m_HasLocalDROverride[lastIndex];
+        m_LocalDROverride[index] = m_LocalDROverride[lastIndex];
     }
 
     #endregion

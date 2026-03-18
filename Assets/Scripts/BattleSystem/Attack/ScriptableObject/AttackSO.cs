@@ -8,5 +8,5 @@ public class AttackSO : ScriptableObject
 
     public float startTime;     //本波攻击的开始时间
 
-    public GameObject attackDirector;       //包含元发射器的物体
+    public DanmakuSO attackDirector;       //包含元发射器的物体
 }

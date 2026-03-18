@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf62afe19e27d37469b8db0755dd1702, type: 3}
-  m_Name: "Emitter - \u72D9"
+  m_Name: "Emitter-\u5DE6\u4FA7\u654C\u4EBA"
   m_EditorClassIdentifier: 
   description: 
   bulletEvents: []
-  shootDelay: 2
-  emitterDuration: 3
-  emitterPosTypeX: 0
+  shootDelay: 1
+  emitterDuration: 30
+  emitterPosTypeX: 3
   emitterPosX:
-    baseValue: 0
+    baseValue: -12
     offsetValue: 0
     randomRange: 0
   emitterPosTypeY: 0
   emitterPosY:
     baseValue: 0
     offsetValue: 0
-    randomRange: 0
-  emitterDirectionType: 0
+    randomRange: 0.5
+  emitterDirectionType: 2
   emitterDirection:
-    baseValue: 90
+    baseValue: 0
     offsetValue: 0
-    randomRange: 0
-  bulletPattern: {fileID: 11400000, guid: 97c322ecf61366f48b9a313b34b25a80, type: 2}
+    randomRange: 3
+  bulletPattern: {fileID: 11400000, guid: ae92b3f3c01308c42ab984445f6ffee8, type: 2}
   emitterEvents: []
-  shootTimesPerWave: 1
-  shootInterval: 999
+  shootTimesPerWave: 5
+  shootInterval: 3
   waveInterval: 999
   angleType: 4
   increment:

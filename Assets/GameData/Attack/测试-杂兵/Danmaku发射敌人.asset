@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
   m_Name: "Danmaku\u53D1\u5C04\u654C\u4EBA"
   m_EditorClassIdentifier: 
-  duration: -1
+  duration: 20
   emitterList:
   - {fileID: 11400000, guid: b504ab7a35a8de1418ff316cf52bb134, type: 2}
-  emitterParameterList: []
+  - {fileID: 11400000, guid: f3aaaa8185ae38044a7785ea11ae1206, type: 2}
   requiredEntities:
   - entityName: RedBullet
     num: 100

@@ -8,7 +8,8 @@ public enum ShootObjType
     Bullet,
     BulletGroup,
     PlayerBullet,
-    Enemy
+    Enemy,
+    Boss
 }
 
 

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: "\u6CE2\u7C92\u5927\u8774\u8776Pattern"
   m_EditorClassIdentifier: 
   bulletName: "\u6CE2\u7C92\u5927\u8774\u8776"
-  bulletDuration: -1
+  bulletDuration: 30
   bulletDamage: 5
   isRelative: 0
   objType: 3
-  bulletBehavior: "\u6D4B\u8BD5BossBehavior"
+  bulletBehavior: "\u6CE2\u7C92\u5927\u8774\u8776Behavior"
   description: 
   shootWays:
     baseValue: 1

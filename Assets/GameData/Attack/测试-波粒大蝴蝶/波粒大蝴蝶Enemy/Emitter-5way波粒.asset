@@ -34,9 +34,9 @@ MonoBehaviour:
   bulletPattern: {fileID: 11400000, guid: 488878fd6ff575a42a0adf6e6ef06356, type: 2}
   emitterEvents:
   - {fileID: 11400000, guid: f3ecb32708f7c8b429803302a98da14d, type: 2}
-  shootTimesPerWave: 9999
-  shootInterval: 0.04
-  waveInterval: 0.04
+  shootTimesPerWave: 1
+  shootInterval: 0.033333
+  waveInterval: 0.033333
   angleType: 4
   increment:
     baseValue: 0

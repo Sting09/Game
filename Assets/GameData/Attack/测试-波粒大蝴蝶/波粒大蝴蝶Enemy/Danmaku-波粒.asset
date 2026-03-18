@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00abfc0adba0ced4ea98b45cd8c4cee3, type: 3}
   m_Name: "Danmaku-\u6CE2\u7C92"
   m_EditorClassIdentifier: 
-  duration: -1
+  duration: 30
   emitterList:
   - {fileID: 11400000, guid: 74a9b7bb6bb1f304a9a5df14679db5fb, type: 2}
   requiredEntities: []

@@ -15,6 +15,15 @@ MonoBehaviour:
   enemyName: "\u8FDC\u56DB\u5927\u8774\u8776"
   prefab: {fileID: 5875919090608444173, guid: 72c2d08bf847b8b459e10587069b8520, type: 3}
   zPriority: 2
+  isBoss: 0
   collisionType: 0
   circleRadius: 0.7
   boxSize: {x: 0, y: 0}
+  maxHP: 200
+  drTimeline:
+  - reductionRate: 1
+    duration: 5
+  - reductionRate: 0.5
+    duration: 10
+  - reductionRate: 0
+    duration: 0

@@ -10,6 +10,7 @@ public class GlobalVariableSO : ScriptableObject
 
     [Header("Competiton Info")]
     public int contestantNum = 16;
+    public int neededBossNum = 3;       //需要打败多少boss通关
 
     [Header("Monster Icon")]
     public Sprite lowLevelMonsterIcon;

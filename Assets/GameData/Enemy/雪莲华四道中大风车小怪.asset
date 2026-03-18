@@ -15,6 +15,9 @@ MonoBehaviour:
   enemyName: Test01
   prefab: {fileID: 5951859378691608815, guid: c748242fa6c4e54449a42c2aa2e6fcfa, type: 3}
   zPriority: 2
+  isBoss: 0
   collisionType: 0
   circleRadius: 0.5
   boxSize: {x: 0, y: 0}
+  maxHP: 5
+  drTimeline: []

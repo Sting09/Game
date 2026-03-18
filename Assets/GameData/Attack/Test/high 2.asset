@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: 15
   isOpponent: 0
+  startTime: 0
+  attackDirector: {fileID: 11400000, guid: ccc9973d9b7e12c4cb7530c8172e926f, type: 2}

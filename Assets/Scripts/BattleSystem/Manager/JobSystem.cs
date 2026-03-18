@@ -374,6 +374,73 @@ public struct EnemyCollisionPolicy : ICollisionPolicy
 }
 
 
+// 计算敌人减伤的JobSystem
+[BurstCompile]
+public struct EnemyDamageReductionJob : IJobParallelFor
+{
+    public float dt;
+
+    [ReadOnly] public NativeArray<bool> isDead;
+    [ReadOnly] public NativeArray<int> visualIDs;
+    [ReadOnly] public NativeArray<int2> drRanges;
+    [ReadOnly] public NativeArray<DamageReductionStage> globalDRStages;
+
+    public NativeArray<int> drCurrentStageIndex;
+    public NativeArray<float> drTimer;
+    public NativeArray<float> baseDR;
+
+    public void Execute(int i)
+    {
+        CheckBurstStatus();
+
+        if (isDead[i]) return;
+
+        int vID = visualIDs[i];
+        int2 range = drRanges[vID];
+
+        // 如果该敌人没有配置减伤时间轴
+        if (range.y <= 0)
+        {
+            baseDR[i] = 0f;
+            return;
+        }
+
+        int currentLocalStage = drCurrentStageIndex[i];
+
+        // 防止数组越界（比如策划改了配置但旧数据还在）
+        if (currentLocalStage >= range.y)
+        {
+            currentLocalStage = range.y - 1;
+        }
+
+        int globalStageIndex = range.x + currentLocalStage;
+        DamageReductionStage stage = globalDRStages[globalStageIndex];
+
+        // 更新时间轴计时器
+        drTimer[i] += dt;
+
+        // 如果当前阶段有时间限制（duration > 0），且已经超时，且不是最后一个阶段
+        while (stage.duration > 0 && drTimer[i] >= stage.duration && currentLocalStage < range.y - 1)
+        {
+            drTimer[i] -= stage.duration; // 扣除消耗的时间，溢出时间带入下一阶段
+            currentLocalStage++;
+            globalStageIndex = range.x + currentLocalStage;
+            stage = globalDRStages[globalStageIndex];
+        }
+
+        // 最终更新状态
+        drCurrentStageIndex[i] = currentLocalStage;
+        baseDR[i] = stage.reductionRate;
+    }
+
+    [BurstDiscard]
+    private void CheckBurstStatus()
+    {
+        Debug.LogWarning($"[性能警告] BulletCullJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
+    }
+}
+
+
 
 
 /// <summary>
@@ -449,8 +516,6 @@ public struct EnemyCullJob : IJobParallelFor
 
 
 
-
-// 在 JobSystem.cs 的末尾添加以下代码
 
 /// <summary>
 /// 玩家子弹与敌人的碰撞检测 Job
