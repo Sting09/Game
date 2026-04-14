@@ -9,6 +9,7 @@ public class BaseShooter : MonoBehaviour
     [SerializeField]private float danmakuTimer;                  //当前符卡的计时器
     [SerializeField]private float currentDanmakuDuration;        //当前符卡的持续时间
     private List<ShooterTimer> timers;           //每个Emitter的计时器
+    public bool isPause = false;                    //是否暂停发射
 
     public bool needPrewarm = false;        //是否需要根据弹幕列表，预热对象池
     public bool isStageDirector = false;    //是否是StageDirector，弹幕结束就胜利
@@ -67,6 +68,7 @@ public class BaseShooter : MonoBehaviour
     void Update()
     {
         if(BattleController.Instance.currentPhase != GamePhase.BattleFighting) { return; }
+        if(isPause) { return; }
 
         danmakuTimer += Time.deltaTime;
         //danmakuDuration为负数时发射永不停止 
@@ -141,5 +143,14 @@ public class BaseShooter : MonoBehaviour
         }
     }
 
+    public void StopShooting()
+    {
+        isPause = true;
+    }
+
+    public void StartShooting()
+    {
+        isPause = false;
+    }
 
 }

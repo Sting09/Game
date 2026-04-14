@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4903218846701785603}
   - component: {fileID: 541135354215349050}
+  - component: {fileID: 8559317658203893311}
   - component: {fileID: 5379494764546353057}
   m_Layer: 0
   m_Name: "\u6D4B\u8BD5Boss"
@@ -88,6 +89,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8559317658203893311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5875919090608444173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed6769b3540d5ae4398948f95f2ba984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossData: {fileID: 11400000, guid: 544aaa66a5e05d640991b567274bc090, type: 2}
+  baseShooter: {fileID: 5379494764546353057}
+  enemyID: 0
+  bossAttackEndEvent: {fileID: 11400000, guid: dd56688e7eb0a72468b72c57a0edac45, type: 2}
+  bossBattleWinEvent: {fileID: 11400000, guid: 677fbf41e165aad4595a8ec21daeb060, type: 2}
 --- !u!114 &5379494764546353057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,12 +118,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d3f46babf11e74281370bfe1ed246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  danmakuToShoot:
-  - {fileID: 11400000, guid: c23a2bf7c6f09b64682426903841e04c, type: 2}
-  - {fileID: 11400000, guid: 530d63c9cd16041428ba43cf9538e1af, type: 2}
-  - {fileID: 11400000, guid: 3f8f336193fb7ae4a8ac727f813f53a7, type: 2}
+  danmakuToShoot: []
   currentDanmakuIndex: 0
   danmakuTimer: 0
   currentDanmakuDuration: 0
+  isPause: 0
   needPrewarm: 0
   isStageDirector: 0
+  isBoss: 1

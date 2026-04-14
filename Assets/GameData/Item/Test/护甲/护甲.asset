@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dac04c74fb75a245be97736f881b4ff, type: 3}
+  m_Name: "\u62A4\u7532"
+  m_EditorClassIdentifier: 
+  ItemID: 2
+  ItemName: "\u62A4\u7532"
+  Type: 1
+  Icon: {fileID: -7451669129354729688, guid: 72a4ac4baacfe9244aef12bc38f569a9, type: 3}
+  Description: "\u53D7\u5230\u7684\u4F24\u5BB3-2"
+  AutoEquipOnPickup: 0
+  CannotUnequip: 0
+  CannotEquipAfterUnequip: 0
+  CannotEquip: 0
+  BaseEffects:
+  - {fileID: 11400000, guid: 894440c14e554344881110e0a775a72c, type: 2}
+  UpgradeTree: []
+  UpgradeMilestoneCount: 3
+  MilestoneRewardEffect: {fileID: 0}

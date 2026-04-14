@@ -4639,6 +4639,67 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &263301772
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 263301773}
+  - component: {fileID: 263301774}
+  m_Layer: 0
+  m_Name: BossAttackEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &263301773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 263301772}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2031514223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &263301774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 263301772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: 
+  eventSO: {fileID: 11400000, guid: dd56688e7eb0a72468b72c57a0edac45, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1777349703}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: ResetBattleData
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &276482010
 GameObject:
   m_ObjectHideFlags: 0
@@ -7183,6 +7244,67 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &513932318
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 513932319}
+  - component: {fileID: 513932320}
+  m_Layer: 0
+  m_Name: BossBattleWin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &513932319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513932318}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2031514223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &513932320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513932318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5e7252a8dc52544be60a3cd3a1ce6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: 
+  eventSO: {fileID: 11400000, guid: 677fbf41e165aad4595a8ec21daeb060, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1777349703}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: AddBossDefeatedNum
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &517971312
 GameObject:
   m_ObjectHideFlags: 0
@@ -14411,6 +14533,56 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1093343854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1093343856}
+  - component: {fileID: 1093343855}
+  m_Layer: 0
+  m_Name: InventoryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1093343855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093343854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fba1063a53c0dd478e6020da2678fe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPassiveLimitedSlots: 6
+  allItemPools:
+  - poolName: TestPool
+    allItems:
+    - {fileID: 11400000, guid: 76868e5b72db74845ac3db77c8333f69, type: 2}
+    - {fileID: 11400000, guid: d5111796864808b489a6546992f9ac75, type: 2}
+--- !u!4 &1093343856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093343854}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1094087551
 GameObject:
   m_ObjectHideFlags: 0
@@ -24376,6 +24548,7 @@ GameObject:
   - component: {fileID: 1777349705}
   - component: {fileID: 1777349704}
   - component: {fileID: 1777349703}
+  - component: {fileID: 1777349706}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -24395,7 +24568,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15dac92196b616048ad078d9e8f46232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  retryTimesRemain: 1
+  playerStats: {fileID: 1777349706}
+  retryTimesRemain: 100
   currentHP: 100
   lossHP: 0
   maxHP: 100
@@ -24488,6 +24662,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 286609887}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1777349706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777349702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeafe6ca8c1fd4b4b92a05c46fc5a997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP:
+    BaseValue: 100
+  defence:
+    BaseValue: 0
+  damage:
+    BaseValue: 1
+  fireRate:
+    BaseValue: 5
+  bulletSize:
+    BaseValue: 1
+  moveSpeed:
+    BaseValue: 8
 --- !u!1 &1778435447
 GameObject:
   m_ObjectHideFlags: 0
@@ -28378,6 +28576,8 @@ Transform:
   - {fileID: 914632727}
   - {fileID: 2072295586}
   - {fileID: 609341513}
+  - {fileID: 263301773}
+  - {fileID: 513932319}
   - {fileID: 779599901}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -29987,3 +30187,4 @@ SceneRoots:
   - {fileID: 1652005873}
   - {fileID: 2031514223}
   - {fileID: 358648590}
+  - {fileID: 1093343856}

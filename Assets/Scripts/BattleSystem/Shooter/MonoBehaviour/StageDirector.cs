@@ -11,6 +11,10 @@ public class StageDirector : MonoBehaviour
 
     public void LoadCurrentDanmaku()
     {
+        if (BattleContext.currentAttack == null)
+        {
+            return;
+        }
         stageDirectorShooter.danmakuToShoot.Clear();
         stageDirectorShooter.danmakuToShoot.Add(BattleContext.currentAttack.attackDirector);
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Player Data")]
+    public PlayerStats playerStats;
     public int retryTimesRemain;          //剩余重开次数
 
     public float currentHP;                 //当前HP值
@@ -196,10 +197,8 @@ public class Player : MonoBehaviour
         return retryTimesRemain;
     }
 
-
-    public int AddBossDefeatedNum(int num)
+    public void AddBossDefeatedNum()
     {
-        bossDefeatedNum += num;
-        return bossDefeatedNum;
+        bossDefeatedNum ++;
     }
 }

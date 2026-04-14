@@ -142,6 +142,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             enemyBoxSizes = enemyMgr.m_BoxSizes,
             enemyAngles = enemyMgr.m_Angles,
             enemyHP = enemyMgr.m_HP,
+            enemyInvulnerable = enemyMgr.m_IsInvulnerable,
 
             hitResults = m_HitResults.AsParallelWriter()
         };
@@ -192,6 +193,8 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         int available = maxEntityCapacity - m_ActiveCount;
         int toProcess = math.min(pendingTotal, available);
 
+        float currentPlayerAttack = GameManager.Instance.player ? GameManager.Instance.player.playerStats.damage.Value : 0;
+
         if (toProcess <= 0)
         {
             m_PendingBullets.Clear();
@@ -233,6 +236,8 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
             m_ActiveVisualIDs[index] = visualID;
             m_EntityBehaviorIDs[index] = behaviorID;
 
+            //伤害值计算：PatternSO中定义的基础伤害 + 玩家攻击力
+            m_Damage[index] = info.damageValue + currentPlayerAttack;     
             
             bool isRel = false;
             int eID = 0;
@@ -371,8 +376,6 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
         m_CollisionJobHandle.Complete();
 
         // 2. 处理命中队列（结算伤害）
-        // 伤害暂时为5
-        const float damagePerHit = 5f;
         while (m_HitResults.TryDequeue(out int2 hit))
         {
             int bulletIdx = hit.x;
@@ -383,7 +386,7 @@ public class PlayerShootingManager : BaseObjManager<PlayerShootingManager>
                 enemyIdx < enemyMgr.m_HP.Length && enemyMgr.m_HP[enemyIdx] > 0f)
             {
                 // 计算玩家造成的伤害
-                float actualDamage = damagePerHit;
+                float actualDamage = m_Damage[bulletIdx];
 
                 // 计算敌人的减伤
                 float finalDR = enemyMgr.m_BaseDR[enemyIdx]; // 取出底层时间轴计算出的减伤

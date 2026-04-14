@@ -15,9 +15,29 @@ MonoBehaviour:
   enemyName: "\u6D4B\u8BD5Boss"
   prefab: {fileID: 5875919090608444173, guid: 7159e1d2791788f4f92824dafa6b6029, type: 3}
   zPriority: 2
-  isBoss: 0
+  isBoss: 1
   collisionType: 0
   circleRadius: 0.7
   boxSize: {x: 0, y: 0}
   maxHP: 200
-  drTimeline: []
+  drTimeline:
+  - reductionRate: 1
+    duration: 10
+  - reductionRate: 0
+    duration: 0
+  bossDRTimeline:
+  - columns:
+    - reductionRate: 1
+      duration: 5
+    - reductionRate: 0
+      duration: 0
+  - columns:
+    - reductionRate: 1
+      duration: 5
+    - reductionRate: 0
+      duration: 0
+  - columns:
+    - reductionRate: 1
+      duration: 5
+    - reductionRate: 0
+      duration: 0

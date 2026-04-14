@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ public class EnemyBasicConfigSO : ScriptableObject
     [Header("Life Settings")]
     public float maxHP;
     public List<DamageReductionStage> drTimeline;       //减伤
+    public List<BossReductionStage> bossDRTimeline;   //boss减伤
 
 }
 
@@ -32,4 +34,10 @@ public struct DamageReductionStage
 
     [Tooltip("持续时间（秒）。如果小于等于0，表示永久持续（直到死亡）")]
     public float duration;
+}
+
+[System.Serializable]
+public class BossReductionStage
+{
+    public List<DamageReductionStage> columns = new List<DamageReductionStage>();
 }

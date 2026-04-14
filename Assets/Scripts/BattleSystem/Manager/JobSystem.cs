@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem.Processors;
 using UnityEngine.Jobs;
 
 /// <summary>
@@ -385,6 +386,13 @@ public struct EnemyDamageReductionJob : IJobParallelFor
     [ReadOnly] public NativeArray<int2> drRanges;
     [ReadOnly] public NativeArray<DamageReductionStage> globalDRStages;
 
+    // ================= 新增 Boss 相关参数 =================
+    [ReadOnly] public NativeArray<bool> isBoss;
+    [ReadOnly] public NativeArray<int> bossCurrentPhase;
+    [ReadOnly] public NativeArray<int2> bossPhaseInfo;
+    [ReadOnly] public NativeArray<int2> globalBossDRRanges;
+    // ======================================================
+
     public NativeArray<int> drCurrentStageIndex;
     public NativeArray<float> drTimer;
     public NativeArray<float> baseDR;
@@ -396,9 +404,35 @@ public struct EnemyDamageReductionJob : IJobParallelFor
         if (isDead[i]) return;
 
         int vID = visualIDs[i];
-        int2 range = drRanges[vID];
+        int2 range;
 
-        // 如果该敌人没有配置减伤时间轴
+        // ================= 修改点：动态获取时间轴范围 =================
+        if (isBoss[i])
+        {
+            int phase = bossCurrentPhase[i];
+            int2 phaseInfo = bossPhaseInfo[vID];
+
+            if (phaseInfo.y <= 0) // 该 Boss 没配置减伤
+            {
+                baseDR[i] = 0f;
+                return;
+            }
+
+            // 防止转阶段时索引越界
+            if (phase >= phaseInfo.y) phase = phaseInfo.y - 1;
+            if (phase < 0) phase = 0;
+
+            // 获取 Boss 当前阶段的时间轴范围
+            range = globalBossDRRanges[phaseInfo.x + phase];
+        }
+        else
+        {
+            // 普通敌人直接获取范围
+            range = drRanges[vID];
+        }
+        // ==============================================================
+
+        // 如果该敌人/Boss当前阶段没有配置减伤时间轴
         if (range.y <= 0)
         {
             baseDR[i] = 0f;
@@ -407,7 +441,7 @@ public struct EnemyDamageReductionJob : IJobParallelFor
 
         int currentLocalStage = drCurrentStageIndex[i];
 
-        // 防止数组越界（比如策划改了配置但旧数据还在）
+        // 防止数组越界（比如策划改了配置但旧数据还在，或切阶段时重置了）
         if (currentLocalStage >= range.y)
         {
             currentLocalStage = range.y - 1;
@@ -436,7 +470,8 @@ public struct EnemyDamageReductionJob : IJobParallelFor
     [BurstDiscard]
     private void CheckBurstStatus()
     {
-        Debug.LogWarning($"[性能警告] BulletCullJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
+        // 顺手修正了这里的文本提示
+        Debug.LogWarning($"[性能警告] EnemyDamageReductionJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
     }
 }
 
@@ -482,7 +517,7 @@ public struct BulletCullJob : IJobParallelFor
 }
 
 /// <summary>
-/// 检查Bullet是否需要移除的事件。
+/// 检查Enemy是否需要移除的事件。
 /// 只检查生命周期。
 /// 如果需要移除，只修改isDead标志位，LateUpdate时由EnemyManager移除所有isDead的Bullet
 /// </summary>
@@ -492,18 +527,38 @@ public struct EnemyCullJob : IJobParallelFor
     [ReadOnly] public NativeArray<float> lifetimes;
     [ReadOnly] public NativeArray<float> maxLifetimes; // 修改：使用NativeArray存储最大生命周期
     public NativeArray<bool> isDeadResults;
-    [ReadOnly] public NativeArray<float> hp;
+    public NativeArray<float> hp;
+    public NativeArray<bool> isInvulnerable;
+    [ReadOnly] public NativeArray<bool> isBoss;
+    [WriteOnly] public NativeArray<bool> triggerPhaseTransition;
 
     public void Execute(int index)
     {
         CheckBurstStatus();
 
         if (isDeadResults[index]) return;
+        
+        // 如果第index个敌人处于无敌状态，直接返回
+        if (isInvulnerable[index]) return; // 转场无敌，不扣血也不判定死亡
 
         // 修改：使用每个子弹的最大生命周期进行判断
         bool lifeDead = (lifetimes[index] > maxLifetimes[index]) && maxLifetimes[index] >= 0;
         bool hpDead = hp[index] <= 0;
-        isDeadResults[index] = lifeDead || hpDead;
+
+        if (isBoss[index])
+        {
+            // Boss血量归零：不死亡，锁血并打上转场标记
+            if(hpDead)
+            {
+                hp[index] = 0;
+                isInvulnerable[index] = true;
+                triggerPhaseTransition[index] = true;
+            }
+        }
+        else
+        {
+            isDeadResults[index] = lifeDead || hpDead;
+        }
     }
 
     [BurstDiscard]
@@ -512,8 +567,6 @@ public struct EnemyCullJob : IJobParallelFor
         Debug.LogWarning($"[性能警告] EnemyCullJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
     }
 }
-
-
 
 
 
@@ -539,6 +592,7 @@ public struct PlayerBulletEnemyCollisionJob : IJobParallelFor
     [ReadOnly] public NativeArray<float2> enemyBoxSizes;
     [ReadOnly] public NativeArray<float> enemyAngles;
     [ReadOnly] public NativeArray<float> enemyHP;
+    [ReadOnly] public NativeArray<bool> enemyInvulnerable;
 
     // --- 输出结果 ---
     // x = bulletIndex, y = enemyIndex
@@ -546,6 +600,8 @@ public struct PlayerBulletEnemyCollisionJob : IJobParallelFor
 
     public void Execute(int i)
     {
+        CheckBurstStatus();
+
         // 如果子弹已死，直接跳过
         if (bulletIsDead[i]) return;
 
@@ -561,6 +617,8 @@ public struct PlayerBulletEnemyCollisionJob : IJobParallelFor
         {
             // 如果敌人已死 (HP<=0)，跳过
             if (enemyHP[j] <= 0f) continue;
+            // 如果敌人处于无敌状态，跳过
+            if (enemyInvulnerable[j]) continue;
 
             bool hit = CheckCollision(
                 bPos.xy, bType, bRadius, bSize, bAngle,
@@ -576,6 +634,14 @@ public struct PlayerBulletEnemyCollisionJob : IJobParallelFor
                 break;
             }
         }
+    }
+
+
+
+    [BurstDiscard]
+    private void CheckBurstStatus()
+    {
+        Debug.LogWarning($"[性能警告] EnemyCullJob 正在以 Mono (慢速) 模式运行！Burst 未生效！");
     }
 
     // --- 内部数学计算库 (Burst Compatible) ---

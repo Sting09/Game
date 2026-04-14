@@ -119,6 +119,9 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
     protected List<int> m_DeadEmittersThisFrame = new List<int>(128);
     protected NativeHashMap<int, float3> m_EmitterDeltas;
 
+    // 是否是关键组件，清屏时不移除
+    protected NativeArray<bool> m_IsKeyComponent;
+
     // Obj的Transoform和GameObject
     protected TransformAccessArray m_Transforms;
     protected List<GameObject> m_ActiveGOs;
@@ -273,6 +276,8 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
             m_Randoms[i] = new Unity.Mathematics.Random(seedGen.NextUInt(1, uint.MaxValue));
         }
 
+        m_IsKeyComponent = new NativeArray<bool>(maxEntityCapacity, Allocator.Persistent);
+
         m_Transforms = new TransformAccessArray(maxEntityCapacity);
         m_ActiveGOs = new List<GameObject>(maxEntityCapacity);
     }
@@ -312,6 +317,8 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         if (m_IsRelative.IsCreated) m_IsRelative.Dispose();
         if (m_EmitterIDs.IsCreated) m_EmitterIDs.Dispose();
         if (m_EmitterDeltas.IsCreated) m_EmitterDeltas.Dispose();
+
+        if (m_IsKeyComponent.IsCreated) m_IsKeyComponent.Dispose();
 
         // 注意一下，只有这里的is是小写
         if (m_Transforms.isCreated) m_Transforms.Dispose();
@@ -402,7 +409,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         ScheduleSpecificJobs();
     }
 
-    void LateUpdate()
+    protected virtual void LateUpdate()
     {
         // 等待本帧的Job执行完
         m_JobHandle.Complete();
@@ -488,6 +495,8 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
 
             m_IsRelative[index] = m_IsRelative[lastIndex];
             m_EmitterIDs[index] = m_EmitterIDs[lastIndex];
+
+            m_IsKeyComponent[index] = m_IsKeyComponent[lastIndex];
 
             m_ActiveGOs[index] = m_ActiveGOs[lastIndex];
             m_Transforms.RemoveAtSwapBack(index);
@@ -600,7 +609,79 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         return m_JobHandle;
     }
 
+    /// <summary>
+    /// 将场景中特定物体的位置同步到Manager的数据中
+    /// </summary>
+    /// <param name="index">物体在Manager中的活跃索引(0 到 m_ActiveCount-1)</param>
+    /// <param name="position">需要同步的世界坐标</param>
+    public void SyncObjectPosition(int index, Vector3 position)
+    {
+        // 1. 安全校验：越界检查
+        if (index < 0 || index >= m_ActiveCount)
+        {
+            Debug.LogWarning($"[{this.GetType().Name}] SyncEnemyPosition 失败：索引 {index} 越界。当前活跃物体数量为 {m_ActiveCount}。");
+            return;
+        }
 
+        // 2. 线程安全：强制主线程等待当前所有正在执行的 Job 完成。
+        // 这是重中之重！如果不 Complete()，主线程和子线程同时访问 m_Positions 会导致崩溃或报错。
+        m_JobHandle.Complete();
+
+        // 3. 更新底层逻辑数据 (Data)
+        // Unity.Mathematics 的 float3 支持与 Vector3 的隐式转换
+        m_Positions[index] = position;
+
+        // 4. 更新表现层视图 (View)
+        // 确保对应的 GameObject 存在且活跃，然后直接修改其 Transform
+        if (m_ActiveGOs[index] != null)
+        {
+            m_ActiveGOs[index].transform.position = position;
+        }
+    }
+
+    /// <summary>
+    /// 清理当前管理的对象并释放内存（保留 m_IsKeyComponent 为 true 的关键物体）
+    /// </summary>
+    /// <param name="destroy">如果为 true，则 Destroy 游戏物体；如果为 false，则设为 inactive 放回对象池</param>
+    public virtual void ClearAllObjects(bool removeKeyComponent = false)
+    {
+        // 1. 强制等待子线程 Job 彻底完成，防止多线程资源冲突
+        m_JobHandle.Complete();
+
+        // 2. 倒序遍历，安全移除（Swap-Back）非关键物体
+        // 必须倒序遍历，因为 RemoveAtSwapBack 会把尾部的元素挪到当前索引，正序遍历会漏掉元素或越界
+        for (int i = m_ActiveCount - 1; i >= 0; i--)
+        {
+            if (m_IsKeyComponent[i] && !removeKeyComponent)    //如果是关键组件，且不删除关键组件
+            {
+                continue; // 关键组件（如Boss），保留跳过
+            }
+
+            // 调用修改后的移除方法，安全地清理内存和物体
+            BaseRemoveObjectAt(i);
+        }
+
+        // 3. 只有当没有任何活跃物体时，才重置Z轴
+        if (m_ActiveCount == 0)
+        {
+            currentZ = 0;
+        }
+
+        // 4. 清空 Native 容器中残留的临时数据（保留内存不Dispose，只清空内容）
+        if (m_CollisionQueue.IsCreated) m_CollisionQueue.Clear();
+        if (m_EmitterDeltas.IsCreated) m_EmitterDeltas.Clear();
+
+        // 【注意移除的旧代码】：
+        // 这里删除了原本对 m_ActiveGOs.Clear() 和 new TransformAccessArray() 的操作！
+        // 因为我们现在使用了 Swap-Back 移除机制，保留下来的 Boss 在这些集合中的状态是完全正确的。
+        // 如果这里强行清空，保留下来的 Boss 就会变成不受数据驱动管理的 "孤儿"。
+        // 至于 m_ActiveEmitters 等字典中的失效数据，无需手动清空，你原本 Update() 里的逻辑会自动清理失效的父物体。
+
+        // 5. 调用子类特有的清理逻辑（如有必要）
+        OnClearAllObjects(removeKeyComponent);
+    }
+
+    /*
     /// <summary>
     /// 清理所有当前管理的对象并释放内存
     /// </summary>
@@ -614,6 +695,8 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         // 2. 遍历所有处于激活状态的物体
         for (int i = 0; i < m_ActiveGOs.Count; i++)
         {
+            if (m_IsKeyComponent[i]) { continue; }
+
             GameObject obj = m_ActiveGOs[i];
             if (obj != null)
             {
@@ -665,6 +748,7 @@ public abstract class BaseObjManager<T> : SingletonMono<T> where T : BaseObjMana
         // 5. 调用子类特有的清理逻辑（如有必要）
         OnClearAllObjects(destroy);
     }
+    */
 
 
     // 留给子类实现特定数据清理的虚方法

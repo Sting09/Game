@@ -289,10 +289,20 @@ public class BulletDOTSManager : BaseObjManager<BulletDOTSManager>
         //如果本帧有子弹命中玩家，则触发OnPlayerHit
         bool hasHit = false;
         float totalDamage = 0f;
+        float currentPlayerDefence = 0;
+        if(GameManager.Instance != null && GameManager.Instance.player != null)
+        {
+            currentPlayerDefence = GameManager.Instance.player.playerStats.defence.Value;
+        }
+
         while (m_CollisionQueue.TryDequeue(out int bulletIndex))
         {
             hasHit = true;
-            totalDamage += m_Damage[bulletIndex];
+
+            //计算玩家实际受到的伤害
+            float actualDamage = m_Damage[bulletIndex] - currentPlayerDefence;
+
+            totalDamage += actualDamage;
         }
 
         if (hasHit)
